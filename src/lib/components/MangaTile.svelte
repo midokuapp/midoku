@@ -1,14 +1,16 @@
 <script>
     import { AspectRatio } from 'bits-ui';
 
-    /** @type {{ title: string, cover_src: string, unread_chapters: number }} */
+    /** @type {{ id: string, title: string, cover_src: string, unread_chapters: number }} */
     export let manga;
 </script>
 
-<a href="/">
-    <AspectRatio.Root ratio={3 / 4}>
-        <img src={manga.cover_src} alt="{manga.title} cover" />
-    </AspectRatio.Root>
+<a href="/manga?id={encodeURIComponent(manga.id)}">
+    <div class="manga-cover">
+        <AspectRatio.Root ratio={3 / 4}>
+            <img src={manga.cover_src} alt="{manga.title} cover" loading="lazy" />
+        </AspectRatio.Root>
+    </div>
     <h4>{manga.title}</h4>
     {#if manga.unread_chapters > 0}
         <span>
@@ -24,15 +26,35 @@
         text-decoration: none;
     }
 
+    .manga-cover {
+        position: relative;
+
+        &::after {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to bottom, transparent 75%, var(--text-1) 100%);
+            border-radius: var(--radius-2);
+        }
+    }
+
     img {
         width: 100%;
         height: 100%;
 
-        border-radius: var(--radius-3);
+        border-radius: var(--radius-2);
         object-fit: cover;
     }
 
     h4 {
+        position: absolute;
+        bottom: var(--size-00);
+        margin: var(--size-2);
+
+        color: var(--surface-1);
         font-size: var(--font-size-2);
         font-weight: var(--font-weight-7);
 

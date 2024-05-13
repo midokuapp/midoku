@@ -1,52 +1,63 @@
 <script>
-    import MangaGrid from '$lib/components/MangaGrid.svelte';
-    import MangaTile from '$lib/components/MangaTile.svelte';
-    import Search from '$lib/components/Search.svelte';
+    import { Search } from 'lucide-svelte';
     import { Settings } from 'lucide-svelte';
 
-    /** @type {Array<{ id: number, title: string, cover_src: string, unread_chapters: number }>} */
+    import MangaGrid from '$lib/components/MangaGrid.svelte';
+    import MangaTile from '$lib/components/MangaTile.svelte';
+
+    /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
     let mangaList = [];
 
     // Generate some dummy data
     for (let i = 0; i < 20; i++) {
         mangaList.push({
-            id: i,
+            id: i.toString(),
             title: `Donec eu finibus dui, vitae vulputate lorem. Sed et vestibulum nulla, quis pellentesque massa.`,
-            cover_src: 'https://source.unsplash.com/random/300x400/?img=' + i,
+            cover_src: 'https://picsum.photos/600/800/?img=' + i,
             unread_chapters: Math.floor(Math.random() * 100) * (i % 2)
         });
     }
 </script>
 
-<div>
-    <section>
-        <a href="/settings">
-            <Settings />
-        </a>
-    </section>
+<header>
     <h1>Library</h1>
-    <Search placeholder="Search for manga..." />
+    <a href="#">
+        <Search />
+    </a>
+    <a href="/settings">
+        <Settings />
+    </a>
+</header>
+<main>
     <MangaGrid>
         {#each mangaList as manga}
             <MangaTile {manga} />
         {/each}
     </MangaGrid>
-</div>
+</main>
 
 <style>
-    div {
+    header {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items: center;
         gap: var(--size-3);
-        padding: var(--size-3);
-    }
+        flex-shrink: 0;
 
-    h1 {
-        font-size: var(--font-size-7);
-    }
+        > h1 {
+            font-size: var(--size-7);
+            font-weight: var(--font-weight-5);
 
-    section {
-        display: flex;
-        justify-content: flex-end;
+            margin-right: auto;
+        }
+
+        > a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: var(--size-7);
+            height: var(--size-7);
+        }
     }
 </style>
