@@ -1,7 +1,7 @@
 import postcssPresetEnv from 'postcss-preset-env';
 
 const config = {
-	plugins: [postcssPresetEnv()]
+    plugins: [postcssPresetEnv()]
 };
 
 export default config;
