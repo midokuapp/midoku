@@ -16,7 +16,7 @@
         align-items: center;
         gap: var(--size-1);
         padding: var(--size-2);
-        background-color: var(--surface-2);
+        background-color: var(--surface-3);
         border-radius: var(--size-1);
 
         color: var(--text-1);
@@ -25,5 +25,6 @@
     input {
         flex: 1;
         font-size: var(--font-size-3);
+        background-color: transparent;
     }
 </style>
