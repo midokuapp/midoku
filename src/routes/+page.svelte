@@ -4,6 +4,8 @@
 
     import MangaGrid from '$lib/components/MangaGrid.svelte';
     import MangaTile from '$lib/components/MangaTile.svelte';
+    import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+    import Header from '$lib/components/Header.svelte';
 
     /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
     let mangaList = [];
@@ -14,50 +16,25 @@
             id: i.toString(),
             title: `Donec eu finibus dui, vitae vulputate lorem. Sed et vestibulum nulla, quis pellentesque massa.`,
             cover_src: 'https://picsum.photos/600/800/?img=' + i,
-            unread_chapters: Math.floor(Math.random() * 100) * (i % 2)
+            unread_chapters: Math.floor(Math.random() * 100) * (i % 2),
         });
     }
 </script>
 
-<header>
-    <h1>Library</h1>
+<Header>
+    <h1 class="mr-auto text-2xl font-medium">Library</h1>
     <a href="#">
         <Search />
     </a>
     <a href="/settings">
         <Settings />
     </a>
-</header>
-<main>
+</Header>
+
+<ScrollArea class="flex-grow">
     <MangaGrid>
         {#each mangaList as manga}
             <MangaTile {manga} />
         {/each}
     </MangaGrid>
-</main>
-
-<style>
-    header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: var(--size-3);
-        flex-shrink: 0;
-
-        > h1 {
-            font-size: var(--size-7);
-            font-weight: var(--font-weight-5);
-
-            margin-right: auto;
-        }
-
-        > a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            width: var(--size-7);
-            height: var(--size-7);
-        }
-    }
-</style>
+</ScrollArea>

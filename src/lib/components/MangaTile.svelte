@@ -1,83 +1,33 @@
 <script>
-    import { AspectRatio } from 'bits-ui';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
 
     /** @type {{ id: string, title: string, cover_src: string, unread_chapters: number }} */
     export let manga;
 </script>
 
-<a href="/manga?id={encodeURIComponent(manga.id)}">
-    <div class="manga-cover">
-        <AspectRatio.Root ratio={3 / 4}>
-            <img src={manga.cover_src} alt="{manga.title} cover" loading="lazy" />
-        </AspectRatio.Root>
-    </div>
-    <h4>{manga.title}</h4>
+<a href="/manga?id={encodeURIComponent(manga.id)}" class="relative">
+    <AspectRatio
+        ratio={3 / 4}
+        class="m-1 after:absolute after:left-0 after:top-0 after:h-full after:w-full
+        after:rounded-md after:bg-gradient-to-b after:from-transparent after:from-60%
+        after:to-black/80 after:content-['']"
+    >
+        <img
+            src={manga.cover_src}
+            alt="{manga.title} cover"
+            loading="lazy"
+            class="rounded-md object-cover"
+        />
+    </AspectRatio>
+    <h1 class="absolute bottom-0 left-0 m-3 line-clamp-2 font-semibold text-white">
+        {manga.title}
+    </h1>
     {#if manga.unread_chapters > 0}
-        <span>
+        <span
+            class="absolute left-0 top-0 rounded-md bg-[hsl(var(--primary))] px-2 py-1 font-semibold
+            text-[hsl(var(--primary-foreground))]"
+        >
             {manga.unread_chapters}
         </span>
     {/if}
 </a>
-
-<style>
-    a {
-        position: relative;
-        color: var(--text-1);
-        text-decoration: none;
-    }
-
-    .manga-cover {
-        position: relative;
-
-        &::after {
-            position: absolute;
-            content: '';
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(to bottom, transparent 75%, var(--text-1) 100%);
-            border-radius: var(--radius-2);
-        }
-    }
-
-    img {
-        width: 100%;
-        height: 100%;
-
-        border-radius: var(--radius-2);
-        object-fit: cover;
-    }
-
-    h4 {
-        position: absolute;
-        bottom: var(--size-00);
-        margin: var(--size-2);
-
-        color: var(--surface-1);
-        font-size: var(--font-size-2);
-        font-weight: var(--font-weight-7);
-
-        /* Clamp the title to 2 lines */
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    span {
-        position: absolute;
-        top: var(--size-00);
-        left: var(--size-00);
-
-        font-size: var(--font-size-2);
-        font-weight: var(--font-weight-6);
-
-        color: var(--surface-1);
-        background-color: var(--brand);
-
-        padding: var(--size-1) var(--size-2);
-
-        border-radius: var(--radius-2);
-    }
-</style>

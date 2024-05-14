@@ -1,22 +1,9 @@
 <script>
-    import { ArrowLeft } from 'lucide-svelte';
+    import Header from '$lib/components/Header.svelte';
 </script>
 
-<section>
-    <a href="/">
-        <ArrowLeft />
-    </a>
-</section>
-<h1>Settings</h1>
+<Header>
+    <h1 class="mr-auto text-2xl font-medium">Settings</h1>
+</Header>
 
-<style>
-    h1 {
-        font-size: var(--font-size-7);
-    }
-
-    section {
-        display: flex;
-        justify-content: flex-start;
-        height: var(--size-7);
-    }
-</style>
+<a href="/">Library</a>

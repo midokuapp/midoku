@@ -3,6 +3,8 @@
     import { onMount } from 'svelte';
     import { ArrowLeft } from 'lucide-svelte';
 
+    import Header from '$lib/components/Header.svelte';
+
     let manga_id = decodeURIComponent($page.url.searchParams.get('id') || '');
 
     onMount(() => {
@@ -10,21 +12,10 @@
     });
 </script>
 
-<section>
+<Header>
     <a href="/">
         <ArrowLeft />
     </a>
-</section>
+</Header>
+
 <h1>Manga {manga_id}</h1>
-
-<style>
-    h1 {
-        font-size: var(--font-size-7);
-    }
-
-    section {
-        display: flex;
-        justify-content: flex-start;
-        height: var(--size-7);
-    }
-</style>

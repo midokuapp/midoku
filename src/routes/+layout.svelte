@@ -2,15 +2,6 @@
     import '../app.css';
 </script>
 
-<div>
+<div class="flex h-screen w-screen flex-col">
     <slot />
 </div>
-
-<style>
-    div {
-        display: flex;
-        flex-direction: column;
-        gap: var(--size-3);
-        padding: var(--size-3);
-    }
-</style>

@@ -34,8 +34,8 @@
     "windows": [
       {
         "title": "midoku",
-        "width": 800,
-        "height": 600,
+        "width": 600,
+        "height": 1000,
         "resizable": true,
         "fullscreen": false
       }

@@ -1,33 +1,6 @@
-<div>
+<div
+    class="m-2 grid grid-cols-3 gap-1 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7
+    2xl:grid-cols-8"
+>
     <slot />
 </div>
-
-<style>
-    @import 'open-props/media';
-
-    div {
-        display: grid;
-        gap: var(--size-3);
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-        @media (--sm-n-above) {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        @media (--md-n-above) {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-        }
-
-        @media (--lg-n-above) {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-
-        @media (--xl-n-above) {
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-        }
-
-        @media (--xxl-n-above) {
-            grid-template-columns: repeat(7, minmax(0, 1fr));
-        }
-    }
-</style>
