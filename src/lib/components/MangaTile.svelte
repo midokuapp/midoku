@@ -8,9 +8,9 @@
 <a href="/manga?id={encodeURIComponent(manga.id)}" class="relative">
     <AspectRatio
         ratio={3 / 4}
-        class="m-1 after:absolute after:left-0 after:top-0 after:h-full after:w-full
-        after:rounded-md after:bg-gradient-to-b after:from-transparent after:from-60%
-        after:to-black/80 after:content-['']"
+        class="m-1 relative after:absolute after:left-0 after:top-0 after:h-full after:w-full
+        after:rounded-md after:bg-gradient-to-b after:from-transparent after:to-black/90 after:to-90%
+        after:content-['']"
     >
         <img
             src={manga.cover_src}
