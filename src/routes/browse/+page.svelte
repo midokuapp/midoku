@@ -9,9 +9,7 @@
     <h1 class="mr-auto text-2xl font-medium">Browse</h1>
 </Header>
 
-<main class="flex-grow">
-
-</main>
+<main class="flex-grow"></main>
 
 <BottomNavBar>
     <BottomNavElem href="/">

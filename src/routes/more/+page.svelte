@@ -4,9 +4,7 @@
     import BottomNavElem from "$lib/components/BottomNavElem.svelte";
 </script>
 
-<main class="flex-grow">
-
-</main>
+<main class="flex-grow"></main>
 
 <BottomNavBar>
     <BottomNavElem href="/">
