@@ -46,11 +46,11 @@
         <LibraryBig slot="icon" />
         <span slot="text">Library</span>
     </BottomNavElem>
-    <BottomNavElem href="#">
+    <BottomNavElem href="/browse">
         <Compass slot="icon" />
         <span slot="text">Browse</span>
     </BottomNavElem>
-    <BottomNavElem href="#">
+    <BottomNavElem href="/more">
         <Ellipsis slot="icon" />
         <span slot="text">More</span>
     </BottomNavElem>
