@@ -24,8 +24,8 @@
     </h1>
     {#if manga.unread_chapters > 0}
         <span
-            class="absolute left-0 top-0 rounded-md bg-[hsl(var(--primary))] px-2 py-1 font-semibold
-            text-[hsl(var(--primary-foreground))]"
+            class="absolute left-0 top-0 rounded-md bg-primary px-2 py-1 font-semibold
+            text-primary-foreground"
         >
             {manga.unread_chapters}
         </span>
