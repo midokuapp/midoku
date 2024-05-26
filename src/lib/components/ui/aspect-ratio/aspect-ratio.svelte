@@ -1,6 +1,9 @@
-<script>
+<script lang="ts">
     import { AspectRatio as AspectRatioPrimitive } from "bits-ui";
-    export let ratio = 4 / 3;
+
+    type $$Props = AspectRatioPrimitive.Props;
+
+    export let ratio: $$Props["ratio"] = 4 / 3;
 </script>
 
 <AspectRatioPrimitive.Root {ratio} {...$$restProps}>
