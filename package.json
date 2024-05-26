@@ -8,8 +8,8 @@
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
-        "lint": "eslint .",
-        "format": "prettier --write ."
+        "lint": "prettier --check . && eslint .",
+        "format": "prettier --write . && eslint . --fix"
     },
     "devDependencies": {
         "@sveltejs/adapter-static": "^3.0.1",
@@ -24,6 +24,9 @@
         "open-props": "^1.7.4",
         "postcss": "^8.4.33",
         "postcss-preset-env": "^9.5.12",
+        "prettier": "3.2.5",
+        "prettier-plugin-svelte": "3.2.3",
+        "prettier-plugin-tailwindcss": "0.5.14",
         "svelte": "^4.2.7",
         "svelte-check": "^3.6.0",
         "tailwindcss": "^3.4.1",
