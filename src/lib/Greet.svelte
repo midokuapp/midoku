@@ -1,11 +1,11 @@
 <script>
-    import { invoke } from '@tauri-apps/api/tauri';
+    import { invoke } from "@tauri-apps/api/tauri";
 
-    let name = '';
-    let greetMsg = '';
+    let name = "";
+    let greetMsg = "";
 
     async function greet() {
-        greetMsg = await invoke('greet', { name });
+        greetMsg = await invoke("greet", { name });
     }
 </script>
 

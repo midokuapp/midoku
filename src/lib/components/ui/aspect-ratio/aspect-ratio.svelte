@@ -1,5 +1,5 @@
 <script>
-    import { AspectRatio as AspectRatioPrimitive } from 'bits-ui';
+    import { AspectRatio as AspectRatioPrimitive } from "bits-ui";
     export let ratio = 4 / 3;
 </script>
 

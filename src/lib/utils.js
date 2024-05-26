@@ -1,26 +1,16 @@
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import { cubicOut } from 'svelte/easing';
+import { clsx } from "clsx";
+import { cubicOut } from "svelte/easing";
+import { twMerge } from "tailwind-merge";
 
-/**
- * @param {import('clsx').ClassValue[]} inputs
- */
 export function cn(...inputs) {
     return twMerge(clsx(inputs));
 }
 
-export const flyAndScale = (
-    /** @type {Element} */ node,
-    params = { y: -8, x: 0, start: 0.95, duration: 150 },
-) => {
+export const flyAndScale = (node, params = { duration: 150, start: 0.95, x: 0, y: -8 }) => {
     const style = getComputedStyle(node);
-    const transform = style.transform === 'none' ? '' : style.transform;
+    const transform = style.transform === "none" ? "" : style.transform;
 
-    const scaleConversion = (
-        /** @type {number} */ valueA,
-        /** @type {[number, number]} */ scaleA,
-        /** @type {[number, number]} */ scaleB,
-    ) => {
+    const scaleConversion = (valueA, scaleA, scaleB) => {
         const [minA, maxA] = scaleA;
         const [minB, maxB] = scaleB;
 
@@ -30,28 +20,26 @@ export const flyAndScale = (
         return valueB;
     };
 
-    const styleToString = (
-        /** @type {{ [x: string]: any; transform: string; opacity: number; }} */ style,
-    ) => {
+    const styleToString = (style) => {
         return Object.keys(style).reduce((str, key) => {
             if (style[key] === undefined) return str;
             return str + `${key}:${style[key]};`;
-        }, '');
+        }, "");
     };
 
     return {
-        duration: params.duration ?? 200,
-        delay: 0,
-        css: (/** @type {number} */ t) => {
+        css: (t) => {
             const y = scaleConversion(t, [0, 1], [params.y ?? 5, 0]);
             const x = scaleConversion(t, [0, 1], [params.x ?? 0, 0]);
             const scale = scaleConversion(t, [0, 1], [params.start ?? 0.95, 1]);
 
             return styleToString({
-                transform: `${transform} translate3d(${x}px, ${y}px, 0) scale(${scale})`,
                 opacity: t,
+                transform: `${transform} translate3d(${x}px, ${y}px, 0) scale(${scale})`,
             });
         },
+        delay: 0,
+        duration: params.duration ?? 200,
         easing: cubicOut,
     };
 };

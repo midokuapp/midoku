@@ -1,8 +1,8 @@
 <script>
-    import { Search } from 'lucide-svelte';
+    import { Search } from "lucide-svelte";
 
     /** @type {string} */
-    export let placeholder = '';
+    export let placeholder = "";
 </script>
 
 <div>

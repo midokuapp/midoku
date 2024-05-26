@@ -5,13 +5,13 @@
 @layer base {
     /* noto-sans-latin-wght-normal */
     @font-face {
-        font-family: 'Noto Sans Variable';
+        font-family: "Noto Sans Variable";
         font-style: normal;
         font-display: swap;
         font-weight: 100 900;
         font-stretch: 62.5% 100%;
         src: url(@fontsource-variable/noto-sans/files/noto-sans-latin-wdth-normal.woff2)
-            format('woff2-variations');
+            format("woff2-variations");
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
             U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
             U+FEFF, U+FFFD;
@@ -19,13 +19,13 @@
 
     /* noto-sans-latin-wght-italic */
     @font-face {
-        font-family: 'Noto Sans Variable';
+        font-family: "Noto Sans Variable";
         font-style: italic;
         font-display: swap;
         font-weight: 100 900;
         font-stretch: 62.5% 100%;
         src: url(@fontsource-variable/noto-sans/files/noto-sans-latin-wdth-italic.woff2)
-            format('woff2-variations');
+            format("woff2-variations");
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
             U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
             U+FEFF, U+FFFD;
@@ -35,65 +35,66 @@
 @layer base {
     :root {
         --background: 0 0% 100%;
-        --foreground: 222.2 84% 4.9%;
+        --foreground: 0 0% 3.9%;
 
-        --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
+        --muted: 0 0% 96.1%;
+        --muted-foreground: 0 0% 45.1%;
 
         --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
+        --popover-foreground: 0 0% 3.9%;
 
-        --primary: 221.2 83.2% 53.3%;
-        --primary-foreground: 210 40% 98%;
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 3.9%;
 
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
+        --border: 0 0% 89.8%;
+        --input: 0 0% 89.8%;
 
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
+        --primary: 0 0% 9%;
+        --primary-foreground: 0 0% 98%;
 
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 222.2 47.4% 11.2%;
+        --secondary: 0 0% 96.1%;
+        --secondary-foreground: 0 0% 9%;
 
-        --destructive: 0 72.22% 50.59%;
-        --destructive-foreground: 210 40% 98%;
+        --accent: 0 0% 96.1%;
+        --accent-foreground: 0 0% 9%;
 
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
+        --destructive: 0 72.2% 50.6%;
+        --destructive-foreground: 0 0% 98%;
 
-        --ring: 221.2 83.2% 53.3%;
+        --ring: 0 0% 3.9%;
 
         --radius: 0.5rem;
     }
+
     .dark {
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
+        --background: 0 0% 3.9%;
+        --foreground: 0 0% 98%;
 
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
 
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
+        --popover: 0 0% 3.9%;
+        --popover-foreground: 0 0% 98%;
 
-        --primary: 217.2 91.2% 59.8%;
-        --primary-foreground: 222.2 47.4% 11.2%;
+        --card: 0 0% 3.9%;
+        --card-foreground: 0 0% 98%;
 
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
 
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 0 0% 9%;
 
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+
+        --accent: 0 0% 14.9%;
+        --accent-foreground: 0 0% 98%;
 
         --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
+        --destructive-foreground: 0 0% 98%;
 
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-
-        --ring: 224.3 76.3% 48%;
+        --ring: 0 0% 83.1%;
     }
 }
 

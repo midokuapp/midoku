@@ -1,5 +1,5 @@
 <script>
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
+    import { AspectRatio } from "$lib/components/ui/aspect-ratio";
 
     /** @type {{ id: string, title: string, cover_src: string, unread_chapters: number }} */
     export let manga;

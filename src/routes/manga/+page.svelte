@@ -1,11 +1,11 @@
 <script>
-    import { page } from '$app/stores';
-    import { onMount } from 'svelte';
-    import { ArrowLeft } from 'lucide-svelte';
+    import { page } from "$app/stores";
+    import { onMount } from "svelte";
+    import { ArrowLeft } from "lucide-svelte";
 
-    import Header from '$lib/components/Header.svelte';
+    import Header from "$lib/components/Header.svelte";
 
-    let manga_id = decodeURIComponent($page.url.searchParams.get('id') || '');
+    let manga_id = decodeURIComponent($page.url.searchParams.get("id") || "");
 
     onMount(() => {
         console.log(manga_id);
