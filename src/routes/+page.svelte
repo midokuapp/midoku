@@ -1,19 +1,10 @@
 <script>
-    import {
-        Compass,
-        Ellipsis,
-        Library,
-        Search,
-        RotateCcw,
-        ArrowLeft,
-        ListFilter,
-    } from "lucide-svelte";
+    import { Search, RotateCcw, ArrowLeft, ListFilter } from "lucide-svelte";
     import { toast } from "svelte-sonner";
 
     import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
     import BottomNavBar from "$lib/components/BottomNavBar.svelte";
-    import BottomNavElem from "$lib/components/BottomNavElem.svelte";
     import Header from "$lib/components/Header.svelte";
     import MangaGrid from "$lib/components/MangaGrid.svelte";
     import MangaTile from "$lib/components/MangaTile.svelte";
@@ -111,17 +102,4 @@
     </MangaGrid>
 </ScrollArea>
 
-<BottomNavBar>
-    <BottomNavElem href="/">
-        <Library slot="icon" />
-        <span slot="text">Library</span>
-    </BottomNavElem>
-    <BottomNavElem href="/browse">
-        <Compass slot="icon" />
-        <span slot="text">Browse</span>
-    </BottomNavElem>
-    <BottomNavElem href="/more">
-        <Ellipsis slot="icon" />
-        <span slot="text">More</span>
-    </BottomNavElem>
-</BottomNavBar>
+<BottomNavBar />
