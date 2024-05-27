@@ -2,7 +2,7 @@
     import {
         Compass,
         Ellipsis,
-        LibraryBig,
+        Library,
         Search,
         RotateCcw,
         ArrowLeft,
@@ -113,7 +113,7 @@
 
 <BottomNavBar>
     <BottomNavElem href="/">
-        <LibraryBig slot="icon" />
+        <Library slot="icon" />
         <span slot="text">Library</span>
     </BottomNavElem>
     <BottomNavElem href="/browse">

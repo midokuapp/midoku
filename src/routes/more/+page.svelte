@@ -1,5 +1,5 @@
 <script>
-    import { Compass, Ellipsis, LibraryBig } from "lucide-svelte";
+    import { Compass, Ellipsis, Library } from "lucide-svelte";
     import BottomNavBar from "$lib/components/BottomNavBar.svelte";
     import BottomNavElem from "$lib/components/BottomNavElem.svelte";
 </script>
@@ -8,7 +8,7 @@
 
 <BottomNavBar>
     <BottomNavElem href="/">
-        <LibraryBig slot="icon" />
+        <Library slot="icon" />
         <span slot="text">Library</span>
     </BottomNavElem>
     <BottomNavElem href="/browse">
