@@ -3,5 +3,5 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
-# Ignore Tauri source code
-src-tauri/
+# Ignore Tauri target directory
+src-tauri/target/

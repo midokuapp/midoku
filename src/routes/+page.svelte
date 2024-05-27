@@ -1,5 +1,14 @@
 <script>
-    import { Compass, Ellipsis, LibraryBig, Search, RotateCcw, ArrowLeft } from "lucide-svelte";
+    import {
+        Compass,
+        Ellipsis,
+        LibraryBig,
+        Search,
+        RotateCcw,
+        ArrowLeft,
+        ListFilter,
+    } from "lucide-svelte";
+    import { toast } from "svelte-sonner";
 
     import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
@@ -10,7 +19,7 @@
     import MangaTile from "$lib/components/MangaTile.svelte";
 
     import { onMount } from "svelte";
-    import { invoke } from "@tauri-apps/api/tauri";
+    import { invoke } from "@tauri-apps/api/core";
 
     /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
     let mangaList = [];
@@ -33,6 +42,17 @@
         return await invoke("get_library");
     }
 
+    /**
+     * Set the application theme for the given value
+     *
+     * @param {"auto" | "light" | "dark"} theme
+     */
+    async function setTheme(theme) {
+        await invoke("plugin:theme|set_theme", {
+            theme: theme,
+        });
+    }
+
     onMount(() => {
         getLibrary().then((data) => {
             mangaList = data;
@@ -53,6 +73,8 @@
             );
         }
     }
+
+    setTheme("auto");
 </script>
 
 <Header>
@@ -73,8 +95,11 @@
             autofocus
         />
     {/if}
-    <button>
+    <button on:click={() => toast("TODO")}>
         <RotateCcw />
+    </button>
+    <button on:click={() => toast("TODO")}>
+        <ListFilter />
     </button>
 </Header>
 
