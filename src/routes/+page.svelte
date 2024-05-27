@@ -1,21 +1,20 @@
 <script>
     import { Search, RotateCcw, ArrowLeft, ListFilter } from "lucide-svelte";
     import { toast } from "svelte-sonner";
-
     import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
-
     import BottomNavBar from "$lib/components/BottomNavBar.svelte";
     import Header from "$lib/components/Header.svelte";
     import MangaGrid from "$lib/components/MangaGrid.svelte";
     import MangaTile from "$lib/components/MangaTile.svelte";
 
-    import { onMount } from "svelte";
-    import { invoke } from "@tauri-apps/api/core";
+    /**
+     * @typedef {import('./+layout').Manga} Manga
+     */
 
-    /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
-    let mangaList = [];
+    /** @type {import('./$types').PageData} */
+    export let data;
 
-    /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
+    /** @type {Manga[]} */
     let filteredMangaList = [];
 
     /** @type {boolean} */
@@ -24,39 +23,11 @@
     /** @type {string} */
     let searchQuery = "";
 
-    /**
-     * Get the library data from the backend
-     *
-     * @returns {Promise<Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>>}
-     */
-    async function getLibrary() {
-        return await invoke("get_library");
-    }
-
-    /**
-     * Set the application theme for the given value
-     *
-     * @param {"auto" | "light" | "dark"} theme
-     */
-    async function setTheme(theme) {
-        await invoke("plugin:theme|set_theme", {
-            theme: theme,
-        });
-    }
-
-    onMount(() => {
-        getLibrary().then((data) => {
-            mangaList = data;
-            mangaList.sort((a, b) => a.title.localeCompare(b.title));
-            filteredMangaList = mangaList;
-        });
-    });
-
     $: {
         if (searchQuery === "") {
-            filteredMangaList = mangaList;
+            filteredMangaList = data.mangaList;
         } else {
-            filteredMangaList = mangaList.filter((manga) =>
+            filteredMangaList = data.mangaList.filter((manga) =>
                 manga.title
                     .normalize()
                     .toLowerCase()
@@ -64,8 +35,6 @@
             );
         }
     }
-
-    setTheme("auto");
 </script>
 
 <Header>
