@@ -3,19 +3,22 @@
 
     import NavBar from "$lib/components/NavBar.svelte";
     import NavElem from "$lib/components/NavElem.svelte";
+
+    /** @type {"library" | "browse" | "more" | null} */
+    export let active = null;
+
+    const navElems = [
+        { href: "/", icon: Library, text: "Library" },
+        { href: "/browse", icon: Compass, text: "Browse" },
+        { href: "/more", icon: Ellipsis, text: "More" },
+    ];
 </script>
 
 <NavBar>
-    <NavElem href="/">
-        <Library slot="icon" />
-        <span slot="text">Library</span>
-    </NavElem>
-    <NavElem href="/browse">
-        <Compass slot="icon" />
-        <span slot="text">Browse</span>
-    </NavElem>
-    <NavElem href="/more">
-        <Ellipsis slot="icon" />
-        <span slot="text">More</span>
-    </NavElem>
+    {#each navElems as { href, icon, text }, i}
+        <NavElem {href} active={active === text.toLowerCase()}>
+            <svelte:component this={icon} slot="icon" />
+            <span slot="text">{text}</span>
+        </NavElem>
+    {/each}
 </NavBar>

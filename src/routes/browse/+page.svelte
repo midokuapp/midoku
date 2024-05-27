@@ -9,4 +9,4 @@
 
 <main class="flex-grow"></main>
 
-<BottomNavBar />
+<BottomNavBar active="browse" />

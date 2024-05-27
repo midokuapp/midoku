@@ -4,4 +4,4 @@
 
 <main class="flex-grow"></main>
 
-<BottomNavBar />
+<BottomNavBar active="more" />

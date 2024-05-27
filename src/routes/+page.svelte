@@ -102,4 +102,4 @@
     </MangaGrid>
 </ScrollArea>
 
-<BottomNavBar />
+<BottomNavBar active="library" />
