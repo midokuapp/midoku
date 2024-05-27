@@ -25,12 +25,12 @@
 
 <Header>
     <h1 class="mr-auto text-2xl font-medium">Library</h1>
-    <a href="#">
+    <button>
         <Search />
-    </a>
-    <a href="/settings">
+    </button>
+    <button>
         <RotateCcw />
-    </a>
+    </button>
 </Header>
 
 <ScrollArea class="flex-grow">
