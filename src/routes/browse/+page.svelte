@@ -6,7 +6,7 @@
 </script>
 
 <Header>
-    <h1 class="mr-auto text-2xl font-medium">Browse</h1>
+    <h1 class="mr-auto text-2xl">Browse</h1>
 </Header>
 
 <main class="flex-grow"></main>

@@ -79,7 +79,7 @@
 
 <Header>
     {#if !searchEnabled}
-        <h1 class="mr-auto text-2xl font-medium">Library</h1>
+        <h1 class="mr-auto text-2xl">Library</h1>
         <button on:click={() => (searchEnabled = true)}>
             <Search />
         </button>
