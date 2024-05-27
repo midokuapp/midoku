@@ -11,6 +11,8 @@ edition = "2021"
 tauri-build = { version = "1.5.2", features = [] }
 
 [dependencies]
+lipsum = "0.9.1"
+rand = "0.8.5"
 serde_json = "1.0.117"
 serde = { version = "1.0.201", features = ["derive"] }
 tauri = { version = "1.6.4", features = [] }

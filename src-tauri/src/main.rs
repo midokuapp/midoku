@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use lipsum::lipsum_words_with_rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -13,11 +14,12 @@ struct Manga {
 
 #[tauri::command]
 fn get_library() -> Vec<Manga> {
+    let mut rng = rand::thread_rng();
     let mut library = Vec::new();
     for i in 0..20 {
         let manga = Manga {
             id: i.to_string(),
-            title: "Donec eu finibus dui, vitae vulputate lorem.".to_string(),
+            title: lipsum_words_with_rng(&mut rng, 7),
             cover_src: format!("https://picsum.photos/600/800/?img={}", i),
             unread_chapters: if i % 2 == 0 { 0 } else { i },
         };
