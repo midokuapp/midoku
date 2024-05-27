@@ -9,18 +9,26 @@
     import MangaGrid from "$lib/components/MangaGrid.svelte";
     import MangaTile from "$lib/components/MangaTile.svelte";
 
+    import { onMount } from "svelte";
+    import { invoke } from "@tauri-apps/api/tauri";
+
+    /**
+     * Get the library data from the backend
+     *
+     * @returns {Promise<Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>>}
+     */
+    async function getLibrary() {
+        return await invoke("get_library");
+    }
+
     /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
     let mangaList = [];
 
-    // Generate some dummy data
-    for (let i = 0; i < 20; i++) {
-        mangaList.push({
-            id: i.toString(),
-            title: `Donec eu finibus dui, vitae vulputate lorem. Sed et vestibulum nulla, quis pellentesque massa.`,
-            cover_src: "https://picsum.photos/600/800/?img=" + i,
-            unread_chapters: Math.floor(Math.random() * 100) * (i % 2),
+    onMount(() => {
+        getLibrary().then((data) => {
+            mangaList = data;
         });
-    }
+    });
 </script>
 
 <Header>

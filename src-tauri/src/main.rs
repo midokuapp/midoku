@@ -1,14 +1,34 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Manga {
+    pub id: String,
+    pub title: String,
+    pub cover_src: String,
+    pub unread_chapters: u32,
+}
+
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}!", name)
+fn get_library() -> Vec<Manga> {
+    let mut library = Vec::new();
+    for i in 0..20 {
+        let manga = Manga {
+            id: i.to_string(),
+            title: "Donec eu finibus dui, vitae vulputate lorem.".to_string(),
+            cover_src: format!("https://picsum.photos/600/800/?img={}", i),
+            unread_chapters: if i % 2 == 0 { 0 } else { i },
+        };
+        library.push(manga);
+    }
+    library
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![get_library])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
