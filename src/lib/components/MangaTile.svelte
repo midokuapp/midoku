@@ -16,13 +16,13 @@
             />
         </AspectRatio>
     </div>
-    <h1 class="mx-1 line-clamp-2 h-10 text-sm font-semibold text-foreground">
+    <h1 class="mx-1 line-clamp-2 h-10 text-sm font-medium text-foreground">
         {manga.title}
     </h1>
     {#if manga.unread_chapters > 0}
         <span
-            class="absolute left-0 top-0 rounded-md bg-primary px-2 py-1 font-semibold
-            text-primary-foreground"
+            class="absolute left-0 top-0 rounded-md bg-primary px-2 py-1 text-sm
+            font-semibold text-primary-foreground"
         >
             {manga.unread_chapters}
         </span>
