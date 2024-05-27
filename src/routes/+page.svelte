@@ -1,5 +1,5 @@
 <script>
-    import { Compass, Ellipsis, LibraryBig, Search, RotateCcw } from "lucide-svelte";
+    import { Compass, Ellipsis, LibraryBig, Search, RotateCcw, ArrowLeft } from "lucide-svelte";
 
     import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
@@ -12,6 +12,18 @@
     import { onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/tauri";
 
+    /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
+    let mangaList = [];
+
+    /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
+    let filteredMangaList = [];
+
+    /** @type {boolean} */
+    let searchEnabled = false;
+
+    /** @type {string} */
+    let searchQuery = "";
+
     /**
      * Get the library data from the backend
      *
@@ -21,21 +33,46 @@
         return await invoke("get_library");
     }
 
-    /** @type {Array<{ id: string, title: string, cover_src: string, unread_chapters: number }>} */
-    let mangaList = [];
-
     onMount(() => {
         getLibrary().then((data) => {
             mangaList = data;
+            mangaList.sort((a, b) => a.title.localeCompare(b.title));
+            filteredMangaList = mangaList;
         });
     });
+
+    $: {
+        if (searchQuery === "") {
+            filteredMangaList = mangaList;
+        } else {
+            filteredMangaList = mangaList.filter((manga) =>
+                manga.title
+                    .normalize()
+                    .toLowerCase()
+                    .includes(searchQuery.normalize().toLowerCase()),
+            );
+        }
+    }
 </script>
 
 <Header>
-    <h1 class="mr-auto text-2xl font-medium">Library</h1>
-    <button>
-        <Search />
-    </button>
+    {#if !searchEnabled}
+        <h1 class="mr-auto text-2xl font-medium">Library</h1>
+        <button on:click={() => (searchEnabled = true)}>
+            <Search />
+        </button>
+    {:else}
+        <button on:click={() => (searchEnabled = false)}>
+            <ArrowLeft />
+        </button>
+        <input
+            type="text"
+            placeholder="Search..."
+            class="h-full flex-grow bg-transparent"
+            bind:value={searchQuery}
+            autofocus
+        />
+    {/if}
     <button>
         <RotateCcw />
     </button>
@@ -43,7 +80,7 @@
 
 <ScrollArea class="flex-grow">
     <MangaGrid>
-        {#each mangaList as manga}
+        {#each filteredMangaList as manga}
             <MangaTile {manga} />
         {/each}
     </MangaGrid>
