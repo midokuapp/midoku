@@ -1,10 +1,10 @@
-import { getLibraryMangaList } from '$lib/library-manga-list';
+import { getLibraryMangaList } from "$lib/tauri-api";
 
 export const prerender = true;
 export const ssr = false;
 
 /**
- * @typedef {import('$lib/types').Manga} Manga
+ * @typedef {import('$lib/tauri-api').Manga} Manga
  */
 
 /** @type {import('./$types').LayoutLoad} */
