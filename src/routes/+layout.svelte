@@ -1,14 +1,11 @@
 <script>
     import { Toaster } from "$lib/components/ui/sonner";
     import { ModeWatcher } from "mode-watcher";
-    import { invoke } from "@tauri-apps/api/core";
+    import { setTheme } from "$lib/theme";
 
     import "../app.css";
 
-    // Set the application theme to auto
-    invoke("plugin:theme|set_theme", {
-        theme: "auto",
-    });
+    setTheme("auto");
 </script>
 
 <ModeWatcher />
