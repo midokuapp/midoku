@@ -7,12 +7,15 @@
     import MangaGrid from "$lib/components/MangaGrid.svelte";
     import MangaTile from "$lib/components/MangaTile.svelte";
 
-    /**
-     * @typedef {import('./+layout').Manga} Manga
-     */
-
     /** @type {import('./$types').PageData} */
     export let data;
+
+    /**
+     * @typedef {import('$lib/types').Manga} Manga
+     */
+
+    /** @type {Manga[]} */
+    let libraryMangaList = data.libraryMangaList;
 
     /** @type {Manga[]} */
     let filteredMangaList = [];
@@ -25,9 +28,9 @@
 
     $: {
         if (searchQuery === "") {
-            filteredMangaList = data.mangaList;
+            filteredMangaList = libraryMangaList;
         } else {
-            filteredMangaList = data.mangaList.filter((manga) =>
+            filteredMangaList = libraryMangaList.filter((manga) =>
                 manga.title
                     .normalize()
                     .toLowerCase()
