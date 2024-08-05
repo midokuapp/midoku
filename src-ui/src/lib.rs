@@ -1,17 +1,9 @@
 mod binding;
 
 use leptos::{html::Input, *};
-use serde::Serialize;
-
-use crate::binding::invoke;
 
 async fn greet(name: String) -> String {
-    #[derive(Serialize)]
-    struct GreetCmdArgs {
-        name: String,
-    }
-
-    invoke("greet", &GreetCmdArgs { name }).await.unwrap()
+    invoke!("greet", {"name": name})
 }
 
 #[component]
