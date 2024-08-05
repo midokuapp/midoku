@@ -1,42 +1,35 @@
-mod binding;
+mod app;
+mod gallery;
 
-use leptos::{html::Input, *};
+use wasm_bindgen::prelude::*;
 
-async fn greet(name: String) -> String {
-    invoke!("greet", {"name": name})
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
-#[component]
-pub fn App() -> impl IntoView {
-    let greet_message = create_action(|name: &String| {
-        let name = name.to_owned();
-        async move { greet(name).await }
-    });
-
-    let input_ref = create_node_ref::<Input>();
-
-    view! {
-        <div>
-            <form on:submit=move |e| {
-                e.prevent_default();
-                let input = input_ref.get().expect("input does not exist");
-                greet_message.dispatch(input.value());
-            }>
-                <label for="name">"Name:"</label>
-                <div class="mt-2">
-                    <input
-                        type="text"
-                        name="name"
-                        node_ref=input_ref
-                        class="w-full max-w-xs input input-bordered"
-                    />
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    "Greet"
-                </button>
-            </form>
-
-            <span>{move || greet_message.value()}</span>
-        </div>
-    }
+/// Send a command to the Tauri backend.
+///
+/// # Example
+///
+/// ```rust,no_run
+/// async fn greet(name: String) -> String {
+///     crate::invoke("greet", {"name": name})
+/// }
+/// ```
+#[macro_export]
+macro_rules! invoke {
+    ($cmd:expr) => {{
+        let result = crate::invoke($cmd, wasm_bindgen::JsValue::NULL).await;
+        serde_wasm_bindgen::from_value(result).unwrap()
+    }};
+    ($cmd:expr, $($args:tt)+) => {{
+        let args = serde_json::json!($($args)+);
+        let args = serde_wasm_bindgen::to_value(&args).expect("invalid arguments");
+        let result = crate::binding::invoke($cmd, args).await;
+        serde_wasm_bindgen::from_value(result).unwrap()
+    }};
 }
+
+pub use app::App;
