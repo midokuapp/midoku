@@ -25,18 +25,23 @@ pub fn App() -> impl IntoView {
 
     view! {
         <div>
-            <form
-                on:submit=move |e| {
-                    e.prevent_default();
-                    let input = input_ref.get().expect("input does not exist");
-                    greet_message.dispatch(input.value());
-                }
-            >
+            <form on:submit=move |e| {
+                e.prevent_default();
+                let input = input_ref.get().expect("input does not exist");
+                greet_message.dispatch(input.value());
+            }>
                 <label for="name">"Name:"</label>
                 <div class="mt-2">
-                    <input type="text" name="name" node_ref=input_ref class="input input-bordered w-full max-w-xs"/>
+                    <input
+                        type="text"
+                        name="name"
+                        node_ref=input_ref
+                        class="w-full max-w-xs input input-bordered"
+                    />
                 </div>
-                <button type="submit" class="btn btn-primary"> "Greet" </button>
+                <button type="submit" class="btn btn-primary">
+                    "Greet"
+                </button>
             </form>
 
             <span>{move || greet_message.value()}</span>
