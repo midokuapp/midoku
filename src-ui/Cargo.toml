@@ -1,0 +1,20 @@
+[package]
+name = "src-ui"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+console_log = "1.0.0"
+js-sys = "0.3.69"
+leptos = { version = "0.6.13", features = ["csr"] }
+leptos_meta = { version = "0.6.13", features = ["csr"] }
+log = "0.4.22"
+serde = { version = "1.0.204", features = ["derive"] }
+serde-wasm-bindgen = "0.6.5"
+wasm-bindgen = "0.2.92"
+wasm-bindgen-futures = "0.4.42"
