@@ -43,7 +43,9 @@ pub fn App() -> impl IntoView {
             <Header>
                 <h1 class="mr-auto text-2xl">Library</h1>
             </Header>
-            <Grid>{tiles}</Grid>
+            <div class="overflow-y-scroll grow">
+                <Grid>{tiles}</Grid>
+            </div>
             <NavigationBar/>
         </div>
     }
