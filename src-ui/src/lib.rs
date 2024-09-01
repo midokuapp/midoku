@@ -12,14 +12,19 @@ extern "C" {
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
-/// Send a command to the Tauri backend.
+/// Send a command to the Tauri backend with optional JSON serializable arguments.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```rust,no_run
-/// async fn greet(name: String) -> String {
-///     crate::invoke!("greet", {"name": name})
-/// }
+/// // With arguments:
+/// let name = "Alice".to_string();
+/// let result = invoke!("greet", {"name": name});
+/// ```
+///
+/// ```rust,no_run
+/// // Without arguments:
+/// let result = invoke!("greet");
 /// ```
 #[macro_export]
 macro_rules! invoke {
