@@ -1,4 +1,5 @@
 use leptos::*;
+use leptos_router::*;
 
 #[component]
 pub fn NavigationBar() -> impl IntoView {
@@ -14,18 +15,21 @@ pub fn NavigationBar() -> impl IntoView {
 #[component]
 pub fn NavigationElement(
     #[prop(into, default = "#".to_string())] href: String,
-    #[prop(default = false)] active: bool,
     #[prop(into)] text: String,
 ) -> impl IntoView {
-    let class = if active {
-        "flex flex-col items-center gap-1 text-muted-foreground"
-    } else {
-        "flex flex-col items-center gap-1"
+    let href_clone = href.clone();
+
+    let class = move || {
+        if href_clone == use_location().pathname.get() {
+            "flex flex-col items-center gap-1"
+        } else {
+            "flex flex-col items-center gap-1 text-muted-foreground"
+        }
     };
 
     view! {
-        <a href={href} class={class}>
+        <A href={href} class={class}>
             <span>{text}</span>
-        </a>
+        </A>
     }
 }
