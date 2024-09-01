@@ -1,5 +1,6 @@
 mod app;
 mod gallery;
+mod header;
 mod navigation;
 
 use wasm_bindgen::prelude::*;

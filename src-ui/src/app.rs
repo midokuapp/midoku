@@ -2,6 +2,7 @@ use leptos::*;
 use serde::{Deserialize, Serialize};
 
 use crate::gallery::{Grid, Tile};
+use crate::header::Header;
 use crate::navigation::NavigationBar;
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -39,6 +40,9 @@ pub fn App() -> impl IntoView {
 
     view! {
         <div class="flex flex-col w-screen h-screen">
+            <Header>
+                <h1 class="mr-auto text-2xl">Library</h1>
+            </Header>
             <Grid>{tiles}</Grid>
             <NavigationBar/>
         </div>
