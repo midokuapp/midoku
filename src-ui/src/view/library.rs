@@ -1,3 +1,4 @@
+use deunicode::deunicode;
 use leptos::*;
 use serde::{Deserialize, Serialize};
 
@@ -17,24 +18,39 @@ async fn get_library() -> Vec<Manga> {
     crate::invoke!("get_library")
 }
 
+fn filter_entry(search: ReadSignal<String>) -> impl Fn(&Manga) -> bool {
+    let search_value = deunicode(&search.get()).to_lowercase();
+
+    move |entry: &Manga| {
+        let entry_title = deunicode(&entry.title).to_lowercase();
+
+        entry_title.contains(&search_value)
+    }
+}
+
+fn map_entry(entry: Manga) -> View {
+    view! {
+        <Tile
+            id=entry.id
+            title=entry.title
+            cover_src=entry.cover_src
+            unread_chapters=entry.unread_chapters
+        />
+    }
+}
+
 #[component]
 pub fn Library() -> impl IntoView {
+    let (search, set_search) = create_signal("".to_string());
+
     let library = create_resource(|| (), |_| async move { get_library().await });
     let tiles = move || {
         library
             .get()
             .unwrap_or_default()
             .drain(..)
-            .map(|entry| {
-                view! {
-                    <Tile
-                        id=entry.id
-                        title=entry.title
-                        cover_src=entry.cover_src
-                        unread_chapters=entry.unread_chapters
-                    />
-                }
-            })
+            .filter(filter_entry(search))
+            .map(map_entry)
             .collect::<Vec<View>>()
     };
 
@@ -42,6 +58,13 @@ pub fn Library() -> impl IntoView {
         <div class="flex flex-col w-screen h-screen">
             <Header>
                 <h1 class="mr-auto text-2xl">Library</h1>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    class="h-full flex-grow bg-transparent"
+                    on:input=move |ev| set_search.set(event_target_value(&ev))
+                    prop:value=search
+                />
             </Header>
             <main class="overflow-y-scroll grow">
                 <Grid>{tiles}</Grid>

@@ -13,6 +13,7 @@ publish = false
 [workspace.dependencies]
 console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
+deunicode = "1.6.0"
 html-escape = "0.2.13"
 js-sys = "0.3.70"
 leptos = "0.6.14"
