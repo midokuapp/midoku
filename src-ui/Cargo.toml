@@ -14,6 +14,7 @@ deunicode = { workspace = true }
 html-escape = { workspace = true }
 js-sys = { workspace = true }
 leptos = { workspace = true, features = ["csr"] }
+leptos-remix-icon = { workspace = true }
 leptos_meta = { workspace = true, features = ["csr"] }
 leptos_router = { workspace = true, features = ["csr"] }
 log = { workspace = true }
