@@ -30,7 +30,7 @@ macro_rules! invoke {
     ($cmd:expr, $($args:tt)+) => {{
         let args = serde_json::json!($($args)+);
         let args = serde_wasm_bindgen::to_value(&args).expect("invalid arguments");
-        let result = crate::binding::invoke($cmd, args).await;
+        let result = crate::invoke($cmd, args).await;
         serde_wasm_bindgen::from_value(result).unwrap()
     }};
 }
