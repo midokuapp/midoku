@@ -15,7 +15,7 @@ extern "C" {
 ///
 /// ```rust,no_run
 /// async fn greet(name: String) -> String {
-///     crate::invoke("greet", {"name": name})
+///     crate::invoke!("greet", {"name": name})
 /// }
 /// ```
 #[macro_export]
