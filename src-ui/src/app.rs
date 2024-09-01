@@ -2,6 +2,7 @@ use leptos::*;
 use serde::{Deserialize, Serialize};
 
 use crate::gallery::{Grid, Tile};
+use crate::navigation::NavigationBar;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct Manga {
@@ -39,6 +40,7 @@ pub fn App() -> impl IntoView {
     view! {
         <div class="flex flex-col w-screen h-screen">
             <Grid>{tiles}</Grid>
+            <NavigationBar/>
         </div>
     }
 }
