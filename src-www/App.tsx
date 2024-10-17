@@ -11,7 +11,7 @@ interface Source {
 
 interface Extension {
   source: Source;
-  icon_path: string;
+  iconPath: string;
 }
 
 async function getExtensions(): Promise<Array<Extension>> {
@@ -31,7 +31,7 @@ export default function App() {
     const version = extension.source.version;
     const nsfw = extension.source.nsfw;
 
-    const iconUrl = convertFileSrc(extension.icon_path);
+    const iconUrl = convertFileSrc(extension.iconPath);
 
     return (
       <li key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>

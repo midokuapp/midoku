@@ -12,6 +12,7 @@ const EXTENSIONS_DIR: &str = "extensions";
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct Source {
     pub name: String,
     pub language: String,
@@ -21,6 +22,7 @@ struct Source {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct Extension {
     pub source: Source,
     pub icon_path: PathBuf,
