@@ -1,14 +1,36 @@
 import { invoke } from "@tauri-apps/api/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-async function greet(name: string): Promise<string> {
-  return await invoke("greet", { name: name });
+interface Extension {
+  name: string;
+  language: string;
+  version: string;
+  url: string;
+  nsfw: boolean;
+}
+
+async function getExtensions(): Promise<Array<Extension>> {
+  return await invoke("get_extensions");
 }
 
 export default function App() {
-  const [message, setMessage] = useState<string>("");
+  const [extensions, setExtensions] = useState<Array<Extension>>([]);
 
-  greet("world").then(setMessage);
+  useEffect(() => {
+    getExtensions().then(setExtensions);
+  }, []);
 
-  return <h1>{message}</h1>;
+  const listExtensions = extensions.map((extension: Extension) => {
+    return (
+      <li>
+        <span style={{ display: "block", fontSize: 16 }}>{extension.name}</span>
+        <div style={{ opacity: 0.7, fontSize: 14 }}>
+          {extension.language} {extension.version}
+          {extension.nsfw && <span style={{ color: "red" }}>18+</span>}
+        </div>
+      </li>
+    );
+  });
+
+  return <ul>{listExtensions}</ul>;
 }
