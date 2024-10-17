@@ -1,12 +1,17 @@
-import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 
-interface Extension {
+interface Source {
   name: string;
   language: string;
   version: string;
   url: string;
   nsfw: boolean;
+}
+
+interface Extension {
+  source: Source;
+  icon_path: string;
 }
 
 async function getExtensions(): Promise<Array<Extension>> {
@@ -21,16 +26,36 @@ export default function App() {
   }, []);
 
   const listExtensions = extensions.map((extension: Extension) => {
+    const name = extension.source.name;
+    const language = extension.source.language;
+    const version = extension.source.version;
+    const nsfw = extension.source.nsfw;
+
+    const iconUrl = convertFileSrc(extension.icon_path);
+
     return (
-      <li>
-        <span style={{ display: "block", fontSize: 16 }}>{extension.name}</span>
-        <div style={{ opacity: 0.7, fontSize: 14 }}>
-          {extension.language} {extension.version}
-          {extension.nsfw && <span style={{ color: "red" }}>18+</span>}
+      <li key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <img src={iconUrl} style={{ width: 48, height: 48 }} />
+        <div>
+          <span style={{ display: "block", fontSize: 16 }}>{name}</span>
+          <div style={{ opacity: 0.7, fontSize: 14 }}>
+            {language} {version}
+            {nsfw && <span style={{ color: "red" }}>{" "}18+</span>}
+          </div>
         </div>
       </li>
     );
   });
 
-  return <ul>{listExtensions}</ul>;
+  return (
+    <ul
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+      }}
+    >
+      {listExtensions}
+    </ul>
+  );
 }

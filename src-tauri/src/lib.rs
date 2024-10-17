@@ -12,7 +12,7 @@ const EXTENSIONS_DIR: &str = "extensions";
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct Extension {
+struct Source {
     pub name: String,
     pub language: String,
     pub version: String,
@@ -20,15 +20,24 @@ struct Extension {
     pub nsfw: bool,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Extension {
+    pub source: Source,
+    pub icon_path: PathBuf,
+}
+
 impl Extension {
     fn from_path(extension_path: PathBuf) -> Result<Self> {
         // TODO: validate the extension directory
         // TODO: load other data for the extension
 
-        let source = extension_path.join("source.json");
-        let source_reader = std::fs::File::open(source)?;
-        let extension = serde_json::from_reader(source_reader)?;
-        Ok(extension)
+        let source_path = extension_path.join("source.json");
+        let source_reader = std::fs::File::open(source_path)?;
+        let source = serde_json::from_reader(source_reader)?;
+
+        let icon_path = extension_path.join("icon.png");
+
+        Ok(Self { source, icon_path })
     }
 }
 
@@ -47,7 +56,7 @@ impl Extensions {
                 match extension {
                     Ok(extension) => {
                         debug!("loaded extension: {:?}", extension);
-                        Some((extension.name.clone(), extension))
+                        Some((extension.source.name.clone(), extension))
                     }
                     Err(e) => {
                         warn!("failed to load extension: {}", e);
