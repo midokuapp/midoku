@@ -1,0 +1,31 @@
+name: Deno
+
+on:
+  push:
+    branches:
+      - dev-vite-react
+  pull_request:
+    branches:
+      - dev-vite-react
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: e61e2e4b5cc10bd3e1d92472e035edd794ab0311
+
+      - name: Run checks
+        run: deno task check
+
+      - name: Run linter
+        run: deno task lint
