@@ -11,8 +11,11 @@ on:
 permissions:
   contents: read
 
+env:
+  DENO_VERSION: e61e2e4b5cc10bd3e1d92472e035edd794ab0311
+
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +25,22 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: e61e2e4b5cc10bd3e1d92472e035edd794ab0311
+          deno-version: ${{ env.DENO_VERSION }}
 
       - name: Run checks
         run: deno task check
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
 
       - name: Run linter
         run: deno task lint
