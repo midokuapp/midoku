@@ -1,144 +1,17 @@
-use std::collections::BTreeMap;
-use std::path::PathBuf;
-use std::sync::{Mutex, MutexGuard};
+mod extension;
 
-use log::{debug, trace, warn};
+use std::path::PathBuf;
+
+use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
-use midoku_bindings::Bindings;
-use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
 use tauri_plugin_log::{Target, TargetKind};
+
+use crate::extension::{Extensions, Source};
 
 const EXTENSIONS_DIR: &str = "extensions";
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Source {
-    pub name: String,
-    pub language: String,
-    pub version: String,
-    pub url: String,
-    pub nsfw: bool,
-}
-
-struct Extension {
-    id: String,
-    pub source: Source,
-    pub icon_path: PathBuf,
-    bindings: Bindings,
-}
-
-impl std::fmt::Debug for Extension {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Extension")
-            .field("id", &self.id)
-            .field("source", &self.source)
-            .field("icon_path", &self.icon_path)
-            .finish()
-    }
-}
-
-impl Extension {
-    fn from_path(extension_path: PathBuf) -> Result<Self> {
-        // TODO: validate the extension directory
-        // TODO: load other data for the extension
-
-        let extension_id = extension_path
-            .file_name()
-            .ok_or("failed to get extension id")?
-            .to_string_lossy()
-            .to_string();
-
-        let source_path = extension_path.join("source.json");
-        let source_reader = std::fs::File::open(source_path)?;
-        let source = serde_json::from_reader(source_reader)?;
-
-        let icon_path = extension_path.join("icon.png");
-
-        let extension_wasm = extension_path.join("extension.wasm");
-        let bindings = Bindings::from_file(extension_wasm)?;
-
-        bindings
-            .initialize()
-            .map_err(|_| "failed to initialize bindings")?;
-
-        Ok(Self {
-            id: extension_id,
-            source,
-            icon_path,
-            bindings,
-        })
-    }
-
-    fn get_manga_list(&self, filters: Vec<Filter>, page: u32) -> Result<(Vec<Manga>, bool)> {
-        tokio::task::block_in_place(|| {
-            self.bindings
-                .get_manga_list(filters, page)
-                .map_err(|_| "failed to get manga list".into())
-        })
-    }
-
-    fn get_manga_details(&self, manga_id: String) -> Result<Manga> {
-        tokio::task::block_in_place(|| {
-            self.bindings
-                .get_manga_details(manga_id)
-                .map_err(|_| "failed to get manga details".into())
-        })
-    }
-
-    fn get_chapter_list(&self, manga_id: String) -> Result<Vec<Chapter>> {
-        tokio::task::block_in_place(|| {
-            self.bindings
-                .get_chapter_list(manga_id)
-                .map_err(|_| "failed to get chapter list".into())
-        })
-    }
-
-    fn get_page_list(&self, manga_id: String, chapter_id: String) -> Result<Vec<Page>> {
-        tokio::task::block_in_place(|| {
-            self.bindings
-                .get_page_list(manga_id, chapter_id)
-                .map_err(|_| "failed to get page list".into())
-        })
-    }
-}
-
-struct Extensions {
-    store: Mutex<BTreeMap<String, Extension>>,
-}
-
-impl Extensions {
-    fn from_dir(extensions_dir: PathBuf) -> Self {
-        let extensions = std::fs::read_dir(extensions_dir)
-            .expect("failed to read extensions directory")
-            .filter_map(|entry| {
-                let entry = entry.expect("failed to read entry");
-                let extension = Extension::from_path(entry.path());
-
-                match extension {
-                    Ok(extension) => {
-                        debug!("loaded extension: {:?}", extension);
-                        Some((extension.id.clone(), extension))
-                    }
-                    Err(e) => {
-                        warn!("failed to load extension: {}", e);
-                        None
-                    }
-                }
-            })
-            .collect();
-
-        Self {
-            store: Mutex::new(extensions),
-        }
-    }
-
-    fn lock(&self) -> MutexGuard<'_, BTreeMap<String, Extension>> {
-        self.store.lock().expect("failed to lock extensions store")
-    }
-}
 
 #[tauri::command]
 async fn get_extensions(
