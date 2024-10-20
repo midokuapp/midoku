@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::sync::{Mutex, MutexGuard};
 
@@ -106,7 +106,7 @@ impl Extension {
 }
 
 struct Extensions {
-    store: Mutex<HashMap<String, Extension>>,
+    store: Mutex<BTreeMap<String, Extension>>,
 }
 
 impl Extensions {
@@ -135,7 +135,7 @@ impl Extensions {
         }
     }
 
-    fn lock(&self) -> MutexGuard<'_, HashMap<String, Extension>> {
+    fn lock(&self) -> MutexGuard<'_, BTreeMap<String, Extension>> {
         self.store.lock().expect("failed to lock extensions store")
     }
 }

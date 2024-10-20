@@ -2619,6 +2619,7 @@ dependencies = [
 [[package]]
 name = "midoku-bindings"
 version = "0.1.0"
+source = "git+https://github.com/midokuapp/midoku-rs.git?rev=0696331e6a851ce34b0ca31282992ac83667f36f#0696331e6a851ce34b0ca31282992ac83667f36f"
 dependencies = [
  "midoku-http",
  "midoku-limiter",
@@ -2631,6 +2632,7 @@ dependencies = [
 [[package]]
 name = "midoku-http"
 version = "0.1.0"
+source = "git+https://github.com/midokuapp/midoku-rs.git?rev=0696331e6a851ce34b0ca31282992ac83667f36f#0696331e6a851ce34b0ca31282992ac83667f36f"
 dependencies = [
  "reqwest 0.12.8",
  "wasmtime",
@@ -2639,6 +2641,7 @@ dependencies = [
 [[package]]
 name = "midoku-limiter"
 version = "0.1.0"
+source = "git+https://github.com/midokuapp/midoku-rs.git?rev=0696331e6a851ce34b0ca31282992ac83667f36f#0696331e6a851ce34b0ca31282992ac83667f36f"
 dependencies = [
  "futures",
  "governor",
@@ -2647,6 +2650,7 @@ dependencies = [
 [[package]]
 name = "midoku-settings"
 version = "0.1.0"
+source = "git+https://github.com/midokuapp/midoku-rs.git?rev=0696331e6a851ce34b0ca31282992ac83667f36f#0696331e6a851ce34b0ca31282992ac83667f36f"
 dependencies = [
  "wasmtime",
 ]
@@ -2654,6 +2658,7 @@ dependencies = [
 [[package]]
 name = "midoku-types"
 version = "0.1.0"
+source = "git+https://github.com/midokuapp/midoku-rs.git?rev=0696331e6a851ce34b0ca31282992ac83667f36f#0696331e6a851ce34b0ca31282992ac83667f36f"
 dependencies = [
  "serde",
  "wasmtime",
