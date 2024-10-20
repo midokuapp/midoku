@@ -89,10 +89,15 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
-                .targets([
-                    Target::new(TargetKind::Stdout),
-                    Target::new(TargetKind::Webview),
-                ])
+                .level(log::LevelFilter::Trace)
+                .level_for("cranelift_codegen", log::LevelFilter::Info)
+                .level_for("cranelift_wasm", log::LevelFilter::Info)
+                .level_for("regalloc2", log::LevelFilter::Info)
+                .level_for("reqwest", log::LevelFilter::Info)
+                .level_for("wasmtime", log::LevelFilter::Info)
+                .level_for("wasmtime_cranelift", log::LevelFilter::Info)
+                .level_for("wasmtime_environ", log::LevelFilter::Info)
+                .targets([Target::new(TargetKind::Stdout)])
                 .build(),
         )
         .setup(|app| {
