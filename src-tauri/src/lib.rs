@@ -153,7 +153,8 @@ async fn get_extensions(
 }
 
 macro_rules! call_extension {
-    ($state:expr, $extension_id:expr, $func:tt) => {
+    ($state:expr, $extension_id:expr, $method:ident, $($args:expr),*) => {{
+        trace!("{} called with extension_id: {}", stringify!($method), $extension_id);
         $state
             .lock()
             .get($extension_id.as_str())
@@ -161,9 +162,9 @@ macro_rules! call_extension {
                 "extension not found".to_string(),
             ))
             .and_then(|extension| {
-                $func(extension).map_err(|e| tauri::Error::AssetNotFound(e.to_string()))
+                extension.$method($($args),*).map_err(|e| tauri::Error::AssetNotFound(e.to_string()))
             })
-    };
+    }};
 }
 
 #[tauri::command]
@@ -173,12 +174,7 @@ async fn get_manga_list(
     filters: Vec<Filter>,
     page: u32,
 ) -> tauri::Result<(Vec<Manga>, bool)> {
-    trace!("get_manga_list called with extension_id: {}", extension_id);
-    call_extension!(
-        state,
-        extension_id,
-        (|extension: &Extension| extension.get_manga_list(filters, page))
-    )
+    call_extension!(state, extension_id, get_manga_list, filters, page)
 }
 
 #[tauri::command]
@@ -187,15 +183,7 @@ async fn get_manga_details(
     extension_id: String,
     manga_id: String,
 ) -> tauri::Result<Manga> {
-    trace!(
-        "get_manga_details called with extension_id: {}",
-        extension_id
-    );
-    call_extension!(
-        state,
-        &extension_id,
-        (|extension: &Extension| extension.get_manga_details(manga_id))
-    )
+    call_extension!(state, extension_id, get_manga_details, manga_id)
 }
 
 #[tauri::command]
@@ -204,15 +192,7 @@ async fn get_chapter_list(
     extension_id: String,
     manga_id: String,
 ) -> tauri::Result<Vec<Chapter>> {
-    trace!(
-        "get_chapter_list called with extension_id: {}",
-        extension_id
-    );
-    call_extension!(
-        state,
-        &extension_id,
-        (|extension: &Extension| extension.get_chapter_list(manga_id))
-    )
+    call_extension!(state, extension_id, get_chapter_list, manga_id)
 }
 
 #[tauri::command]
@@ -222,12 +202,7 @@ async fn get_page_list(
     manga_id: String,
     chapter_id: String,
 ) -> tauri::Result<Vec<Page>> {
-    trace!("get_page_list called with extension_id: {}", extension_id);
-    call_extension!(
-        state,
-        &extension_id,
-        (|extension: &Extension| extension.get_page_list(manga_id, chapter_id))
-    )
+    call_extension!(state, extension_id, get_page_list, manga_id, chapter_id)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
