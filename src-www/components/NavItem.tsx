@@ -1,7 +1,11 @@
-export default function NavItem({ children }: { children: React.ReactNode }) {
+export default function NavItem(
+  { onClick, children }: { onClick: () => void; children: React.ReactNode },
+) {
   return (
     <a
+      onClick={onClick}
       style={{
+        cursor: "pointer",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

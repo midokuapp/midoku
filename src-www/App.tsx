@@ -1,8 +1,18 @@
+import { useState } from "react";
+
 import NavBar from "./components/NavBar.tsx";
 import NavItem from "./components/NavItem.tsx";
 import Extension from "./pages/Extensions.tsx";
+import More from "./pages/More.tsx";
 
 export default function App() {
+  const [page, setPage] = useState("extension");
+
+  const pages: { [key: string]: React.ReactNode } = {
+    extension: <Extension />,
+    more: <More />,
+  };
+
   return (
     <div
       style={{
@@ -13,13 +23,13 @@ export default function App() {
       }}
     >
       <main style={{ flex: 1 }}>
-        <Extension />
+        {pages[page]}
       </main>
       <NavBar>
-        <NavItem>
+        <NavItem onClick={() => setPage("extension")}>
           <span>Extensions</span>
         </NavItem>
-        <NavItem>
+        <NavItem onClick={() => setPage("more")}>
           <span>More</span>
         </NavItem>
       </NavBar>
