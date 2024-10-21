@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import NavBar from "./components/NavBar.tsx";
 import NavItem from "./components/NavItem.tsx";
 import Extension from "./pages/Extensions.tsx";
 import More from "./pages/More.tsx";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Extension />,
+  },
+  {
+    path: "/more",
+    element: <More />,
+  },
+]);
+
 export default function App() {
-  const [page, setPage] = useState("extension");
-
-  const pages: { [key: string]: React.ReactNode } = {
-    extension: <Extension />,
-    more: <More />,
-  };
-
   return (
     <div
       style={{
@@ -23,13 +27,13 @@ export default function App() {
       }}
     >
       <main style={{ flex: 1 }}>
-        {pages[page]}
+        <RouterProvider router={router} />
       </main>
       <NavBar>
-        <NavItem onClick={() => setPage("extension")}>
+        <NavItem href="/">
           <span>Extensions</span>
         </NavItem>
-        <NavItem onClick={() => setPage("more")}>
+        <NavItem href="/more">
           <span>More</span>
         </NavItem>
       </NavBar>
