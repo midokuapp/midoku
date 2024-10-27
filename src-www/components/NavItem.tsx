@@ -10,8 +10,6 @@ export default function NavItem(
         flexDirection: "column",
         alignItems: "center",
         gap: "0.25rem",
-        textDecoration: "none",
-        color: "inherit",
       }}
     >
       {children}

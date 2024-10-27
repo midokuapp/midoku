@@ -1,14 +1,19 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import Browse from "./pages/Browse.tsx";
 import NavBar from "./components/NavBar.tsx";
 import NavItem from "./components/NavItem.tsx";
-import Extension from "./pages/Extensions.tsx";
+import Extensions from "./pages/Extensions.tsx";
 import More from "./pages/More.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Extension />,
+    element: <Browse />,
+  },
+  {
+    path: "/extensions",
+    element: <Extensions />,
   },
   {
     path: "/more",
@@ -31,6 +36,9 @@ export default function App() {
       </main>
       <NavBar>
         <NavItem href="/">
+          <span>Browse</span>
+        </NavItem>
+        <NavItem href="/extensions">
           <span>Extensions</span>
         </NavItem>
         <NavItem href="/more">
