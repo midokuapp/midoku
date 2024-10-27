@@ -27,3 +27,6 @@ jspm_packages/
 # Vite generated output
 .vite/
 dist/
+
+# Zed Editor
+.zed/
