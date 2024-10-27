@@ -6,10 +6,12 @@ use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use tauri::{Manager, State};
 use tauri_plugin_log::{Target, TargetKind};
+use tauri_plugin_store::StoreExt;
 
 use crate::extension::{Extensions, Source};
 
 const EXTENSIONS_DIR: &str = "extensions";
+const STORE_FILE: &str = "app_data.json";
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -94,15 +96,20 @@ pub fn run() {
                 .targets([Target::new(TargetKind::Stdout)])
                 .build(),
         )
+        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
-            // Load the extensions.
-            let extensions_dir: PathBuf = app
+            let app_local_data_dir: PathBuf = app
                 .path()
                 .app_local_data_dir()
-                .expect("failed to get local app data dir")
-                .join(EXTENSIONS_DIR);
+                .expect("failed to get local app data dir");
 
-            app.manage(Extensions::from_dir(extensions_dir));
+            // Load the extensions.
+            let extensions_dir = app_local_data_dir.join(EXTENSIONS_DIR);
+            let extensions = Extensions::from_dir(extensions_dir);
+            app.manage(extensions);
+
+            // Load the store.
+            let _store = app.store(STORE_FILE)?;
 
             Ok(())
         })

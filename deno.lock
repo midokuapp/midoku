@@ -2,6 +2,7 @@
   "version": "4",
   "specifiers": {
     "npm:@tauri-apps/api@^2.0.2": "2.0.2",
+    "npm:@tauri-apps/plugin-store@^2.1.0": "2.1.0",
     "npm:@types/node@*": "22.5.4",
     "npm:@types/react-dom@^18.3.1": "18.3.1",
     "npm:@types/react-router-dom@^5.3.3": "5.3.3",
@@ -316,6 +317,12 @@
     },
     "@tauri-apps/api@2.0.2": {
       "integrity": "sha512-3wSwmG+1kr6WrgAFKK5ijkNFPp8TT3FLj3YHUb5EwMO+3FxX4uWlfSWkeeBy+Kc1RsKzugtYLuuya+98Flj+3w=="
+    },
+    "@tauri-apps/plugin-store@2.1.0": {
+      "integrity": "sha512-GADqrc17opUKYIAKnGHIUgEeTZ2wJGu1ZITKQ1WMuOFdv8fvXRFBAqsqPjE3opgWohbczX6e1NpwmZK1AnuWVw==",
+      "dependencies": [
+        "@tauri-apps/api"
+      ]
     },
     "@types/babel__core@7.20.5": {
       "integrity": "sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==",
@@ -651,6 +658,7 @@
   "workspace": {
     "dependencies": [
       "npm:@tauri-apps/api@^2.0.2",
+      "npm:@tauri-apps/plugin-store@^2.1.0",
       "npm:@types/react-dom@^18.3.1",
       "npm:@types/react-router-dom@^5.3.3",
       "npm:@types/react@^18.3.11",

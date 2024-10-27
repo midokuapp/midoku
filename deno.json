@@ -1,7 +1,10 @@
 {
   "exclude": ["dist/", "src-tauri/", ".vite/"],
   "fmt": {
-    "exclude": ["!src-tauri/tauri.conf.json"]
+    "exclude": [
+      "!src-tauri/tauri.conf.json",
+      "!src-tauri/capabilities/default.json"
+    ]
   },
   "tasks": {
     "dev": "deno run -A npm:vite dev",
@@ -18,6 +21,7 @@
   },
   "imports": {
     "@tauri-apps/api": "npm:@tauri-apps/api@^2.0.2",
+    "@tauri-apps/plugin-store": "npm:@tauri-apps/plugin-store@^2.1.0",
     "@types/react": "npm:@types/react@^18.3.11",
     "@types/react-dom": "npm:@types/react-dom@^18.3.1",
     "@types/react-router-dom": "npm:@types/react-router-dom@^5.3.3",

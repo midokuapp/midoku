@@ -2,9 +2,13 @@ import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 
 import { Extension, Source } from "../types/extension.ts";
+import { store } from "../store.ts";
 
 export default function Extensions() {
   const [extensions, setExtensions] = useState<Array<Extension>>([]);
+  const [extensionRepositoryUrl, setExtensionRepositoryUrl] = useState<string>(
+    "",
+  );
 
   useEffect(() => {
     invoke<Array<[string, Source, string]>>("get_extensions").then(
@@ -15,6 +19,18 @@ export default function Extensions() {
       },
     );
   }, []);
+
+  useEffect(() => {
+    store.get<string>("extensionRepositoryUrl").then((data) => {
+      if (data) {
+        setExtensionRepositoryUrl(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    store.set("extensionRepositoryUrl", extensionRepositoryUrl);
+  }, [extensionRepositoryUrl]);
 
   const listExtensions = extensions.map((extension: Extension) => {
     return (
@@ -37,14 +53,28 @@ export default function Extensions() {
   });
 
   return (
-    <ul
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-      }}
-    >
-      {listExtensions}
-    </ul>
+    <>
+      <input
+        type="text"
+        style={{
+          // 0.5rem is padding, 4px is border width on either side
+          width: "calc(100% - 0.5rem - 4px)",
+          padding: "0.25rem",
+          borderWidth: "2px",
+        }}
+        placeholder="Extension repository URL"
+        value={extensionRepositoryUrl}
+        onChange={(e) => setExtensionRepositoryUrl(e.target.value)}
+      />
+      <ul
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+        }}
+      >
+        {listExtensions}
+      </ul>
+    </>
   );
 }
