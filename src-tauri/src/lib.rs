@@ -5,10 +5,11 @@ use std::path::PathBuf;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use tauri::{Manager, State};
+use tauri_plugin_http::reqwest;
 use tauri_plugin_log::{Target, TargetKind};
 use tauri_plugin_store::StoreExt;
 
-use crate::extension::{Extensions, Source};
+use crate::extension::{Extensions, Manifest, Source};
 
 const EXTENSIONS_DIR: &str = "extensions";
 const STORE_FILE: &str = "app_data.json";
@@ -25,6 +26,24 @@ async fn get_extensions(
         .iter()
         .map(|(_, v)| (v.id.clone(), v.source.clone(), v.icon_path.clone()))
         .collect())
+}
+
+#[tauri::command]
+async fn get_repository_extensions(repository_url: String) -> tauri::Result<Vec<Manifest>> {
+    trace!("get_repository_extensions called");
+    let response = reqwest::get(&repository_url).await;
+
+    if response.is_err() {
+        return Ok(vec![]);
+    }
+
+    let response = response.unwrap().json::<Vec<Manifest>>().await;
+
+    if response.is_err() {
+        return Ok(vec![]);
+    }
+
+    Ok(response.unwrap())
 }
 
 macro_rules! call_extension {
@@ -83,6 +102,7 @@ async fn get_page_list(
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         .plugin(
             tauri_plugin_log::Builder::default()
                 .level(log::LevelFilter::Trace)
@@ -115,6 +135,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_extensions,
+            get_repository_extensions,
             get_manga_list,
             get_manga_details,
             get_chapter_list,

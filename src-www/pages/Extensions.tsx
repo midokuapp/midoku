@@ -1,44 +1,47 @@
 import { useEffect, useState } from "react";
 
-import { Extension } from "../types/extension.ts";
+import { Manifest } from "../types/manifest.ts";
 import { store } from "../store.ts";
-import { getExtensions } from "../tauri.ts";
+import { getRepositoryExtensions } from "../tauri.ts";
 
 export default function Extensions() {
-  const [extensions, setExtensions] = useState<Extension[]>([]);
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
+  const [manifests, setManifests] = useState<Manifest[]>([]);
 
   useEffect(() => {
-    getExtensions().then(setExtensions);
-
     store.get<string>("extensionRepositoryUrl").then((data) => {
-      if (data) setRepositoryUrl(data);
+      if (data) {
+        setRepositoryUrl(data);
+      }
     });
   }, []);
 
   useEffect(() => {
     store.set("extensionRepositoryUrl", repositoryUrl);
+
+    getRepositoryExtensions(repositoryUrl).then(setManifests);
   }, [repositoryUrl]);
 
-  const listExtensions = extensions.map((extension: Extension) => {
-    return (
-      <li
-        key={extension.id}
-        style={{ display: "flex", alignItems: "center", gap: 12 }}
-      >
-        <img src={extension.iconUrl} style={{ width: 48, height: 48 }} />
-        <div>
-          <span style={{ display: "block", fontSize: 16 }}>
-            {extension.name}
-          </span>
-          <div style={{ opacity: 0.7, fontSize: 14 }}>
-            {extension.language} {extension.version}
-            {extension.nsfw && <span style={{ color: "red" }}>{" "}18+</span>}
-          </div>
-        </div>
-      </li>
-    );
-  });
+  const manifestList = manifests.map((manifest: Manifest) => (
+    <li key={manifest.id}>
+      <p>{manifest.id}</p>
+      <p>{manifest.name}</p>
+      <p>{manifest.version}</p>
+      <p>{manifest.language}</p>
+      <p>NSFW: {manifest.nsfw ? "Yes" : "No"}</p>
+      <p>
+        <a href={repositoryUrl + "/extensions/" + manifest.extension}>
+          {manifest.extension}
+        </a>
+      </p>
+      <p>
+        <img
+          src={repositoryUrl + "/icons/" + manifest.icon}
+          alt={manifest.name}
+        />
+      </p>
+    </li>
+  ));
 
   return (
     <>
@@ -54,15 +57,12 @@ export default function Extensions() {
         value={repositoryUrl}
         onChange={(e) => setRepositoryUrl(e.target.value)}
       />
-      <ul
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}
-      >
-        {listExtensions}
+      <ul>
+        {manifestList}
       </ul>
+      <p style={{ overflowWrap: "break-word" }}>
+        {JSON.stringify(manifests)}
+      </p>
     </>
   );
 }
