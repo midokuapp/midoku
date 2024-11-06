@@ -5,7 +5,13 @@ import { Manifest } from "./types/manifest.ts";
 
 export async function getExtensions(): Promise<Extension[]> {
   return (await invoke<[string, Source, string][]>("get_extensions"))
-    .map(([id, source, iconPath]) => new Extension(id, source, iconPath));
+    .map(([id, source, iconPath]) =>
+      <Extension> {
+        id: id,
+        source: source,
+        iconPath: iconPath,
+      }
+    );
 }
 
 export async function getRepositoryExtensions(

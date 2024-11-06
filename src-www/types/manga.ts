@@ -27,8 +27,12 @@ export interface Manga {
   coverUrl: string;
   authorName: string;
   artistName: string;
-  categories: Array<string>;
+  categories: string[];
   status: Status;
   contentRating: ContentRating;
   readingMode: ReadingMode;
+}
+
+export interface MangaList {
+  data: [Manga[], boolean];
 }
