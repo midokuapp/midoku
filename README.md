@@ -2,7 +2,21 @@
 
 ## Development
 
-I assume you have installed Rust, Cargo, Tauri and Deno.
+I assume you have installed Rust, Cargo.
+
+### Install Deno
+
+```bash
+curl -fsSL https://deno.land/x/install/install.sh | sh
+```
+
+### Then install Tauri CLI
+
+```bash
+cargo install tauri-cli --version "^2.0.0" --locked
+```
+
+### Run the app
 
 ```bash
 cargo tauri dev
