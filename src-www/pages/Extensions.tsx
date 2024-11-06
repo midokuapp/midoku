@@ -17,6 +17,8 @@ export default function Extensions() {
   }, []);
 
   useEffect(() => {
+    if (!repositoryUrl) return;
+
     store.set("extensionRepositoryUrl", repositoryUrl);
 
     getRepositoryExtensions(repositoryUrl).then(setManifests);
