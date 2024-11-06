@@ -1,4 +1,4 @@
-import { convertFileSrc, invoke } from "@tauri-apps/api/core.ts";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 
 import { Chapter } from "../types/chapter.ts";
 import { Filter } from "../types/filter.ts";
