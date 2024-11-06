@@ -30,7 +30,10 @@ async fn get_extensions(
 
 #[tauri::command]
 async fn get_repository_extensions(repository_url: String) -> tauri::Result<Vec<Manifest>> {
-    trace!("get_repository_extensions called");
+    trace!(
+        "get_repository_extensions called with repository_url: {}",
+        repository_url
+    );
     let response = reqwest::get(&repository_url).await;
 
     if response.is_err() {
