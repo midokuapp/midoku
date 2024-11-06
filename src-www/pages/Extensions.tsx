@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 
 import { Manifest } from "../types/manifest.ts";
 import { store } from "../store.ts";
-import { getRepositoryExtensions, installExtension } from "../tauri.ts";
+import {
+  getRepositoryExtensions,
+  installExtension,
+  uninstallExtension,
+} from "../tauri.ts";
 
 export default function Extensions() {
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
@@ -47,6 +51,11 @@ export default function Extensions() {
           installExtension(repositoryUrl, manifest)}
       >
         Install
+      </button>
+      <button
+        onClick={() => uninstallExtension(manifest.id)}
+      >
+        Uninstall
       </button>
     </li>
   ));

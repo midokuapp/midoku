@@ -25,3 +25,9 @@ export async function installExtension(
     manifest: manifest,
   });
 }
+
+export async function uninstallExtension(extensionId: string): Promise<void> {
+  await invoke("uninstall_extension", {
+    extensionId: extensionId,
+  });
+}

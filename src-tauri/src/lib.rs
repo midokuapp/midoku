@@ -103,6 +103,34 @@ async fn install_extension(
     Ok(())
 }
 
+#[tauri::command]
+async fn uninstall_extension(
+    app_handle: AppHandle,
+    state: State<'_, Extensions>,
+    extension_id: String,
+) -> tauri::Result<()> {
+    trace!(
+        "uninstall_extension called with extension_id: {}",
+        extension_id
+    );
+
+    let app_local_data_dir: PathBuf = app_handle
+        .path()
+        .app_local_data_dir()
+        .expect("failed to get local app data dir");
+
+    let extension_dir = app_local_data_dir.join(EXTENSIONS_DIR);
+    let extension_path = extension_dir.join(&extension_id);
+
+    // Remove the extension directory
+    std::fs::remove_dir_all(&extension_path)?;
+
+    // Unregister the extension
+    state.lock().remove(&extension_id);
+
+    Ok(())
+}
+
 macro_rules! call_extension {
     ($state:expr, $extension_id:expr, $method:ident, $($args:expr),*) => {{
         trace!("{} called with extension_id: {}", stringify!($method), $extension_id);
@@ -194,6 +222,7 @@ pub fn run() {
             get_extensions,
             get_repository_extensions,
             install_extension,
+            uninstall_extension,
             get_manga_list,
             get_manga_details,
             get_chapter_list,
