@@ -16,9 +16,7 @@ export default function Extensions() {
         }));
       },
     );
-  }, []);
 
-  useEffect(() => {
     store.get<string>("extensionRepositoryUrl").then((data) => {
       if (data) {
         setRepositoryUrl(data);
