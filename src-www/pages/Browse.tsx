@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Extension } from "../types/extension.ts";
+import { getIconUrl } from "../services/extensions.service.ts";
 import { getExtensions } from "../tauri.ts";
 
 export default function Browse() {
@@ -16,13 +17,16 @@ export default function Browse() {
         key={extension.id}
         style={{ display: "flex", alignItems: "center", gap: 12 }}
       >
-        <img src={extension.iconUrl} style={{ width: 48, height: 48 }} />
+        <img
+          src={getIconUrl(extension.iconPath)}
+          style={{ width: 48, height: 48 }}
+        />
         <div>
           <span style={{ display: "block", fontSize: 16 }}>
-            {extension.name}
+            {extension.source.name}
           </span>
           <div style={{ opacity: 0.7, fontSize: 14 }}>
-            {extension.language}
+            {extension.source.language}
           </div>
         </div>
         <a
