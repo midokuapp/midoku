@@ -208,8 +208,10 @@ pub fn run() {
                 .app_local_data_dir()
                 .expect("failed to get local app data dir");
 
-            // Load the extensions.
             let extensions_dir = app_local_data_dir.join(EXTENSIONS_DIR);
+            std::fs::create_dir_all(&extensions_dir).expect("failed to create extensions dir");
+
+            // Load the extensions.
             let extensions = Extensions::from_dir(extensions_dir);
             app.manage(extensions);
 
