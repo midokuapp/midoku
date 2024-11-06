@@ -1,19 +1,13 @@
-import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 
-import { Extension, Source } from "../types/extension.ts";
+import { Extension } from "../types/extension.ts";
+import { getExtensions } from "../tauri.ts";
 
 export default function Browse() {
-  const [extensions, setExtensions] = useState<Array<Extension>>([]);
+  const [extensions, setExtensions] = useState<Extension[]>([]);
 
   useEffect(() => {
-    invoke<Array<[string, Source, string]>>("get_extensions").then(
-      (data) => {
-        setExtensions(data.map(([id, source, iconPath]) => {
-          return new Extension(id, source, iconPath);
-        }));
-      },
-    );
+    getExtensions().then(setExtensions);
   }, []);
 
   const listExtensions = extensions.map((extension: Extension) => {
