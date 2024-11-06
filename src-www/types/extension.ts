@@ -14,42 +14,24 @@ export interface Source {
 }
 
 export class Extension {
-  private _id: string;
-  private _source: Source;
-  private _iconPath: string;
+  public name: string;
+  public language: string;
+  public version: string;
+  public url: string;
+  public nsfw: boolean;
+  public iconUrl: string;
 
-  constructor(id: string, source: Source, iconPath: string) {
-    this._id = id;
-    this._source = source;
-    this._iconPath = iconPath;
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get name(): string {
-    return this._source.name;
-  }
-
-  get language(): string {
-    return this._source.language;
-  }
-
-  get version(): string {
-    return this._source.version;
-  }
-
-  get url(): string {
-    return this._source.url;
-  }
-
-  get nsfw(): boolean {
-    return this._source.nsfw;
-  }
-
-  get iconUrl(): string {
-    return convertFileSrc(this._iconPath);
+  constructor(
+    public id: string,
+    source: Source,
+    iconPath: string,
+  ) {
+    this.name = source.name;
+    this.language = source.language;
+    this.version = source.version;
+    this.url = source.url;
+    this.nsfw = source.nsfw;
+    this.iconUrl = convertFileSrc(iconPath);
   }
 
   async getMangaList(
@@ -57,7 +39,7 @@ export class Extension {
     page: number,
   ): Promise<[Array<Manga>, boolean]> {
     return await invoke("get_manga_list", {
-      extensionId: this._id,
+      extensionId: this.id,
       filters: filters,
       page: page,
     });
@@ -65,21 +47,21 @@ export class Extension {
 
   async getMangaDetails(mangaId: string): Promise<Manga> {
     return await invoke("get_manga_details", {
-      extensionId: this._id,
+      extensionId: this.id,
       mangaId: mangaId,
     });
   }
 
   async getChapterList(mangaId: string): Promise<Array<Chapter>> {
     return await invoke("get_chapter_list", {
-      extensionId: this._id,
+      extensionId: this.id,
       mangaId: mangaId,
     });
   }
 
   async getPageList(mangaId: string, chapterId: string): Promise<Array<Page>> {
     return await invoke("get_page_list", {
-      extensionId: this._id,
+      extensionId: this.id,
       mangaId: mangaId,
       chapterId: chapterId,
     });
