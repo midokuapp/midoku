@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { Extension } from "../../types/extension";
+import { Extension, Source } from "../../types/extension";
 import { Manga } from "../../types/manga";
-import { useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import "../../style/loader.css";
+import MangaImage from "../../components/MangaImage";
+import { invoke } from "@tauri-apps/api/core";
 
 export default function ExtensionBrowse() {
-  const { state } = useLocation();
-  const extension = state.extension as Extension;
   globalThis.addEventListener("scroll", handleScroll);
+
+  const id = useParams().id;
+  console.log("extensionId", id);
+
+  const [extension, setExtension] = useState<Extension | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,11 +23,17 @@ export default function ExtensionBrowse() {
 
   // Récupérer l'extension
   useEffect(() => {
-    console.log("Extension :", extension);
+    getExtension(id).then((extension) => {
+      setExtension(extension);
+      console.log("Extension :", extension);
+    });
   }, []);
 
   useEffect(() => {
-    if (!extension || !extension.getMangaList) {
+    if (!extension) {
+      return;
+    }
+    if (!extension.getMangaList) {
       return setError(
         "L'extension n'est pas valide. Veuillez passer par la page d'accueil.",
       );
@@ -32,7 +43,7 @@ export default function ExtensionBrowse() {
     extension.getMangaList([], pagination).then((data) => {
       setMangas([...mangas, ...data[0]]);
       setLoading(false);
-      console.log("Mangas chargés :", data);
+      console.log("pagination " + pagination + " :", data);
     }).catch((error) => {
       console.error("Erreur lors du chargement des mangas :", error);
       setError("Une erreur est survenue lors du chargement des mangas.");
@@ -44,8 +55,11 @@ export default function ExtensionBrowse() {
       document.body.scrollHeight - 300 <
         globalThis.scrollY + globalThis.innerHeight
     ) {
+      if (loading) return;
+
       setLoading(true);
       setPagination(pagination + 1);
+      console.log("scoll active");
     }
   }
 
@@ -54,6 +68,25 @@ export default function ExtensionBrowse() {
     return (
       <div style={{ padding: "0 2rem" }}>
         <p style={{ color: "red" }}>{error}</p>
+      </div>
+    );
+  }
+
+  // if extension is not loaded yet
+  if (!extension) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          Chargement...
+        </div>
+        <div className="loader"></div>
       </div>
     );
   }
@@ -90,19 +123,12 @@ export default function ExtensionBrowse() {
         {mangas.map((manga) => (
           <li key={manga.id} style={{ textAlign: "center" }}>
             {/* Image de couverture */}
-            <a href={manga.url} target="_blank" rel="noopener noreferrer">
-              <img
+            <Link to={{ pathname: "/read/" + manga.id }} state={manga}>
+              <MangaImage
                 src={manga.coverUrl}
                 alt={manga.title}
-                style={{
-                  width: "100%",
-                  height: "280px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                }}
               />
-            </a>
+            </Link>
             {/* Titre du manga */}
             <a
               href={manga.url}
@@ -128,9 +154,7 @@ export default function ExtensionBrowse() {
       </ul>
 
       {/* infinie scroll loading */}
-      {loading &&
-        // center the loader
-
+      {loading && // center the loader
         <div
           style={{
             display: "flex",
@@ -146,4 +170,15 @@ export default function ExtensionBrowse() {
         </div>}
     </div>
   );
+}
+
+// todo : use memo to avoid re-rendering
+async function getExtension(extensionId: string) {
+  let extensionsList = await invoke<Array<[string, Source, string]>>(
+    "get_extensions",
+  );
+  let extension = extensionsList.find(([id, source, iconPath]) =>
+    id === extensionId
+  );
+  return new Extension(extension[0], extension[1], extension[2]);
 }
