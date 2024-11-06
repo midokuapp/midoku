@@ -55,7 +55,7 @@ export class Extension {
   async getMangaList(
     filters: Array<Filter>,
     page: number,
-  ): Promise<Array<Manga>> {
+  ): Promise<[Array<Manga>, boolean]> {
     return await invoke("get_manga_list", {
       extensionId: this._id,
       filters: filters,
