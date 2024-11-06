@@ -16,6 +16,10 @@ const router = createBrowserRouter([
     element: <Browse />,
   },
   {
+    path: "/browse/:id",
+    element: <ExtensionBrowser />,
+  },
+  {
     path: "/extensions",
     element: <Extensions />,
   },
