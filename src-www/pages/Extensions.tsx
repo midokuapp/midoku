@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Manifest } from "../types/manifest.ts";
 import { store } from "../store.ts";
-import { getRepositoryExtensions } from "../tauri.ts";
+import { getRepositoryExtensions, installExtension } from "../tauri.ts";
 
 export default function Extensions() {
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
@@ -42,6 +42,12 @@ export default function Extensions() {
           alt={manifest.name}
         />
       </p>
+      <button
+        onClick={() =>
+          installExtension(repositoryUrl, manifest)}
+      >
+        Install
+      </button>
     </li>
   ));
 
@@ -62,9 +68,6 @@ export default function Extensions() {
       <ul>
         {manifestList}
       </ul>
-      <p style={{ overflowWrap: "break-word" }}>
-        {JSON.stringify(manifests)}
-      </p>
     </>
   );
 }

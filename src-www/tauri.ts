@@ -15,3 +15,13 @@ export async function getRepositoryExtensions(
     repositoryUrl: repositoryUrl,
   }));
 }
+
+export async function installExtension(
+  repositoryUrl: string,
+  manifest: Manifest,
+): Promise<void> {
+  await invoke("install_extension", {
+    repositoryUrl: repositoryUrl,
+    manifest: manifest,
+  });
+}

@@ -2,14 +2,16 @@ mod extension;
 
 use std::path::PathBuf;
 
+use flate2::read::GzDecoder;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
-use tauri::{Manager, State};
+use tar::Archive;
+use tauri::{AppHandle, Manager, State};
 use tauri_plugin_http::reqwest;
 use tauri_plugin_log::{Target, TargetKind};
 use tauri_plugin_store::StoreExt;
 
-use crate::extension::{Extensions, Manifest, Source};
+use crate::extension::{Extension, Extensions, Manifest, Source};
 
 const EXTENSIONS_DIR: &str = "extensions";
 const STORE_FILE: &str = "app_data.json";
@@ -47,6 +49,58 @@ async fn get_repository_extensions(repository_url: String) -> tauri::Result<Vec<
     }
 
     Ok(response.unwrap())
+}
+
+#[tauri::command]
+async fn install_extension(
+    app_handle: AppHandle,
+    state: State<'_, Extensions>,
+    repository_url: String,
+    manifest: Manifest,
+) -> tauri::Result<()> {
+    trace!("install_extension called with manifest: {:?}", manifest);
+
+    let app_local_data_dir: PathBuf = app_handle
+        .path()
+        .app_local_data_dir()
+        .expect("failed to get local app data dir");
+
+    let extension_dir = app_local_data_dir.join(EXTENSIONS_DIR);
+    let extension_path = extension_dir.join(&manifest.id);
+
+    if extension_path.exists() {
+        return Ok(());
+    }
+
+    std::fs::create_dir_all(&extension_path)?;
+
+    let extension_package_url = format!("{}/extensions/{}", repository_url, manifest.extension);
+
+    // Download the extension package
+    let extension_package = reqwest::get(&extension_package_url)
+        .await
+        .expect("failed to download extension package");
+    let extension_package = extension_package
+        .bytes()
+        .await
+        .expect("failed to read extension package");
+
+    // Extract the extension package
+    let extension_package = GzDecoder::new(extension_package.as_ref());
+    let mut extension_package = Archive::new(extension_package);
+
+    // Unpack the extension package
+    extension_package.unpack(&extension_path)?;
+
+    // Register the extension
+    Extension::from_path(extension_path)
+        .and_then(|extension| {
+            state.lock().insert(extension.id.clone(), extension);
+            Ok(())
+        })
+        .expect("failed to register extension");
+
+    Ok(())
 }
 
 macro_rules! call_extension {
@@ -139,6 +193,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_extensions,
             get_repository_extensions,
+            install_extension,
             get_manga_list,
             get_manga_details,
             get_chapter_list,
