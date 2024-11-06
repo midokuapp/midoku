@@ -6,7 +6,7 @@ import NavBar from "./components/NavBar";
 import NavItem from "./components/NavItem";
 import Extensions from "./pages/Extensions";
 import More from "./pages/More";
-import Youn from "./pages/Youn";
+import MangaDetails from "./pages/MangaDetails";
 
 import "./style/global.css";
 
@@ -17,7 +17,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/browse/:id",
-    element: <ExtensionBrowser />,
+    element: <ExtensionBrowser id={""} />,
+  },
+  {
+    path: "/read/:id",
+    element: <MangaDetails />,
   },
   {
     path: "/extensions",
