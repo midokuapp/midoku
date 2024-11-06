@@ -20,16 +20,16 @@
     "lib": ["dom", "deno.ns"]
   },
   "imports": {
-    "@tauri-apps/api": "npm:@tauri-apps/api@^2.0.2",
-    "@tauri-apps/plugin-store": "npm:@tauri-apps/plugin-store@^2.1.0",
-    "@types/react": "npm:@types/react@^18.3.11",
-    "@types/react-dom": "npm:@types/react-dom@^18.3.1",
-    "@types/react-router-dom": "npm:@types/react-router-dom@^5.3.3",
-    "@vitejs/plugin-react": "npm:@vitejs/plugin-react@^4.3.2",
-    "react": "npm:react@^18.3.1",
-    "react-dom": "npm:react-dom@^18.3.1",
-    "react-router-dom": "npm:react-router-dom@^6.27.0",
-    "vite": "npm:vite@^5.4.9"
+    "@tauri-apps/api": "npm:@tauri-apps/api@2.0.2",
+    "@tauri-apps/plugin-store": "npm:@tauri-apps/plugin-store@2.1.0",
+    "@types/react": "npm:@types/react@18.3.11",
+    "@types/react-dom": "npm:@types/react-dom@18.3.1",
+    "@types/react-router-dom": "npm:@types/react-router-dom@5.3.3",
+    "@vitejs/plugin-react": "npm:@vitejs/plugin-react@4.3.2",
+    "react": "npm:react@18.3.1",
+    "react-dom": "npm:react-dom@18.3.1",
+    "react-router-dom": "npm:react-router-dom@6.27.0",
+    "vite": "npm:vite@5.4.9"
   },
   "nodeModulesDir": "auto"
 }
