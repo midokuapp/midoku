@@ -29,34 +29,36 @@ export default function Extensions() {
   }, [repositoryUrl]);
 
   const manifestList = manifests.map((manifest: Manifest) => (
-    <li key={manifest.id}>
-      <p>{manifest.id}</p>
-      <p>{manifest.name}</p>
-      <p>{manifest.version}</p>
-      <p>{manifest.language}</p>
-      <p>NSFW: {manifest.nsfw ? "Yes" : "No"}</p>
-      <p>
-        <a href={repositoryUrl + "/extensions/" + manifest.extension}>
-          {manifest.extension}
-        </a>
-      </p>
-      <p>
+    <li key={manifest.id} className="card card-compact card-side">
+      <figure>
         <img
           src={repositoryUrl + "/icons/" + manifest.icon}
           alt={manifest.name}
         />
-      </p>
-      <button
-        onClick={() =>
-          installExtension(repositoryUrl, manifest)}
-      >
-        Install
-      </button>
-      <button
-        onClick={() => uninstallExtension(manifest.id)}
-      >
-        Uninstall
-      </button>
+      </figure>
+      <div className="card-body">
+        <h2 className="card-title">{manifest.name}</h2>
+        <p>
+          {manifest.version} {manifest.language}
+          {manifest.nsfw && <span className="text-error">{" "}+18</span>}
+        </p>
+        <div className="card-actions">
+          <button
+            className="btn btn-success"
+            onClick={() =>
+              installExtension(repositoryUrl, manifest)}
+          >
+            Install
+          </button>
+          <button
+            className="btn btn-error"
+            onClick={() =>
+              uninstallExtension(manifest.id)}
+          >
+            Uninstall
+          </button>
+        </div>
+      </div>
     </li>
   ));
 
@@ -64,12 +66,7 @@ export default function Extensions() {
     <>
       <input
         type="text"
-        style={{
-          // 0.5rem is padding, 4px is border width on either side
-          width: "calc(100% - 0.5rem - 4px)",
-          padding: "0.25rem",
-          borderWidth: "2px",
-        }}
+        className="input input-bordered w-full"
         placeholder="Extension repository URL"
         value={repositoryUrl}
         onChange={(e) => setRepositoryUrl(e.target.value)}
