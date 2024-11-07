@@ -9,7 +9,7 @@
   "tasks": {
     "dev": "deno run -A npm:vite dev",
     "build": "deno run -A npm:vite build",
-    "check": "deno check src-www/",
+    "check": "deno check src-www/  --unstable-sloppy-imports" ,
     "lint": "deno lint && deno fmt --check",
     "format": "deno lint --fix && deno fmt"
   },
