@@ -21,7 +21,7 @@ export async function getMangaList(
   extensionId: string,
   filters: Filter[],
   page: number,
-): Promise<[Manga[],boolean]> {
+): Promise<MangaList> {
   return await invoke("get_manga_list", {
     extensionId: extensionId,
     filters: filters,
