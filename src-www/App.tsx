@@ -16,11 +16,11 @@ const router = createBrowserRouter([
     element: <Browse />,
   },
   {
-    path: "/browse/:id",
-    element: <ExtensionBrowser id={""} />,
+    path: "/browse/:extensionId",
+    element: <ExtensionBrowser />,
   },
   {
-    path: "/read/:id",
+    path: "/browse/:extensionId/:mangaId",
     element: <MangaDetails />,
   },
   {
