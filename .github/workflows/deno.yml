@@ -11,9 +11,6 @@ on:
 permissions:
   contents: read
 
-env:
-  DENO_VERSION: e61e2e4b5cc10bd3e1d92472e035edd794ab0311
-
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -25,7 +22,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: ${{ env.DENO_VERSION }}
+          deno-version: v2.x
 
       - name: Run checks
         run: deno task check
