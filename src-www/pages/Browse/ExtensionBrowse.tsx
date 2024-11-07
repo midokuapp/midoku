@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Extension} from "../../types/extension";
-import {Manga, MangaList} from "../../types/manga";
+import {Manga} from "../../types/manga";
 import {Link, useParams} from "react-router-dom";
 import {getExtension, getIconUrl, getMangaList,} from "../../services/extensions.service";
 import "../../style/loader.css";
