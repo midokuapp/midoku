@@ -11,7 +11,7 @@
     "build": "deno run -A npm:vite build",
     "check": "deno check src-www/",
     "lint": "deno lint && deno fmt --check",
-    "format": "deno lint --fix && deno fmt"
+    "fmt": "deno lint --fix && deno fmt"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
