@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { Extension } from "../../types/extension";
-import { Manga } from "../../types/manga";
 import { Link, useParams } from "react-router-dom";
+
+import { Extension } from "../../types/extension.ts";
+import { Manga } from "../../types/manga.ts";
 import {
   getExtension,
   getIconUrl,
   getMangaList,
-} from "../../services/extensions.service";
+} from "../../services/extensions.service.ts";
+import MangaImage from "../../components/MangaImage.tsx";
+
 import "../../style/loader.css";
-import MangaImage from "../../components/MangaImage";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();

@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 
-import { Extension, Source } from "../types/extension";
-import { Manifest } from "../types/manifest";
+import { Extension, Source } from "../types/extension.ts";
+import { Manifest } from "../types/manifest.ts";
 
 export async function getExtensions(): Promise<Extension[]> {
   return (await invoke<[string, Source, string][]>("get_extensions"))

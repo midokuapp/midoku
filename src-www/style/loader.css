@@ -4,7 +4,7 @@
   aspect-ratio: 1;
   background:
     radial-gradient(farthest-side, #81e4da 90%, #0000) center/16px 16px,
-     radial-gradient(farthest-side, #7eb7b2 90%, #0000) bottom/12px 12px;
+    radial-gradient(farthest-side, #7eb7b2 90%, #0000) bottom/12px 12px;
   background-repeat: no-repeat;
   animation: l17 1s infinite linear;
   position: relative;

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Manga, ReadingMode } from "../types/manga";
 import { Link, useParams } from "react-router-dom";
 
+import MangaImage from "../components/MangaImage.tsx";
+import { Manga, ReadingMode } from "../types/manga.ts";
+import { getMangaDetails } from "../services/extensions.service.ts";
+
 import "../style/loader.css";
-import MangaImage from "../components/MangaImage";
-import { getMangaDetails } from "../services/extensions.service";
 
 export default function MangaDetails() {
   const { extensionId, mangaId } = useParams<

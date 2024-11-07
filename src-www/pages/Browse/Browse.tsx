@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-
-import { Extension } from "../../types/extension";
-import { getIconUrl } from "../../services/extensions.service";
-import { getExtensions } from "../../services/tauri.service";
 import { Link } from "react-router-dom";
+
+import { Extension } from "../../types/extension.ts";
+import { getIconUrl } from "../../services/extensions.service.ts";
+import { getExtensions } from "../../services/tauri.service.ts";
 
 export default function Browse() {
   const [extensions, setExtensions] = useState<Extension[]>([]);

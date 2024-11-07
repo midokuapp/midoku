@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Browse from "./pages/Browse/Browse";
-import ExtensionBrowser from "./pages/Browse/ExtensionBrowse";
-import NavBar from "./components/NavBar";
-import NavItem from "./components/NavItem";
-import Extensions from "./pages/Extensions";
-import More from "./pages/More";
-import MangaDetails from "./pages/MangaDetails";
+import Browse from "./pages/Browse/Browse.tsx";
+import ExtensionBrowser from "./pages/Browse/ExtensionBrowse.tsx";
+import NavBar from "./components/NavBar.tsx";
+import NavItem from "./components/NavItem.tsx";
+import Extensions from "./pages/Extensions.tsx";
+import More from "./pages/More.tsx";
+import MangaDetails from "./pages/MangaDetails.tsx";
 
 const router = createBrowserRouter([
   {

@@ -1,10 +1,10 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 
-import { Chapter } from "../types/chapter";
-import { Filter } from "../types/filter";
-import { Manga, MangaList } from "../types/manga";
-import { Page } from "../types/page";
-import { getExtensions } from "./tauri.service";
+import { Chapter } from "../types/chapter.ts";
+import { Filter } from "../types/filter.ts";
+import { Manga, MangaList } from "../types/manga.ts";
+import { Page } from "../types/page.ts";
+import { getExtensions } from "./tauri.service.ts";
 
 export function getIconUrl(iconPath: string): string {
   return convertFileSrc(iconPath);
