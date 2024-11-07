@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 
-import {Extension} from "../../types/extension.ts";
-import {getIconUrl} from "../../services/extensions.service.ts";
-import {getExtensions} from "../../tauri.ts";
+import {Extension} from "../../types/extension";
+import {getIconUrl} from "../../services/extensions.service";
+import {getExtensions} from "../../tauri";
 import {Link} from "react-router-dom";
 
 export default function Browse() {
