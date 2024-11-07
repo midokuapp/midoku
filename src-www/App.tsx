@@ -2,8 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Browse from "./pages/Browse/Browse.tsx";
 import ExtensionBrowser from "./pages/Browse/ExtensionBrowse.tsx";
-import NavBar from "./components/NavBar.tsx";
-import NavItem from "./components/NavItem.tsx";
 import Extensions from "./pages/Extensions.tsx";
 import More from "./pages/More.tsx";
 import MangaDetails from "./pages/MangaDetails.tsx";
@@ -33,28 +31,21 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100vw",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <main style={{ flex: 1 }}>
+    <div className="flex flex-col h-screen">
+      <main className="flex-1 p-2">
         <RouterProvider router={router} />
       </main>
-      <NavBar>
-        <NavItem href="/">
-          <span>Browse</span>
-        </NavItem>
-        <NavItem href="/extensions">
-          <span>Extensions</span>
-        </NavItem>
-        <NavItem href="/more">
-          <span>More</span>
-        </NavItem>
-      </NavBar>
+      <ul className="menu menu-horizontal justify-evenly bg-base-200">
+        <li>
+          <a href="/">Browse</a>
+        </li>
+        <li>
+          <a href="/extensions">Extensions</a>
+        </li>
+        <li>
+          <a href="/more">More</a>
+        </li>
+      </ul>
     </div>
   );
 }
