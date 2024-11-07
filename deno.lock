@@ -8,12 +8,16 @@
     "npm:@types/react-router-dom@5.3.3": "5.3.3",
     "npm:@types/react@18.3.11": "18.3.11",
     "npm:@vitejs/plugin-react@4.3.2": "4.3.2_vite@5.4.9_@babel+core@7.26.0",
+    "npm:autoprefixer@10.4.20": "10.4.20_postcss@8.4.47",
     "npm:autoprefixer@^10.4.20": "10.4.20_postcss@8.4.47",
-    "npm:daisyui@^4.12.14": "4.12.14_postcss@8.4.47",
+    "npm:daisyui@4.12.14": "4.12.14_postcss@8.4.47",
+    "npm:postcss@8.4.47": "8.4.47",
     "npm:postcss@^8.4.47": "8.4.47",
     "npm:react-dom@18.3.1": "18.3.1_react@18.3.1",
+    "npm:react-icons@5.3.0": "5.3.0_react@18.3.1",
     "npm:react-router-dom@6.27.0": "6.27.0_react@18.3.1_react-dom@18.3.1__react@18.3.1",
     "npm:react@18.3.1": "18.3.1",
+    "npm:tailwindcss@3.4.14": "3.4.14_postcss@8.4.47",
     "npm:tailwindcss@^3.4.14": "3.4.14_postcss@8.4.47",
     "npm:vite@*": "5.4.9",
     "npm:vite@5.4.9": "5.4.9"
@@ -909,6 +913,12 @@
         "scheduler"
       ]
     },
+    "react-icons@5.3.0_react@18.3.1": {
+      "integrity": "sha512-DnUk8aFbTyQPSkCfF8dbX6kQjXA9DktMeJqfjrg6cK9vwQVMxmcA3BfP4QoiztVmEHtwlTgLFsPuH2NskKT6eg==",
+      "dependencies": [
+        "react"
+      ]
+    },
     "react-refresh@0.14.2": {
       "integrity": "sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA=="
     },
@@ -1163,13 +1173,14 @@
       "npm:@types/react-router-dom@5.3.3",
       "npm:@types/react@18.3.11",
       "npm:@vitejs/plugin-react@4.3.2",
-      "npm:autoprefixer@^10.4.20",
-      "npm:daisyui@^4.12.14",
-      "npm:postcss@^8.4.47",
+      "npm:autoprefixer@10.4.20",
+      "npm:daisyui@4.12.14",
+      "npm:postcss@8.4.47",
       "npm:react-dom@18.3.1",
+      "npm:react-icons@5.3.0",
       "npm:react-router-dom@6.27.0",
       "npm:react@18.3.1",
-      "npm:tailwindcss@^3.4.14",
+      "npm:tailwindcss@3.4.14",
       "npm:vite@5.4.9"
     ]
   }

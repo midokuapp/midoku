@@ -9,7 +9,7 @@
   "tasks": {
     "dev": "deno run -A npm:vite dev",
     "build": "deno run -A npm:vite build",
-    "check": "deno check src-www/",
+    "check": "deno check src/",
     "lint": "deno lint && deno fmt --check",
     "fmt": "deno lint --fix && deno fmt"
   },
@@ -26,13 +26,14 @@
     "@types/react-dom": "npm:@types/react-dom@18.3.1",
     "@types/react-router-dom": "npm:@types/react-router-dom@5.3.3",
     "@vitejs/plugin-react": "npm:@vitejs/plugin-react@4.3.2",
-    "autoprefixer": "npm:autoprefixer@^10.4.20",
-    "daisyui": "npm:daisyui@^4.12.14",
-    "postcss": "npm:postcss@^8.4.47",
+    "autoprefixer": "npm:autoprefixer@10.4.20",
+    "daisyui": "npm:daisyui@4.12.14",
+    "postcss": "npm:postcss@8.4.47",
     "react": "npm:react@18.3.1",
     "react-dom": "npm:react-dom@18.3.1",
+    "react-icons": "npm:react-icons@5.3.0",
     "react-router-dom": "npm:react-router-dom@6.27.0",
-    "tailwindcss": "npm:tailwindcss@^3.4.14",
+    "tailwindcss": "npm:tailwindcss@3.4.14",
     "vite": "npm:vite@5.4.9"
   },
   "nodeModulesDir": "auto"
