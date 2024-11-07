@@ -1,5 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 const TAURI_ENV_DEBUG = Deno.env.get("TAURI_ENV_DEBUG");
 const TAURI_DEV_HOST = Deno.env.get("TAURI_DEV_HOST");
@@ -7,6 +9,11 @@ const TAURI_ENV_PLATFORM = Deno.env.get("TAURI_ENV_PLATFORM");
 
 export default defineConfig({
   plugins: [react()],
+  css: {
+    postcss: {
+      plugins: [tailwindcss, autoprefixer],
+    },
+  },
   clearScreen: false,
   server: {
     strictPort: true,
