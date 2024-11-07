@@ -8,8 +8,6 @@ import Extensions from "./pages/Extensions";
 import More from "./pages/More";
 import MangaDetails from "./pages/MangaDetails";
 
-import "./style/global.css";
-
 const router = createBrowserRouter([
   {
     path: "/",
