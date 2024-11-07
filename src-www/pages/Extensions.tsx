@@ -29,35 +29,35 @@ export default function Extensions() {
   }, [repositoryUrl]);
 
   const manifestList = manifests.map((manifest: Manifest) => (
-    <li key={manifest.id} className="card card-compact card-side">
-      <figure>
+    <li key={manifest.id} className="flex items-center gap-2">
+      <figure className="size-16">
         <img
           src={repositoryUrl + "/icons/" + manifest.icon}
           alt={manifest.name}
         />
       </figure>
-      <div className="card-body">
-        <h2 className="card-title">{manifest.name}</h2>
+      <div>
+        <h2 className="">{manifest.name}</h2>
         <p>
           {manifest.version} {manifest.language}
           {manifest.nsfw && <span className="text-error">{" "}+18</span>}
         </p>
-        <div className="card-actions">
-          <button
-            className="btn btn-success"
-            onClick={() =>
-              installExtension(repositoryUrl, manifest)}
-          >
-            Install
-          </button>
-          <button
-            className="btn btn-error"
-            onClick={() =>
-              uninstallExtension(manifest.id)}
-          >
-            Uninstall
-          </button>
-        </div>
+      </div>
+      <div className="flex gap-2 ml-auto">
+        <button
+          className="btn btn-success"
+          onClick={() =>
+            installExtension(repositoryUrl, manifest)}
+        >
+          Install
+        </button>
+        <button
+          className="btn btn-error"
+          onClick={() =>
+            uninstallExtension(manifest.id)}
+        >
+          Uninstall
+        </button>
       </div>
     </li>
   ));
@@ -71,7 +71,7 @@ export default function Extensions() {
         value={repositoryUrl}
         onChange={(e) => setRepositoryUrl(e.target.value)}
       />
-      <ul>
+      <ul className="py-3">
         {manifestList}
       </ul>
     </>
