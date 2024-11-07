@@ -1,12 +1,20 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 
-import { Chapter } from "../types/chapter.ts";
-import { Filter } from "../types/filter.ts";
-import { Manga, MangaList } from "../types/manga.ts";
-import { Page } from "../types/page.ts";
+import { Chapter } from "../types/chapter";
+import { Filter } from "../types/filter";
+import { Manga, MangaList } from "../types/manga";
+import { Page } from "../types/page";
+import { getExtensions } from "./tauri.service";
 
 export function getIconUrl(iconPath: string): string {
   return convertFileSrc(iconPath);
+}
+
+// todo : use memo to avoid re-rendering
+export async function getExtension(extensionId: string) {
+  return await getExtensions().then((extensions) =>
+    extensions.find((extension) => extension.id === extensionId)
+  );
 }
 
 export async function getMangaList(

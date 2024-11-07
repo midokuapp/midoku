@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { Manifest } from "../types/manifest.ts";
-import { store } from "../store.ts";
+import { Manifest } from "../types/manifest";
+import { store } from "../store";
 import {
   getRepositoryExtensions,
   installExtension,
   uninstallExtension,
-} from "../tauri.ts";
+} from "../services/tauri.service";
 
 export default function Extensions() {
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");

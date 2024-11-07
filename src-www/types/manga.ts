@@ -33,6 +33,4 @@ export interface Manga {
   readingMode: ReadingMode;
 }
 
-export interface MangaList {
-  data: [Manga[], boolean];
-}
+export type MangaList = [Manga[], boolean];
