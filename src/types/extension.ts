@@ -8,6 +8,6 @@ export interface Source {
 
 export interface Extension {
   id: string;
-  iconPath: string;
+  iconUrl: string;
   source: Source;
 }

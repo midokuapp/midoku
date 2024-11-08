@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
-import { getIconUrl, getMangaList } from "../../services/extensions.service.ts";
+import { getMangaList } from "../../services/extensions.service.ts";
 import MangaImage from "../../components/Manga/MangaImage.tsx";
 import { useExtensions } from "../../context/extensions.ts";
 
@@ -71,7 +71,7 @@ const Loader = () => (
 const ExtensionHeader = ({ extension }: { extension: Extension }) => (
   <div className="flex items-center gap-3 mb-5">
     <img
-      src={getIconUrl(extension.iconPath)}
+      src={extension.iconUrl}
       alt={extension.source.name}
       className="w-12 h-12"
     />

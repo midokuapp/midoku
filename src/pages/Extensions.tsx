@@ -7,7 +7,6 @@ import {
   uninstallExtension,
 } from "../services/tauri.service.ts";
 
-import { getIconUrl } from "../services/extensions.service.ts";
 import { useExtensions } from "../context/extensions.ts";
 import { useRepositoryUrl } from "../context/repositoryUrl.ts";
 import { useManifests } from "../context/manifests.ts";
@@ -115,7 +114,7 @@ export default function Extensions() {
           >
             <figure className="w-12 h-12">
               <img
-                src={getIconUrl(extension.iconPath)}
+                src={extension.iconUrl}
                 alt={extension.source.name}
                 className="rounded-full"
               />

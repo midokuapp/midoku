@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import { Extension, Source } from "../types/extension.ts";
 import { Manifest } from "../types/manifest.ts";
+import { getIconUrl } from "./extensions.service.ts";
 
 export async function getExtensions(): Promise<Extension[]> {
   return (await invoke<[string, Source, string][]>("get_extensions"))
@@ -9,30 +10,9 @@ export async function getExtensions(): Promise<Extension[]> {
       <Extension> {
         id: id,
         source: source,
-        iconPath: iconPath,
+        iconUrl: getIconUrl(iconPath),
       }
     );
-}
-
-export async function getExtension(
-  extensionId: string,
-): Promise<Extension | null> {
-  const data = await invoke<
-    [string, Source, string] | null
-  >(
-    "get_extension",
-    { extensionId: extensionId },
-  );
-
-  if (data === null) return null;
-
-  const [id, source, iconPath] = data;
-
-  return <Extension> {
-    id: id,
-    source: source,
-    iconPath: iconPath,
-  };
 }
 
 export async function getRepositoryExtensions(

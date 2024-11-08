@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 import { useExtensions } from "../../context/extensions.ts";
-import { getIconUrl } from "../../services/extensions.service.ts";
 
 export default function Browse() {
   const { extensions } = useExtensions();
@@ -21,7 +20,7 @@ export default function Browse() {
             className="flex items-center gap-3"
           >
             <img
-              src={getIconUrl(extension.iconPath)}
+              src={extension.iconUrl}
               className="w-12 h-12"
               alt={`${extension.source.name} icon`}
             />
