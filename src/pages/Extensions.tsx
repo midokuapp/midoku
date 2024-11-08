@@ -141,21 +141,21 @@ export default function Extensions() {
       {/* Available Extensions List */}
       <h2 className="text-xl font-semibold mb-2">Available</h2>
       <Group>
-        {manifests.map((manifest) => (
-          <Item key={manifest.id}>
-            <Icon
-              src={`${repositoryUrl}/icons/${manifest.icon}`}
-              alt={manifest.name}
-            />
-            <Detail>
-              <Title title={manifest.name} />
-              <Description {...manifest} />
-            </Detail>
-            {isInstalled(manifest.id)
-              ? <UninstallButton extensionId={manifest.id} />
-              : <InstallButton manifest={manifest} />}
-          </Item>
-        ))}
+        {manifests.map((manifest) =>
+          !isInstalled(manifest.id) && (
+            <Item key={manifest.id}>
+              <Icon
+                src={`${repositoryUrl}/icons/${manifest.icon}`}
+                alt={manifest.name}
+              />
+              <Detail>
+                <Title title={manifest.name} />
+                <Description {...manifest} />
+              </Detail>
+              <InstallButton manifest={manifest} />
+            </Item>
+          )
+        )}
       </Group>
     </div>
   );
