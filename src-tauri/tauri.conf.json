@@ -21,7 +21,7 @@
     ],
     "security": {
       "csp": {
-        "img-src": "'self' asset: http://asset.localhost"
+        "img-src": "'self' asset: http://asset.localhost blob: data: https://*"
       },
       "assetProtocol": {
         "enable": true,
