@@ -11,23 +11,16 @@ export default function ExtensionBrowse() {
   const { extensionId } = useParams();
   const { extensions } = useContext(ExtensionsContext);
 
-  const [extension, setExtension] = useState<Extension | null>(null);
+  const extension: Extension = extensions.find((extension: Extension) =>
+    extension.id === extensionId
+  )!;
+
   const [mangas, setMangas] = useState<Array<Manga>>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [pagination, setPagination] = useState<number>(1);
 
   useEffect(() => {
-    if (!extensionId) return;
-
-    setExtension(
-      extensions.find((extension: Extension) => extension.id === extensionId)!,
-    );
-  }, [extensionId]);
-
-  useEffect(() => {
-    if (!extension) return;
-
     setLoading(true);
     getMangaList(extension.id, [], pagination)
       .then((data) => setMangas([...mangas, ...data[0]]))
@@ -51,7 +44,6 @@ export default function ExtensionBrowse() {
   }, [loading]);
 
   if (error) return <ErrorMessage error={error} />;
-  if (!extension) return <Loader />;
 
   return (
     <div className="px-2">
