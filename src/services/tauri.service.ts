@@ -14,6 +14,27 @@ export async function getExtensions(): Promise<Extension[]> {
     );
 }
 
+export async function getExtension(
+  extensionId: string,
+): Promise<Extension | null> {
+  const data = await invoke<
+    [string, Source, string] | null
+  >(
+    "get_extension",
+    { extensionId: extensionId },
+  );
+
+  if (data === null) return null;
+
+  const [id, source, iconPath] = data;
+
+  return <Extension> {
+    id: id,
+    source: source,
+    iconPath: iconPath,
+  };
+}
+
 export async function getRepositoryExtensions(
   repositoryUrl: string,
 ): Promise<Manifest[]> {

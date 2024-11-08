@@ -3,11 +3,8 @@ import { Link, useParams } from "react-router-dom";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
-import {
-  getExtension,
-  getIconUrl,
-  getMangaList,
-} from "../../services/extensions.service.ts";
+import { getIconUrl, getMangaList } from "../../services/extensions.service.ts";
+import { getExtension } from "../../services/tauri.service.ts";
 import MangaImage from "../../components/Manga/MangaImage.tsx";
 
 export default function ExtensionBrowse() {
@@ -21,8 +18,12 @@ export default function ExtensionBrowse() {
   useEffect(() => {
     if (!extensionId) return;
     getExtension(extensionId)
-      .then(setExtension)
-      .catch(() => setError("Erreur lors du chargement de l'extension."));
+      .then((
+        extension,
+      ) => (extension !== null
+        ? setExtension(extension)
+        : setError("Erreur lors du chargement de l'extension."))
+      );
   }, [extensionId]);
 
   useEffect(() => {

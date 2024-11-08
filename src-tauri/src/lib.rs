@@ -31,6 +31,18 @@ async fn get_extensions(
 }
 
 #[tauri::command]
+async fn get_extension(
+    state: State<'_, Extensions>,
+    extension_id: String,
+) -> tauri::Result<Option<(String, Source, PathBuf)>> {
+    trace!("get_extension called with extension_id: {}", extension_id);
+    Ok(state
+        .lock()
+        .get(extension_id.as_str())
+        .map(|v| (v.id.clone(), v.source.clone(), v.icon_path.clone())))
+}
+
+#[tauri::command]
 async fn get_repository_extensions(repository_url: String) -> tauri::Result<Vec<Manifest>> {
     trace!(
         "get_repository_extensions called with repository_url: {}",
@@ -222,6 +234,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_extensions,
+            get_extension,
             get_repository_extensions,
             install_extension,
             uninstall_extension,
