@@ -22,6 +22,32 @@ cargo install tauri-cli --version "^2.0.0" --locked
 cargo tauri dev
 ```
 
+## Build
+
+### Android
+
+See https://v2.tauri.app/start/prerequisites/#android for the prerequisites.
+
+> [!NOTE]
+> You will not need to install the `armv7-linux-androideabi` nor
+> `i686-linux-android` targets as Wasmtime+Cranelift does not support arm32.
+> (https://github.com/bytecodealliance/wasmtime/issues/1173)
+
+Initialize the Android project:
+
+```bash
+cargo tauri android init --skip-targets-install
+```
+
+To build the app for Android, run:
+
+```bash
+cargo tauri android build --apk --target aarch64 x86_64
+```
+
+To sign the APK, follow the instructions at
+https://v2.tauri.app/distribute/sign/android/
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0

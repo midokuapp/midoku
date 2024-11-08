@@ -31,5 +31,5 @@ dist/
 # Zed Editor
 .zed/
 
-# intelij idea
+# IntelliJ IDEA
 .idea/

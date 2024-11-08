@@ -5,7 +5,6 @@ import autoprefixer from "autoprefixer";
 
 const TAURI_ENV_DEBUG = Deno.env.get("TAURI_ENV_DEBUG");
 const TAURI_DEV_HOST = Deno.env.get("TAURI_DEV_HOST");
-const TAURI_ENV_PLATFORM = Deno.env.get("TAURI_ENV_PLATFORM");
 
 export default defineConfig({
   plugins: [react()],
@@ -25,7 +24,7 @@ export default defineConfig({
   },
   envPrefix: ["VITE_", "TAURI_ENV_*"],
   build: {
-    target: TAURI_ENV_PLATFORM == "windows" ? "chome105" : "safari13",
+    target: "esnext",
     minify: !TAURI_ENV_DEBUG ? "esbuild" : false,
     sourcemap: !!TAURI_ENV_DEBUG,
   },
