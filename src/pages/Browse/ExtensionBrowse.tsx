@@ -18,7 +18,7 @@ export default function ExtensionBrowse() {
   const [mangas, setMangas] = useState<Array<Manga>>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [pagination, setPagination] = useState<number>(1);
+  const [pagination, setPagination] = useState<number>(0);
 
   useEffect(() => {
     setLoading(true);
