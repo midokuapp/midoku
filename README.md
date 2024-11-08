@@ -37,6 +37,14 @@ Initialize the Android project:
 cargo tauri android init --skip-targets-install
 ```
 
+> [!IMPORTANT]
+> You will need to delete the old `android` directory if you have already
+> initialized the Android project before to update the application version.
+>
+> ```bash
+> rm -rd src-tauri/gen/android
+> ```
+
 To develop the app for Android, run:
 
 ```bash
