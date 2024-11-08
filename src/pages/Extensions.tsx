@@ -39,55 +39,72 @@ export default function Extensions() {
     setExtensions(updatedExtensions);
   };
 
-  // Map over repository extensions and create a list of components
-  const manifestList = manifests.map((manifest) => {
-    const installed = isInstalled(manifest.id);
+  const Icon = ({ src, alt }: { src: string; alt: string }) => (
+    <figure className="w-12 h-12">
+      <img src={src} alt={alt} className="rounded-md" />
+    </figure>
+  );
+
+  const Detail = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex flex-col">{children}</div>
+  );
+
+  const Title = ({ title }: { title: string }) => (
+    <h2 className="text-lg font-semibold">{title}</h2>
+  );
+
+  const Description = ({ language, version, nsfw }: {
+    language: string;
+    version: string;
+    nsfw: boolean;
+  }) => (
+    <p className="text-neutral text-sm">
+      {language} {version}
+      {nsfw && <span className="text-error">{" "}+18</span>}
+    </p>
+  );
+
+  const InstallButton = ({ manifest }: { manifest: Manifest }) => {
     return (
-      <li
-        key={manifest.id}
-        className="flex items-center gap-4 p-3 bg-gray-800 rounded-lg shadow-md"
+      <button
+        className="ml-auto btn btn-success btn-sm"
+        onClick={() => handleInstall(manifest)}
       >
-        <figure className="w-12 h-12">
-          <img
-            src={`${repositoryUrl}/icons/${manifest.icon}`}
-            alt={manifest.name}
-            className="rounded-full"
-          />
-        </figure>
-        <div className="flex flex-col">
-          <h2 className="text-lg font-semibold text-white">{manifest.name}</h2>
-          <p className="text-gray-400 text-sm">
-            {manifest.version} · {manifest.language}
-            {manifest.nsfw && <span className="text-red-500 ml-2">+18</span>}
-          </p>
-        </div>
-        <div className="ml-auto">
-          {installed
-            ? (
-              <button
-                className="bg-red-600 text-white py-1 px-3 rounded-lg text-sm hover:bg-red-500 transition"
-                onClick={() => handleUninstall(manifest.id)}
-              >
-                Uninstall
-              </button>
-            )
-            : (
-              <button
-                className="bg-green-600 text-white py-1 px-3 rounded-lg text-sm hover:bg-green-500 transition"
-                onClick={() => handleInstall(manifest)}
-              >
-                Install
-              </button>
-            )}
-        </div>
-      </li>
+        Install
+      </button>
     );
-  });
+  };
+
+  const UninstallButton = ({ extensionId }: { extensionId: string }) => {
+    return (
+      <button
+        className="ml-auto btn btn-error btn-sm"
+        onClick={() => handleUninstall(extensionId)}
+      >
+        Uninstall
+      </button>
+    );
+  };
+
+  const Item = (
+    { key, children }: {
+      key: string;
+      children: React.ReactNode;
+    },
+  ) => (
+    <li key={key} className="flex items-center gap-4 p-3 rounded-lg shadow-md">
+      {children}
+    </li>
+  );
+
+  const Group = ({ children }: { children: React.ReactNode }) => (
+    <div className="space-y-4 mb-8">{children}</div>
+  );
 
   return (
-    <div className="max-w-lg mx-auto p-6 text-white min-h-screen">
+    <div className="max-w-xl mx-auto p-3">
       <h1 className="text-2xl font-bold mb-4">Extension Manager</h1>
-      <p className="text-gray-400 mb-4">
+      <p className="text-neutral  mb-4">
         Manage your manga extensions: Install new sources or uninstall those you
         no longer need.
       </p>
@@ -96,7 +113,7 @@ export default function Extensions() {
       <div className="flex items-center mb-4">
         <input
           type="text"
-          className="flex-1 p-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 placeholder-gray-500 focus:outline-none focus:border-gray-500"
+          className="input input-bordered w-full"
           placeholder="Extension repository URL"
           value={repositoryUrl}
           onChange={(e) => setRepositoryUrl(e.target.value)}
@@ -104,44 +121,42 @@ export default function Extensions() {
       </div>
 
       {/* Installed Extensions List */}
-      <h2 className="text-xl font-semibold mb-2">Installed Extensions</h2>
-      <ul className="space-y-4 mb-8">
+      <h2 className="text-xl font-semibold mb-2">Installed</h2>
+      <Group>
         {extensions.map((extension) => (
-          <li
-            key={extension.id}
-            className="flex items-center gap-4 p-3 bg-gray-800 rounded-lg shadow-md"
-          >
-            <figure className="w-12 h-12">
-              <img
-                src={extension.iconUrl}
-                alt={extension.source.name}
-                className="rounded-full"
-              />
-            </figure>
-            <div className="flex flex-col">
-              <h2 className="text-lg font-semibold text-white">
-                {extension.source.name}
-              </h2>
-              <p className="text-gray-400 text-sm">
-                {extension.source.version} · {extension.source.language}
-                {extension.source.nsfw && (
-                  <span className="text-red-500 ml-2">+18</span>
-                )}
-              </p>
-            </div>
-            <button
-              className="ml-auto bg-red-600 text-white py-1 px-3 rounded-lg text-sm hover:bg-red-500 transition"
-              onClick={() => handleUninstall(extension.id)}
-            >
-              Uninstall
-            </button>
-          </li>
+          <Item key={extension.id}>
+            <Icon
+              src={extension.iconUrl}
+              alt={extension.source.name}
+            />
+            <Detail>
+              <Title title={extension.source.name} />
+              <Description {...extension.source} />
+            </Detail>
+            <UninstallButton extensionId={extension.id} />
+          </Item>
         ))}
-      </ul>
+      </Group>
 
       {/* Available Extensions List */}
-      <h2 className="text-xl font-semibold mb-2">Available Extensions</h2>
-      <ul className="space-y-4">{manifestList}</ul>
+      <h2 className="text-xl font-semibold mb-2">Available</h2>
+      <Group>
+        {manifests.map((manifest) => (
+          <Item key={manifest.id}>
+            <Icon
+              src={`${repositoryUrl}/icons/${manifest.icon}`}
+              alt={manifest.name}
+            />
+            <Detail>
+              <Title title={manifest.name} />
+              <Description {...manifest} />
+            </Detail>
+            {isInstalled(manifest.id)
+              ? <UninstallButton extensionId={manifest.id} />
+              : <InstallButton manifest={manifest} />}
+          </Item>
+        ))}
+      </Group>
     </div>
   );
 }
