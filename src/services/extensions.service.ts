@@ -1,13 +1,9 @@
-import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { invoke } from "@tauri-apps/api/core";
 
 import { Chapter } from "../types/chapter.ts";
 import { Filter } from "../types/filter.ts";
 import { Manga, MangaList } from "../types/manga.ts";
 import { Page } from "../types/page.ts";
-
-export function getIconUrl(iconPath: string): string {
-  return convertFileSrc(iconPath);
-}
 
 export async function getMangaList(
   extensionId: string,

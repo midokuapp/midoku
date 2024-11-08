@@ -1,8 +1,7 @@
-import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 
 import { Extension, Source } from "../types/extension.ts";
 import { Manifest } from "../types/manifest.ts";
-import { getIconUrl } from "./extensions.service.ts";
 
 export async function getExtensions(): Promise<Extension[]> {
   return (await invoke<[string, Source, string][]>("get_extensions"))
@@ -10,7 +9,7 @@ export async function getExtensions(): Promise<Extension[]> {
       <Extension> {
         id: id,
         source: source,
-        iconUrl: getIconUrl(iconPath),
+        iconUrl: convertFileSrc(iconPath),
       }
     );
 }
