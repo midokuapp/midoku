@@ -14,6 +14,8 @@ import MangaDetails from "./pages/MangaDetails.tsx";
 import { ExtensionsContext } from "./context/extensions.ts";
 import { Extension } from "./types/extension.ts";
 import { RepositoryUrlContext } from "./context/repositoryUrl.ts";
+import { ManifestsContext } from "./context/manifests.ts";
+import { Manifest } from "./types/manifest.ts";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +86,7 @@ function Layout() {
 export default function App() {
   const [extensions, setExtensions] = useState<Extension[]>([]);
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
+  const [manifests, setManifests] = useState<Manifest[]>([]);
 
   return (
     <ExtensionsContext.Provider
@@ -98,9 +101,16 @@ export default function App() {
           setRepositoryUrl,
         }}
       >
-        <div className="flex flex-col h-screen">
-          <RouterProvider router={router} />
-        </div>
+        <ManifestsContext.Provider
+          value={{
+            manifests,
+            setManifests,
+          }}
+        >
+          <div className="flex flex-col h-screen">
+            <RouterProvider router={router} />
+          </div>
+        </ManifestsContext.Provider>
       </RepositoryUrlContext.Provider>
     </ExtensionsContext.Provider>
   );

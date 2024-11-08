@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Manifest } from "../types/manifest.ts";
 import {
   getExtensions,
@@ -10,11 +10,12 @@ import {
 import { getIconUrl } from "../services/extensions.service.ts";
 import { useExtensions } from "../context/extensions.ts";
 import { useRepositoryUrl } from "../context/repositoryUrl.ts";
+import { useManifests } from "../context/manifests.ts";
 
 export default function Extensions() {
   const { extensions, setExtensions } = useExtensions();
   const { repositoryUrl, setRepositoryUrl } = useRepositoryUrl();
-  const [manifests, setManifests] = useState<Manifest[]>([]);
+  const { manifests, setManifests } = useManifests();
 
   // Fetch repository extensions when repositoryUrl changes
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function Extensions() {
   };
 
   // Map over repository extensions and create a list of components
-  const manifestList = manifests.map((manifest: Manifest) => {
+  const manifestList = manifests.map((manifest) => {
     const installed = isInstalled(manifest.id);
     return (
       <li
