@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   createBrowserRouter,
   NavLink,
@@ -11,11 +10,9 @@ import ExtensionBrowse from "./pages/Browse/ExtensionBrowse.tsx";
 import Extensions from "./pages/Extensions.tsx";
 import More from "./pages/More.tsx";
 import MangaDetails from "./pages/MangaDetails.tsx";
-import { ExtensionsContext } from "./context/extensions.ts";
-import { Extension } from "./types/extension.ts";
-import { RepositoryUrlContext } from "./context/repositoryUrl.ts";
-import { ManifestsContext } from "./context/manifests.ts";
-import { Manifest } from "./types/manifest.ts";
+import { ExtensionsContextProvider } from "./context/extensions.ts";
+import { RepositoryUrlContextProvider } from "./context/repositoryUrl.ts";
+import { ManifestsContextProvider } from "./context/manifests.ts";
 
 const router = createBrowserRouter([
   {
@@ -83,35 +80,36 @@ function Layout() {
   );
 }
 
+class ContextBuilder {
+  private contexts: React.FC<{ children: React.ReactNode }>[] = [];
+
+  add(context: React.FC) {
+    this.contexts.push(context);
+    return this;
+  }
+
+  build(children: React.ReactNode) {
+    return this.contexts.reduceRight(
+      (acc, Context) => <Context>{acc}</Context>,
+      children,
+    );
+  }
+}
+
 export default function App() {
-  const [extensions, setExtensions] = useState<Extension[]>([]);
-  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
-  const [manifests, setManifests] = useState<Manifest[]>([]);
+  const Context = ({ children }: { children: React.ReactNode }) => {
+    return new ContextBuilder()
+      .add(ExtensionsContextProvider)
+      .add(RepositoryUrlContextProvider)
+      .add(ManifestsContextProvider)
+      .build(children);
+  };
 
   return (
-    <ExtensionsContext.Provider
-      value={{
-        extensions,
-        setExtensions,
-      }}
-    >
-      <RepositoryUrlContext.Provider
-        value={{
-          repositoryUrl,
-          setRepositoryUrl,
-        }}
-      >
-        <ManifestsContext.Provider
-          value={{
-            manifests,
-            setManifests,
-          }}
-        >
-          <div className="flex flex-col h-screen">
-            <RouterProvider router={router} />
-          </div>
-        </ManifestsContext.Provider>
-      </RepositoryUrlContext.Provider>
-    </ExtensionsContext.Provider>
+    <Context>
+      <div className="flex flex-col h-screen">
+        <RouterProvider router={router} />
+      </div>
+    </Context>
   );
 }
