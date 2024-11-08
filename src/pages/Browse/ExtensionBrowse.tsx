@@ -10,8 +10,6 @@ import {
 } from "../../services/extensions.service.ts";
 import MangaImage from "../../components/Manga/MangaImage.tsx";
 
-import "../../style/loader.css";
-
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
   const [extension, setExtension] = useState<Extension | null>(null);
@@ -73,7 +71,8 @@ const ErrorMessage = ({ error }: { error: string }) => (
 const Loader = () => (
   <div className="flex flex-col items-center justify-center">
     <div className="text-center py-5">Chargement...</div>
-    <div className="loader"></div>
+    <div className="border-gray-300 h-10 w-10 animate-spin rounded-full border-8 border-t-blue-600">
+    </div>
   </div>
 );
 
