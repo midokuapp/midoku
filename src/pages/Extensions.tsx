@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Manifest } from "../types/manifest.ts";
 import {
   getExtensions,
@@ -6,6 +6,7 @@ import {
   installExtension,
   uninstallExtension,
 } from "../services/tauri.service.ts";
+import { FiDownload, FiTrash2 } from "react-icons/fi";
 
 import { useExtensions } from "../context/extensions.ts";
 import { useRepositoryUrl } from "../context/repositoryUrl.ts";
@@ -65,12 +66,19 @@ export default function Extensions() {
   );
 
   const InstallButton = ({ manifest }: { manifest: Manifest }) => {
+    const [downloading, setDownloading] = useState(false);
+
     return (
       <button
-        className="ml-auto btn btn-success btn-sm"
-        onClick={() => handleInstall(manifest)}
+        className="ml-auto btn btn-circle text-lg hover:btn-success"
+        onClick={() => {
+          handleInstall(manifest);
+          setDownloading(true);
+        }}
       >
-        Install
+        {downloading
+          ? <span className="loading loading-spinner"></span>
+          : <FiDownload />}
       </button>
     );
   };
@@ -78,10 +86,10 @@ export default function Extensions() {
   const UninstallButton = ({ extensionId }: { extensionId: string }) => {
     return (
       <button
-        className="ml-auto btn btn-error btn-sm"
+        className="ml-auto btn btn-circle text-lg hover:btn-error"
         onClick={() => handleUninstall(extensionId)}
       >
-        Uninstall
+        <FiTrash2 />
       </button>
     );
   };
