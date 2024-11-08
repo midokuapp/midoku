@@ -56,7 +56,7 @@ export default function ExtensionBrowse() {
   if (!extension) return <Loader />;
 
   return (
-    <div className="px-8">
+    <div className="px-2">
       <ExtensionHeader extension={extension} />
       <MangaGrid mangas={mangas} extensionId={extension.id} />
       {loading && <Loader />}
@@ -91,7 +91,7 @@ const ExtensionHeader = ({ extension }: { extension: Extension }) => (
 const MangaGrid = (
   { mangas, extensionId }: { mangas: Array<Manga>; extensionId: string },
 ) => (
-  <ul className="grid grid-cols-[repeat(auto-fill,minmax(180px,5fr))] gap-4 list-none p-0">
+  <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,5fr))] gap-4 list-none p-0">
     {mangas.map((manga) => (
       <li key={manga.id} className="text-center">
         <Link

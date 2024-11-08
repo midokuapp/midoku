@@ -5,7 +5,6 @@ import MangaImage from "../components/Manga/MangaImage.tsx";
 import { Manga, ReadingMode } from "../types/manga.ts";
 import { getMangaDetails } from "../services/extensions.service.ts";
 
-import "../style/loader.css";
 import MangaChapters from "../components/Manga/MangaChapters.tsx";
 
 export default function MangaDetails() {
@@ -16,11 +15,13 @@ export default function MangaDetails() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [manga, setManga] = useState<Manga | null>(null);
+  const [descriptionExpanded, setDescriptionExpanded] = useState<boolean>(
+    false,
+  );
 
-  // Récupérer le manga
   useEffect(() => {
     if (!extensionId || !mangaId) {
-      setError("Erreur lors de la récupération des détails du manga.");
+      setError("Error loading manga details.");
       setLoading(false);
       return;
     }
@@ -30,37 +31,22 @@ export default function MangaDetails() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(
-          "Erreur lors de la récupération des détails du manga. : " +
-            err,
-        );
+        setError("Error loading manga details: " + err);
         setLoading(false);
       });
   }, [extensionId, mangaId]);
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem",
-        }}
-      >
-        <div>Chargement...</div>
+      <div className="flex flex-col justify-center items-center h-screen text-white">
+        <div>Loading...</div>
         <div className="loader"></div>
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div style={{ padding: "0 2rem", color: "red" }}>
-        {error}
-      </div>
-    );
+    return <div className="p-4 text-red-500">{error}</div>;
   }
 
   if (!manga) {
@@ -68,60 +54,67 @@ export default function MangaDetails() {
   }
 
   return (
-    <div style={{ padding: "2rem", maxWidth: 800, margin: "0 auto" }}>
-      {/* Titre et couverture du manga */}
-      <div
-        style={{
-          display: "flex",
-          gap: "1.5rem",
-          alignItems: "flex-start",
-        }}
-      >
-        <MangaImage src={manga.coverUrl} alt={manga.title} />
-        <div>
-          <h1 style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>
-            {manga.title}
-          </h1>
-          <div style={{ opacity: 0.7, marginBottom: "0.5rem" }}>
-            Statut : {manga.status}
+    <div className="max-w-md mx-auto text-white ">
+      <div className="p-2">
+        {/* Manga title and cover */}
+        <div className="flex gap-4 items-start">
+          <MangaImage
+            src={manga.coverUrl}
+            alt={manga.title}
+            height={150}
+            width={30}
+          />
+          <div className="flex flex-col">
+            <h1 className="text-lg font-semibold mb-1">{manga.title}</h1>
+            <div className="text-gray-400 text-sm mb-1">
+              <strong>Author:</strong> {manga.authorName}
+            </div>
+            <div className="text-gray-400 text-sm">
+              <strong>Satus:</strong> {manga.status}
+            </div>
+            <p className="text-gray-400 text-sm">
+              <strong>Content Rating:</strong> {manga.contentRating}
+            </p>
           </div>
-          <div style={{ opacity: 0.7 }}>
-            Lecture : {manga.readingMode === ReadingMode.RightToLeft
-              ? "Droite à Gauche"
-              : "Gauche à Droite"}
-          </div>
+        </div>
+
+        {/* Extra details */}
+        <div className="mt-4">
+          <h2 className="text-md font-semibold mb-2">Details</h2>
+          <p className="text-gray-400 text-sm">
+            <strong>Reading Style:</strong>{" "}
+            {manga.readingMode === ReadingMode.RightToLeft
+              ? "Right to Left"
+              : "Left to Right"}
+          </p>
+          <p className="text-gray-400 text-sm">
+            <strong>Categories:</strong> {manga.categories.join(", ")}
+          </p>
+        </div>
+
+        {/* Collapsible description */}
+        <div className="mt-4">
+          <h2 className="text-md font-semibold mb-2">Description</h2>
+          <p
+            className={`text-gray-300 text-sm  transition ${
+              descriptionExpanded ? "" : "line-clamp-3"
+            }`}
+          >
+            {manga.description}
+          </p>
+          <button
+            onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+            className="text-blue-400 text-sm mt-2"
+          >
+            {descriptionExpanded ? "Show less" : "Show more"}
+          </button>
         </div>
       </div>
 
-      {/* Informations sur le manga */}
-      <div style={{ marginTop: "1.5rem" }}>
-        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>
-          Détails
-        </h2>
-        <p style={{ marginBottom: "0.5rem" }}>
-          <strong>Auteur :</strong> {manga.authorName}
-        </p>
-        <p style={{ marginBottom: "0.5rem" }}>
-          <strong>Artiste :</strong> {manga.artistName}
-        </p>
-        <p style={{ marginBottom: "0.5rem" }}>
-          <strong>Catégories :</strong> {manga.categories.join(", ")}
-        </p>
-        <p>
-          <strong>Note de Contenu :</strong> {manga.contentRating}
-        </p>
+      {/* Chapter List */}
+      <div className="mt-4">
+        <MangaChapters extensionId={extensionId} mangaId={mangaId} />
       </div>
-
-      {/* Description */}
-      <div style={{ marginTop: "1.5rem" }}>
-        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>
-          Description
-        </h2>
-        <p>{manga.description}</p>
-      </div>
-
-      {/* Liste des Chapitres Disponibles */}
-      <MangaChapters extensionId={extensionId} mangaId={mangaId} />
     </div>
   );
 }

@@ -1,8 +1,16 @@
 function MangaImage(
-  { src, alt, fallBackSrc = "/fallback-img.jpg" }: {
+  {
+    src,
+    alt,
+    fallBackSrc = "/fallback-img.jpg",
+    height = 200,
+    width = 100,
+  }: {
     src: string;
     alt: string;
     fallBackSrc?: string;
+    height?: number;
+    width?: number;
   },
 ) {
   return (
@@ -10,8 +18,8 @@ function MangaImage(
       src={src}
       alt={alt}
       style={{
-        width: "100%",
-        height: "280px",
+        width: `${width}%`,
+        height: `${height}px`,
         objectFit: "cover",
         borderRadius: "8px",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
