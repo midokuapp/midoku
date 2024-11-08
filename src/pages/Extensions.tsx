@@ -18,7 +18,6 @@ export default function Extensions() {
 
   // Fetch repository extensions when repositoryUrl changes
   useEffect(() => {
-    if (!repositoryUrl) return;
     getRepositoryExtensions(repositoryUrl).then(setManifests);
   }, [repositoryUrl]);
 
