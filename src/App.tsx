@@ -14,6 +14,7 @@ import MangaDetails from "./pages/MangaDetails.tsx";
 import { ExtensionsContext } from "./context/extensions.ts";
 import { getExtensions } from "./services/tauri.service.ts";
 import { Extension } from "./types/extension.ts";
+import { RepositoryUrlContext } from "./context/repositoryUrl.ts";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,7 @@ function Layout() {
 
 export default function App() {
   const [extensions, setExtensions] = useState<Extension[]>([]);
+  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
 
   useEffect(() => {
     getExtensions().then(setExtensions);
@@ -95,9 +97,16 @@ export default function App() {
         setExtensions,
       }}
     >
-      <div className="flex flex-col h-screen">
-        <RouterProvider router={router} />
-      </div>
+      <RepositoryUrlContext.Provider
+        value={{
+          repositoryUrl,
+          setRepositoryUrl,
+        }}
+      >
+        <div className="flex flex-col h-screen">
+          <RouterProvider router={router} />
+        </div>
+      </RepositoryUrlContext.Provider>
     </ExtensionsContext.Provider>
   );
 }

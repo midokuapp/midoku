@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Manifest } from "../types/manifest.ts";
-import { storeService } from "../services/store.service.ts";
 import {
   getExtensions,
   getRepositoryExtensions,
@@ -10,26 +9,16 @@ import {
 
 import { getIconUrl } from "../services/extensions.service.ts";
 import { useExtensions } from "../context/extensions.ts";
+import { useRepositoryUrl } from "../context/repositoryUrl.ts";
 
 export default function Extensions() {
   const { extensions, setExtensions } = useExtensions();
-  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
+  const { repositoryUrl, setRepositoryUrl } = useRepositoryUrl();
   const [manifests, setManifests] = useState<Manifest[]>([]);
-
-  // Load repository URL from storage and fetch manifests if URL is available
-  useEffect(() => {
-    storeService.get<string>("extensionRepositoryUrl").then((data) => {
-      if (data) {
-        setRepositoryUrl(data);
-      }
-    });
-  }, []);
 
   // Fetch repository extensions when repositoryUrl changes
   useEffect(() => {
     if (!repositoryUrl) return;
-
-    storeService.set("extensionRepositoryUrl", repositoryUrl);
     getRepositoryExtensions(repositoryUrl).then(setManifests);
   }, [repositoryUrl]);
 
