@@ -3,10 +3,10 @@ name: Deno
 on:
   push:
     branches:
-      - dev-vite-react
+      - main
   pull_request:
     branches:
-      - dev-vite-react
+      - main
 
 permissions:
   contents: read
