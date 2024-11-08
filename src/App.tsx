@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   createBrowserRouter,
   NavLink,
@@ -12,7 +12,6 @@ import Extensions from "./pages/Extensions.tsx";
 import More from "./pages/More.tsx";
 import MangaDetails from "./pages/MangaDetails.tsx";
 import { ExtensionsContext } from "./context/extensions.ts";
-import { getExtensions } from "./services/tauri.service.ts";
 import { Extension } from "./types/extension.ts";
 import { RepositoryUrlContext } from "./context/repositoryUrl.ts";
 
