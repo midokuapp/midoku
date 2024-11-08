@@ -86,10 +86,6 @@ export default function App() {
   const [extensions, setExtensions] = useState<Extension[]>([]);
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
 
-  useEffect(() => {
-    getExtensions().then(setExtensions);
-  }, []);
-
   return (
     <ExtensionsContext.Provider
       value={{
