@@ -8,7 +8,7 @@ import {
   getIconUrl,
   getMangaList,
 } from "../../services/extensions.service.ts";
-import MangaImage from "../../components/MangaImage.tsx";
+import MangaImage from "../../components/Manga/MangaImage.tsx";
 
 import "../../style/loader.css";
 
@@ -20,7 +20,6 @@ export default function ExtensionBrowse() {
   const [loading, setLoading] = useState<boolean>(true);
   const [pagination, setPagination] = useState<number>(1);
 
-  // Charger l'extension une seule fois au démarrage
   useEffect(() => {
     if (!extensionId) return;
     getExtension(extensionId)
@@ -28,18 +27,16 @@ export default function ExtensionBrowse() {
       .catch(() => setError("Erreur lors du chargement de l'extension."));
   }, [extensionId]);
 
-  // Charger la liste de mangas pour chaque pagination
   useEffect(() => {
     if (!extension) return;
 
-    setLoading(true); // Activer le chargement pendant la requête
+    setLoading(true);
     getMangaList(extension.id, [], pagination)
       .then((data) => setMangas([...mangas, ...data[0]]))
       .catch(() => setError("Erreur lors du chargement des mangas."))
       .finally(() => setLoading(false));
   }, [extension, pagination]);
 
-  // Gestion du scroll infini
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -55,14 +52,11 @@ export default function ExtensionBrowse() {
     return () => globalThis.removeEventListener("scroll", handleScroll);
   }, [loading]);
 
-  // Afficher un message d'erreur si nécessaire
   if (error) return <ErrorMessage error={error} />;
-
-  // Si l'extension est encore en chargement
   if (!extension) return <Loader />;
 
   return (
-    <div style={{ padding: "0 2rem" }}>
+    <div className="px-8">
       <ExtensionHeader extension={extension} />
       <MangaGrid mangas={mangas} extensionId={extension.id} />
       {loading && <Loader />}
@@ -70,57 +64,36 @@ export default function ExtensionBrowse() {
   );
 }
 
-// Composant de message d'erreur
 const ErrorMessage = ({ error }: { error: string }) => (
-  <div style={{ padding: "0 2rem" }}>
-    <p style={{ color: "red" }}>{error}</p>
+  <div className="px-8">
+    <p className="text-red-600">{error}</p>
   </div>
 );
 
-// Composant de loader
 const Loader = () => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <div style={{ textAlign: "center", padding: "20px 0" }}>Chargement...</div>
+  <div className="flex flex-col items-center justify-center">
+    <div className="text-center py-5">Chargement...</div>
     <div className="loader"></div>
   </div>
 );
 
-// En-tête de l'extension avec le nom et l'icône
 const ExtensionHeader = ({ extension }: { extension: Extension }) => (
-  <div
-    style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}
-  >
+  <div className="flex items-center gap-3 mb-5">
     <img
       src={getIconUrl(extension.iconPath)}
       alt={extension.source.name}
-      style={{ width: 48, height: 48 }}
+      className="w-12 h-12"
     />
-    <h2 style={{ fontSize: 24 }}>{extension.source.name}</h2>
+    <h2 className="text-2xl">{extension.source.name}</h2>
   </div>
 );
 
-// Grille de mangas
 const MangaGrid = (
   { mangas, extensionId }: { mangas: Array<Manga>; extensionId: string },
 ) => (
-  <ul
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 5fr))",
-      gap: "16px",
-      listStyle: "none",
-      padding: 0,
-    }}
-  >
+  <ul className="grid grid-cols-[repeat(auto-fill,minmax(180px,5fr))] gap-4 list-none p-0">
     {mangas.map((manga) => (
-      <li key={manga.id} style={{ textAlign: "center" }}>
+      <li key={manga.id} className="text-center">
         <Link
           to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
           state={manga}
@@ -131,18 +104,9 @@ const MangaGrid = (
           href={manga.url}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ textDecoration: "none", color: "#333" }}
+          className="text-gray-800 no-underline"
         >
-          <p
-            style={{
-              marginTop: 8,
-              fontSize: 14,
-              fontWeight: "bold",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
+          <p className="mt-2 text-white text-sm font-bold overflow-hidden overflow-ellipsis whitespace-nowrap">
             {manga.title}
           </p>
         </a>

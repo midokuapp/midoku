@@ -13,43 +13,41 @@ export default function Browse() {
   }, []);
 
   return (
-    <ul
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        padding: "0 2rem",
-      }}
-    >
-      {extensions.map((extension: Extension) => {
-        return (
+    <div>
+      <div>
+        <h1>
+          Explore
+        </h1>
+      </div>
+
+      <ul className="flex flex-col gap-2 px-8">
+        {extensions.map((extension: Extension) => (
           <li
             key={extension.id}
-            style={{ display: "flex", alignItems: "center", gap: 12 }}
+            className="flex items-center gap-3"
           >
             <img
               src={getIconUrl(extension.iconPath)}
-              style={{ width: 48, height: 48 }}
+              className="w-12 h-12"
+              alt={`${extension.source.name} icon`}
             />
             <div>
-              <span style={{ display: "block", fontSize: 16 }}>
+              <span className="block text-lg">
                 {extension.source.name}
               </span>
-              <div style={{ opacity: 0.7, fontSize: 14 }}>
+              <div className="text-sm opacity-70">
                 {extension.source.language}
               </div>
             </div>
             <Link
               to={`/browse/${extension.id}`}
-              style={{
-                marginLeft: "auto",
-              }}
+              className="ml-auto text-blue-600 hover:underline"
             >
               Browse
             </Link>
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </div>
   );
 }

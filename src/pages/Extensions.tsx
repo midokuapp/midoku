@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Manifest } from "../types/manifest.ts";
-import { store } from "../store.ts";
+import { storeService } from "../services/store.service.ts";
 import {
   getRepositoryExtensions,
   installExtension,
@@ -13,7 +13,7 @@ export default function Extensions() {
   const [manifests, setManifests] = useState<Manifest[]>([]);
 
   useEffect(() => {
-    store.get<string>("extensionRepositoryUrl").then((data) => {
+    storeService.get<string>("extensionRepositoryUrl").then((data) => {
       if (data) {
         setRepositoryUrl(data);
       }
@@ -23,7 +23,7 @@ export default function Extensions() {
   useEffect(() => {
     if (!repositoryUrl) return;
 
-    store.set("extensionRepositoryUrl", repositoryUrl);
+    storeService.set("extensionRepositoryUrl", repositoryUrl);
 
     getRepositoryExtensions(repositoryUrl).then(setManifests);
   }, [repositoryUrl]);
