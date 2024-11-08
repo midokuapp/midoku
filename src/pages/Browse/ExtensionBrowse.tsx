@@ -1,17 +1,17 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
 import { getIconUrl, getMangaList } from "../../services/extensions.service.ts";
 import MangaImage from "../../components/Manga/MangaImage.tsx";
-import { ExtensionsContext } from "../../context/extensions.ts";
+import { useExtensions } from "../../context/extensions.ts";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
-  const { extensions } = useContext(ExtensionsContext);
+  const { extensions } = useExtensions();
 
-  const extension: Extension = extensions.find((extension: Extension) =>
+  const extension = extensions.find((extension) =>
     extension.id === extensionId
   )!;
 

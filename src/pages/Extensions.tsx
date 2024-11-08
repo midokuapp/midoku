@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Manifest } from "../types/manifest.ts";
 import { storeService } from "../services/store.service.ts";
 import {
@@ -8,12 +8,11 @@ import {
   uninstallExtension,
 } from "../services/tauri.service.ts";
 
-import { Extension } from "../types/extension.ts";
 import { getIconUrl } from "../services/extensions.service.ts";
-import { ExtensionsContext } from "../context/extensions.ts";
+import { useExtensions } from "../context/extensions.ts";
 
 export default function Extensions() {
-  const { extensions, setExtensions } = useContext(ExtensionsContext);
+  const { extensions, setExtensions } = useExtensions();
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
   const [manifests, setManifests] = useState<Manifest[]>([]);
 
@@ -36,7 +35,7 @@ export default function Extensions() {
 
   // Helper to check if an extension is installed
   const isInstalled = (manifestId: string) => {
-    return extensions.some((ext: Extension) => ext.id === manifestId);
+    return extensions.some((extension) => extension.id === manifestId);
   };
 
   // Install and uninstall extension actions with real-time update
@@ -119,32 +118,32 @@ export default function Extensions() {
       {/* Installed Extensions List */}
       <h2 className="text-xl font-semibold mb-2">Installed Extensions</h2>
       <ul className="space-y-4 mb-8">
-        {extensions.map((ext: Extension) => (
+        {extensions.map((extension) => (
           <li
-            key={ext.id}
+            key={extension.id}
             className="flex items-center gap-4 p-3 bg-gray-800 rounded-lg shadow-md"
           >
             <figure className="w-12 h-12">
               <img
-                src={getIconUrl(ext.iconPath)}
-                alt={ext.source.name}
+                src={getIconUrl(extension.iconPath)}
+                alt={extension.source.name}
                 className="rounded-full"
               />
             </figure>
             <div className="flex flex-col">
               <h2 className="text-lg font-semibold text-white">
-                {ext.source.name}
+                {extension.source.name}
               </h2>
               <p className="text-gray-400 text-sm">
-                {ext.source.version} · {ext.source.language}
-                {ext.source.nsfw && (
+                {extension.source.version} · {extension.source.language}
+                {extension.source.nsfw && (
                   <span className="text-red-500 ml-2">+18</span>
                 )}
               </p>
             </div>
             <button
               className="ml-auto bg-red-600 text-white py-1 px-3 rounded-lg text-sm hover:bg-red-500 transition"
-              onClick={() => handleUninstall(ext.id)}
+              onClick={() => handleUninstall(extension.id)}
             >
               Uninstall
             </button>
