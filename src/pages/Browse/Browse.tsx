@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
-import { useExtensions } from "../../context/extensions.ts";
+import { useStore } from "../../services/store.service.ts";
 
 export default function Browse() {
-  const { extensions } = useExtensions();
+  const extensions = useStore((state) => state.extensions);
 
   const Icon = ({ src, alt }: { src: string; alt: string }) => (
     <figure className="w-12 h-12">

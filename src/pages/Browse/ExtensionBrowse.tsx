@@ -5,11 +5,11 @@ import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
 import { getMangaList } from "../../services/extensions.service.ts";
 import MangaImage from "../../components/Manga/MangaImage.tsx";
-import { useExtensions } from "../../context/extensions.ts";
+import { useStore } from "../../services/store.service.ts";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
-  const { extensions } = useExtensions();
+  const extensions = useStore((state) => state.extensions);
 
   const extension = extensions.find((extension) =>
     extension.id === extensionId

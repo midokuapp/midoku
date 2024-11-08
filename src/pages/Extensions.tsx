@@ -7,15 +7,15 @@ import {
   uninstallExtension,
 } from "../services/tauri.service.ts";
 import { FiDownload, FiTrash2 } from "react-icons/fi";
-
-import { useExtensions } from "../context/extensions.ts";
-import { useRepositoryUrl } from "../context/repositoryUrl.ts";
-import { useManifests } from "../context/manifests.ts";
+import { useStore } from "../services/store.service.ts";
 
 export default function Extensions() {
-  const { extensions, setExtensions } = useExtensions();
-  const { repositoryUrl, setRepositoryUrl } = useRepositoryUrl();
-  const { manifests, setManifests } = useManifests();
+  const extensions = useStore((state) => state.extensions);
+  const setExtensions = useStore((state) => state.setExtensions);
+  const repositoryUrl = useStore((state) => state.repositoryUrl);
+  const setRepositoryUrl = useStore((state) => state.setRepositoryUrl);
+  const manifests = useStore((state) => state.manifests);
+  const setManifests = useStore((state) => state.setManifests);
 
   // Fetch repository extensions when repositoryUrl changes
   useEffect(() => {
