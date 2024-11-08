@@ -9,7 +9,7 @@ import { useStore } from "../../services/store.service.ts";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
-  const extensions = useStore((state) => state.extensions);
+  const getExtension = useStore((state) => state.getExtension);
 
   const [extension, setExtension] = useState<Extension | null>(null);
   const [mangas, setMangas] = useState<Array<Manga>>([]);
@@ -20,9 +20,7 @@ export default function ExtensionBrowse() {
   useEffect(() => {
     if (!extensionId) return;
 
-    setExtension(
-      extensions.find((extension: Extension) => extension.id === extensionId)!,
-    );
+    setExtension(getExtension(extensionId)!);
   }, [extensionId]);
 
   useEffect(() => {

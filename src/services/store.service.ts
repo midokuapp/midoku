@@ -11,6 +11,7 @@ const repositoryUrl = await appData.get<string>("extensionRepositoryUrl") ?? "";
 interface StoreState {
   extensions: Extension[];
   setExtensions: (extensions: Extension[]) => void;
+  getExtension: (extensionId: string) => Extension | undefined;
 
   repositoryUrl: string;
   setRepositoryUrl: (repositoryUrl: string) => void;
@@ -19,9 +20,13 @@ interface StoreState {
   setManifests: (manifests: Manifest[]) => void;
 }
 
-export const useStore = create<StoreState>()((set) => ({
+export const useStore = create<StoreState>()((set, get) => ({
   extensions: new Array<Extension>(),
   setExtensions: (extensions: Extension[]) => set({ extensions }),
+  getExtension: (extensionId: string) => {
+    const extensions = get().extensions;
+    return extensions.find((extension) => extension.id === extensionId);
+  },
 
   repositoryUrl: repositoryUrl,
   setRepositoryUrl: (repositoryUrl: string) => {
