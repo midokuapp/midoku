@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 
+import { ExtensionsContext } from "../../context/extensions.ts";
 import { Extension } from "../../types/extension.ts";
 import { getIconUrl } from "../../services/extensions.service.ts";
-import { getExtensions } from "../../services/tauri.service.ts";
 
 export default function Browse() {
-  const [extensions, setExtensions] = useState<Extension[]>([]);
-
-  useEffect(() => {
-    getExtensions().then(setExtensions);
-  }, []);
+  const { extensions } = useContext(ExtensionsContext);
 
   return (
     <div>

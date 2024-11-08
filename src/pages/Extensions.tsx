@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Manifest } from "../types/manifest.ts";
 import { storeService } from "../services/store.service.ts";
 import {
@@ -10,18 +10,12 @@ import {
 
 import { Extension } from "../types/extension.ts";
 import { getIconUrl } from "../services/extensions.service.ts";
+import { ExtensionsContext } from "../context/extensions.ts";
 
 export default function Extensions() {
+  const { extensions, setExtensions } = useContext(ExtensionsContext);
   const [repositoryUrl, setRepositoryUrl] = useState<string>("");
   const [manifests, setManifests] = useState<Manifest[]>([]);
-  const [installedExtensions, setInstalledExtensions] = useState<Extension[]>(
-    [],
-  );
-
-  // Load installed extensions on component mount
-  useEffect(() => {
-    getExtensions().then(setInstalledExtensions);
-  }, []);
 
   // Load repository URL from storage and fetch manifests if URL is available
   useEffect(() => {
@@ -42,20 +36,20 @@ export default function Extensions() {
 
   // Helper to check if an extension is installed
   const isInstalled = (manifestId: string) => {
-    return installedExtensions.some((ext: Extension) => ext.id === manifestId);
+    return extensions.some((ext: Extension) => ext.id === manifestId);
   };
 
   // Install and uninstall extension actions with real-time update
   const handleInstall = async (manifest: Manifest) => {
     await installExtension(repositoryUrl, manifest);
     const updatedExtensions = await getExtensions();
-    setInstalledExtensions(updatedExtensions);
+    setExtensions(updatedExtensions);
   };
 
   const handleUninstall = async (manifestId: string) => {
     await uninstallExtension(manifestId);
     const updatedExtensions = await getExtensions();
-    setInstalledExtensions(updatedExtensions);
+    setExtensions(updatedExtensions);
   };
 
   // Map over repository extensions and create a list of components
@@ -125,7 +119,7 @@ export default function Extensions() {
       {/* Installed Extensions List */}
       <h2 className="text-xl font-semibold mb-2">Installed Extensions</h2>
       <ul className="space-y-4 mb-8">
-        {installedExtensions.map((ext: Extension) => (
+        {extensions.map((ext: Extension) => (
           <li
             key={ext.id}
             className="flex items-center gap-4 p-3 bg-gray-800 rounded-lg shadow-md"

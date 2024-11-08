@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
 import { getIconUrl, getMangaList } from "../../services/extensions.service.ts";
-import { getExtension } from "../../services/tauri.service.ts";
 import MangaImage from "../../components/Manga/MangaImage.tsx";
+import { ExtensionsContext } from "../../context/extensions.ts";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
+  const { extensions } = useContext(ExtensionsContext);
+
   const [extension, setExtension] = useState<Extension | null>(null);
   const [mangas, setMangas] = useState<Array<Manga>>([]);
   const [error, setError] = useState<string | null>(null);
@@ -17,13 +19,10 @@ export default function ExtensionBrowse() {
 
   useEffect(() => {
     if (!extensionId) return;
-    getExtension(extensionId)
-      .then((
-        extension,
-      ) => (extension !== null
-        ? setExtension(extension)
-        : setError("Erreur lors du chargement de l'extension."))
-      );
+
+    setExtension(
+      extensions.find((extension: Extension) => extension.id === extensionId)!,
+    );
   }, [extensionId]);
 
   useEffect(() => {

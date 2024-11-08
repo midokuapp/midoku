@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   createBrowserRouter,
   NavLink,
@@ -10,6 +11,9 @@ import ExtensionBrowse from "./pages/Browse/ExtensionBrowse.tsx";
 import Extensions from "./pages/Extensions.tsx";
 import More from "./pages/More.tsx";
 import MangaDetails from "./pages/MangaDetails.tsx";
+import { ExtensionsContext } from "./context/extensions.ts";
+import { getExtensions } from "./services/tauri.service.ts";
+import { Extension } from "./types/extension.ts";
 
 const router = createBrowserRouter([
   {
@@ -78,9 +82,22 @@ function Layout() {
 }
 
 export default function App() {
+  const [extensions, setExtensions] = useState<Extension[]>([]);
+
+  useEffect(() => {
+    getExtensions().then(setExtensions);
+  }, []);
+
   return (
-    <div className="flex flex-col h-screen">
-      <RouterProvider router={router} />
-    </div>
+    <ExtensionsContext.Provider
+      value={{
+        extensions,
+        setExtensions,
+      }}
+    >
+      <div className="flex flex-col h-screen">
+        <RouterProvider router={router} />
+      </div>
+    </ExtensionsContext.Provider>
   );
 }
