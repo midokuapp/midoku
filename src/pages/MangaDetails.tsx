@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import MangaImage from "../components/MangaImage.tsx";
+import MangaImage from "../components/Manga/MangaImage.tsx";
 import { Manga, ReadingMode } from "../types/manga.ts";
 import { getMangaDetails } from "../services/extensions.service.ts";
 
 import "../style/loader.css";
+import MangaChapters from "../components/Manga/MangaChapters.tsx";
 
 export default function MangaDetails() {
   const { extensionId, mangaId } = useParams<
@@ -30,7 +31,8 @@ export default function MangaDetails() {
       })
       .catch((err) => {
         setError(
-          "Erreur lors de la récupération des détails du manga. : " + err,
+          "Erreur lors de la récupération des détails du manga. : " +
+            err,
         );
         setLoading(false);
       });
@@ -68,7 +70,13 @@ export default function MangaDetails() {
   return (
     <div style={{ padding: "2rem", maxWidth: 800, margin: "0 auto" }}>
       {/* Titre et couverture du manga */}
-      <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "1.5rem",
+          alignItems: "flex-start",
+        }}
+      >
         <MangaImage src={manga.coverUrl} alt={manga.title} />
         <div>
           <h1 style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>
@@ -87,7 +95,9 @@ export default function MangaDetails() {
 
       {/* Informations sur le manga */}
       <div style={{ marginTop: "1.5rem" }}>
-        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>Détails</h2>
+        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>
+          Détails
+        </h2>
         <p style={{ marginBottom: "0.5rem" }}>
           <strong>Auteur :</strong> {manga.authorName}
         </p>
@@ -110,22 +120,8 @@ export default function MangaDetails() {
         <p>{manga.description}</p>
       </div>
 
-      {/* Lien vers le site source */}
-      <div style={{ marginTop: "2rem", textAlign: "center" }}>
-        <Link
-          to={{ pathname: manga.url }}
-          target="_blank"
-          style={{
-            padding: "0.8rem 2rem",
-            backgroundColor: "#007bff",
-            color: "white",
-            borderRadius: "5px",
-            textDecoration: "none",
-          }}
-        >
-          Lire sur le site source
-        </Link>
-      </div>
+      {/* Liste des Chapitres Disponibles */}
+      <MangaChapters extensionId={extensionId} mangaId={mangaId} />
     </div>
   );
 }

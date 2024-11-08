@@ -8,7 +8,7 @@ import {
   getIconUrl,
   getMangaList,
 } from "../../services/extensions.service.ts";
-import MangaImage from "../../components/MangaImage.tsx";
+import MangaImage from "../../components/Manga/MangaImage.tsx";
 
 import "../../style/loader.css";
 
