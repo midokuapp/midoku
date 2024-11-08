@@ -56,12 +56,12 @@ function Layout() {
   ];
 
   return (
-    <div>
+    <>
       <main className="flex-1 p-2 overflow-y-auto">
         <Outlet />
       </main>
       {/* Barre de navigation, shadow vers le haut */}
-      <nav className="fixed bottom-0 w-full bg-base-200 px-2 border-t border-base-100 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px]">
+      <nav className="w-full bg-base-200 px-2 border-t border-base-100 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px]">
         <div className="grid grid-cols-4 max-w-xl mx-auto py-3">
           {navItems.map((item) => (
             <NavLink
@@ -78,7 +78,7 @@ function Layout() {
           ))}
         </div>
       </nav>
-    </div>
+    </>
   );
 }
 
