@@ -22,8 +22,6 @@ cargo install tauri-cli --version "^2.0.0" --locked
 cargo tauri dev
 ```
 
-## Build
-
 ### Android
 
 See https://v2.tauri.app/start/prerequisites/#android for the prerequisites.
@@ -37,6 +35,12 @@ Initialize the Android project:
 
 ```bash
 cargo tauri android init --skip-targets-install
+```
+
+To develop the app for Android, run:
+
+```bash
+cargo tauri android dev
 ```
 
 To build the app for Android, run:
