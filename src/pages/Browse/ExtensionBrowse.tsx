@@ -113,12 +113,47 @@ const MangaItem = (
   const { ref, inView } = useInView();
   const [src, setSrc] = useState<string | null>(null);
 
+  const compressBlob = async (src: string, size: number) =>
+    await new Promise<string>((resolve) => {
+      const image = new Image();
+      image.src = src;
+      image.onload = () => {
+        if (image.width <= size && image.height <= size) {
+          resolve(src);
+          return;
+        }
+
+        const aspectRatio = image.width / image.height;
+
+        let width, height;
+        if (image.width < image.height) {
+          width = size;
+          height = Math.round(width / aspectRatio);
+        } else {
+          height = size;
+          width = Math.round(height * aspectRatio);
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(image, 0, 0, width, height);
+
+        const url = canvas.toDataURL("image/jpeg", 0.7);
+        resolve(url);
+      };
+    });
+
   useEffect(() => {
     fetch(manga.coverUrl)
       .then((response) => response.blob())
       .then((blob) => {
         const url = URL.createObjectURL(blob);
-        setSrc(url);
+        compressBlob(url, 300).then((url) => {
+          setSrc(url);
+        });
       });
   }, []);
 
