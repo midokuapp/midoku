@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
@@ -13,64 +14,64 @@ export default function ExtensionBrowse() {
 
   const [extension, setExtension] = useState<Extension | null>(null);
   const [mangas, setMangas] = useState<Array<Manga>>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [pagination, setPagination] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(0);
 
   useEffect(() => {
     if (!extensionId) return;
 
-    setExtension(getExtension(extensionId)!);
+    const extension = getExtension(extensionId)!;
+    setExtension(extension);
   }, [extensionId]);
 
-  useEffect(() => {
+  const loadMore = async () => {
     if (!extension) return;
-
     setLoading(true);
-    getMangaList(extension.id, [], pagination)
-      .then((data) => setMangas([...mangas, ...data[0]]))
-      .catch(() => setError("Erreur lors du chargement des mangas."))
-      .finally(() => setLoading(false));
-  }, [extension, pagination]);
+    const [nextMangas, nextHasMore] = await getMangaList(
+      extension.id,
+      [],
+      page,
+    );
+    setMangas([...mangas, ...nextMangas]);
+    setHasMore(nextHasMore);
+    setPage(page + 1);
+    setLoading(false);
+  };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        document.body.scrollHeight - 300 <
-          globalThis.scrollY + globalThis.innerHeight
-      ) {
-        if (!loading) {
-          setPagination(pagination + 1);
-        }
-      }
-    };
-    globalThis.addEventListener("scroll", handleScroll);
-    return () => globalThis.removeEventListener("scroll", handleScroll);
-  }, [loading]);
+  const [sentryRef] = useInfiniteScroll({
+    loading,
+    hasNextPage: hasMore,
+    onLoadMore: loadMore,
+  });
 
-  if (error) return <ErrorMessage error={error} />;
   if (!extension) return <Loader />;
 
   return (
-    <div className="px-2">
+    <div className="px-2 overflow-auto">
       <ExtensionHeader extension={extension} />
-      <MangaGrid mangas={mangas} extensionId={extension.id} />
-      {loading && <Loader />}
+      <Grid>
+        {mangas.map((manga: Manga) => (
+          <GridItem key={manga.id}>
+            <MangaItem manga={manga} extensionId={extension.id} />
+          </GridItem>
+        ))}
+        {(loading || hasMore) && (
+          <GridItem
+            ref={sentryRef}
+            className="col-span-full flex flex-col items-center justify-center"
+          >
+            <Loader />
+          </GridItem>
+        )}
+      </Grid>
     </div>
   );
 }
 
-const ErrorMessage = ({ error }: { error: string }) => (
-  <div className="px-8">
-    <p className="text-red-600">{error}</p>
-  </div>
-);
-
 const Loader = () => (
   <div className="flex flex-col items-center justify-center">
-    <div className="text-center py-5">Chargement...</div>
-    <div className="border-gray-300 h-10 w-10 animate-spin rounded-full border-8 border-t-blue-600">
-    </div>
+    <div className="loading loading-dots"></div>
   </div>
 );
 
@@ -85,29 +86,45 @@ const ExtensionHeader = ({ extension }: { extension: Extension }) => (
   </div>
 );
 
-const MangaGrid = (
-  { mangas, extensionId }: { mangas: Array<Manga>; extensionId: string },
-) => (
+const Grid = ({ children }: { children: React.ReactNode }) => (
   <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,5fr))] gap-4 list-none p-0">
-    {mangas.map((manga) => (
-      <li key={manga.id} className="text-center">
-        <Link
-          to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
-          state={manga}
-        >
-          <MangaImage src={manga.coverUrl} alt={manga.title} />
-        </Link>
-        <a
-          href={manga.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-800 no-underline"
-        >
-          <p className="mt-2 text-white text-sm font-bold overflow-hidden overflow-ellipsis whitespace-nowrap">
-            {manga.title}
-          </p>
-        </a>
-      </li>
-    ))}
+    {children}
   </ul>
+);
+
+type GridItemProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+const GridItem = forwardRef<React.ComponentRef<"li">, GridItemProps>(
+  function GridItem(props: GridItemProps, ref: React.LegacyRef<HTMLLIElement>) {
+    return (
+      <li ref={ref} className={props.className}>
+        {props.children}
+      </li>
+    );
+  },
+);
+
+const MangaItem = (
+  { manga, extensionId }: { manga: Manga; extensionId: string },
+) => (
+  <>
+    <Link
+      to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
+      state={manga}
+    >
+      <MangaImage src={manga.coverUrl} alt={manga.title} />
+    </Link>
+    <a
+      href={manga.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <p className="mt-2 text-sm font-bold overflow-hidden overflow-ellipsis whitespace-nowrap">
+        {manga.title}
+      </p>
+    </a>
+  </>
 );

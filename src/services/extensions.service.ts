@@ -2,14 +2,14 @@ import { invoke } from "@tauri-apps/api/core";
 
 import { Chapter } from "../types/chapter.ts";
 import { Filter } from "../types/filter.ts";
-import { Manga, MangaList } from "../types/manga.ts";
+import { Manga } from "../types/manga.ts";
 import { Page } from "../types/page.ts";
 
 export async function getMangaList(
   extensionId: string,
   filters: Filter[],
   page: number,
-): Promise<MangaList> {
+): Promise<[Manga[], boolean]> {
   return await invoke("get_manga_list", {
     extensionId: extensionId,
     filters: filters,
