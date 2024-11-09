@@ -117,7 +117,7 @@ const MangaItem = (
       <img
         src={manga.coverUrl}
         alt={manga.title}
-        className="aspect-[3/5] rounded-md object-cover"
+        className="aspect-[2/3] rounded-md object-cover"
       />
       <p className="mx-1 mt-1 line-clamp-2 text-sm font-bold">
         {manga.title}
