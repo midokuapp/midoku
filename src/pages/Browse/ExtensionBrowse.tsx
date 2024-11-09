@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useInfiniteScroll from "react-infinite-scroll-hook";
+import { useInView } from "react-intersection-observer";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
@@ -108,20 +109,29 @@ const GridItem = forwardRef<React.ComponentRef<"li">, GridItemProps>(
 
 const MangaItem = (
   { manga, extensionId }: { manga: Manga; extensionId: string },
-) => (
-  <>
-    <Link
-      to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
-      state={manga}
-    >
-      <img
-        src={manga.coverUrl}
-        alt={manga.title}
-        className="aspect-[2/3] rounded-md object-cover"
-      />
-      <p className="mx-1 mt-1 line-clamp-2 text-sm font-bold">
-        {manga.title}
-      </p>
-    </Link>
-  </>
-);
+) => {
+  const { ref, inView } = useInView();
+
+  return (
+    <>
+      <Link
+        ref={ref}
+        to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
+        state={manga}
+      >
+        <div className="w-full aspect-[2/3]">
+          {inView && (
+            <img
+              src={manga.coverUrl}
+              alt={manga.title}
+              className="h-full rounded-md object-cover"
+            />
+          )}
+        </div>
+        <p className="mx-1 mt-1 line-clamp-2 text-sm font-bold">
+          {manga.title}
+        </p>
+      </Link>
+    </>
+  );
+};
