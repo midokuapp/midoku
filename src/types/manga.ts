@@ -1,22 +1,22 @@
 export enum Status {
-  Unknown,
-  Ongoing,
-  Completed,
-  Hiatus,
-  Cancelled,
+  Unknown = "Unknown",
+  Ongoing = "Ongoing",
+  Completed = "Completed",
+  Hiatus = "Hiatus",
+  Cancelled = "Cancelled",
 }
 
 export enum ContentRating {
-  Safe,
-  Suggestive,
-  Nsfw,
+  Safe = "Safe",
+  Suggestive = "Suggestive",
+  Nsfw = "Nsfw",
 }
 
 export enum ReadingMode {
-  RightToLeft,
-  LeftToRight,
-  Vertical,
-  Scroll,
+  RightToLeft = "RightToLeft",
+  LeftToRight = "LeftToRight",
+  Vertical = "Vertical",
+  Scroll = "Scroll",
 }
 
 export interface Manga {
