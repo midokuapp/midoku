@@ -69,7 +69,7 @@ function Layout() {
               to={item.path}
               className={({ isActive }) =>
                 `flex flex-col items-center p-2 text-sm ${
-                  isActive ? "text-primary" : "text-neutral"
+                  isActive ? "text-primary" : "opacity-50 hover:opacity-100"
                 }`}
             >
               {item.icon}

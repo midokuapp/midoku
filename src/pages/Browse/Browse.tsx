@@ -20,7 +20,7 @@ export default function Browse() {
   );
 
   const Description = ({ language }: { language: string }) => (
-    <p className="text-neutral text-sm">
+    <p className="text-sm opacity-70">
       {language}
     </p>
   );

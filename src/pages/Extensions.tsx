@@ -59,8 +59,8 @@ export default function Extensions() {
     version: string;
     nsfw: boolean;
   }) => (
-    <p className="text-neutral text-sm">
-      {language} {version}
+    <p className="text-sm">
+      <span className="opacity-70">{language} {version}</span>
       {nsfw && <span className="text-error">{" "}+18</span>}
     </p>
   );
@@ -112,7 +112,7 @@ export default function Extensions() {
   return (
     <div className="max-w-xl mx-auto p-3">
       <h1 className="text-2xl font-bold mb-4">Extension Manager</h1>
-      <p className="text-neutral  mb-4">
+      <p className="mb-4 opacity-70">
         Manage your manga extensions: Install new sources or uninstall those you
         no longer need.
       </p>
