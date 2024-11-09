@@ -25,7 +25,7 @@ function MangaChapter({ extensionId, mangaId }: {
 
   return (
     <div className="mt-4">
-      <h2 className="text-xl text-white font-bold mb-4 p-2">Chapters</h2>
+      <h2 className="text-xl font-bold mb-4 p-2">Chapters</h2>
       {chapters.length === 0 ? <p>No Chapters</p> : (
         <ul className="space-y-2">
           {chapters.map((chapter: Chapter) => (
