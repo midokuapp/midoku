@@ -112,6 +112,15 @@ const MangaItem = (
 ) => {
   const { ref, inView } = useInView();
 
+  useEffect(() => {
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = manga.coverUrl;
+    });
+  }, []);
+
   return (
     <>
       <Link
