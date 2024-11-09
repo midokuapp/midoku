@@ -5,7 +5,6 @@ import useInfiniteScroll from "react-infinite-scroll-hook";
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
 import { getMangaList } from "../../services/extensions.service.ts";
-import MangaImage from "../../components/Manga/MangaImage.tsx";
 import { useStore } from "../../services/store.service.ts";
 
 export default function ExtensionBrowse() {
@@ -48,7 +47,7 @@ export default function ExtensionBrowse() {
   if (!extension) return <Loader />;
 
   return (
-    <div className="px-2 overflow-auto">
+    <div className="px-1">
       <ExtensionHeader extension={extension} />
       <Grid>
         {mangas.map((manga: Manga) => (
@@ -87,7 +86,7 @@ const ExtensionHeader = ({ extension }: { extension: Extension }) => (
 );
 
 const Grid = ({ children }: { children: React.ReactNode }) => (
-  <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,5fr))] gap-4 list-none p-0">
+  <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,5fr))] gap-3">
     {children}
   </ul>
 );
@@ -115,16 +114,14 @@ const MangaItem = (
       to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
       state={manga}
     >
-      <MangaImage src={manga.coverUrl} alt={manga.title} />
-    </Link>
-    <a
-      href={manga.url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <p className="mt-2 text-sm font-bold overflow-hidden overflow-ellipsis whitespace-nowrap">
+      <img
+        src={manga.coverUrl}
+        alt={manga.title}
+        className="aspect-[3/5] rounded-md object-cover"
+      />
+      <p className="mx-1 mt-1 line-clamp-2 text-sm font-bold">
         {manga.title}
       </p>
-    </a>
+    </Link>
   </>
 );
