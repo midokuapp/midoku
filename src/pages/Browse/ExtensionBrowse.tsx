@@ -111,14 +111,15 @@ const MangaItem = (
   { manga, extensionId }: { manga: Manga; extensionId: string },
 ) => {
   const { ref, inView } = useInView();
+  const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = resolve;
-      image.onerror = reject;
-      image.src = manga.coverUrl;
-    });
+    fetch(manga.coverUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        setSrc(url);
+      });
   }, []);
 
   return (
@@ -129,9 +130,9 @@ const MangaItem = (
         state={manga}
       >
         <div className="w-full aspect-[2/3]">
-          {inView && (
+          {inView && src && (
             <img
-              src={manga.coverUrl}
+              src={src}
               alt={manga.title}
               className="w-full h-full rounded-md object-cover"
             />
