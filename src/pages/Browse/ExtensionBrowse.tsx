@@ -124,7 +124,7 @@ const MangaItem = (
             <img
               src={manga.coverUrl}
               alt={manga.title}
-              className="h-full rounded-md object-cover"
+              className="w-full h-full rounded-md object-cover"
             />
           )}
         </div>
