@@ -110,8 +110,14 @@ const GridItem = forwardRef<React.ComponentRef<"li">, GridItemProps>(
 const MangaItem = (
   { manga, extensionId }: { manga: Manga; extensionId: string },
 ) => {
-  const { ref, inView } = useInView();
   const [src, setSrc] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const { ref, inView } = useInView({
+    onChange: (inView) => {
+      if (inView) setLoading(true);
+    },
+  });
 
   const compressBlob = async (src: string, size: number) =>
     await new Promise<string>((resolve) => {
@@ -164,12 +170,15 @@ const MangaItem = (
         to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
         state={manga}
       >
-        <div className="w-full aspect-[2/3]">
-          {inView && src && (
+        <div className="w-full aspect-[2/3] skeleton rounded-md">
+          {inView && (
             <img
               src={src}
               alt={manga.title}
-              className="w-full h-full rounded-md object-cover"
+              onLoad={() => setLoading(false)}
+              className={`w-full h-full object-cover rounded-md transition-opacity duration-300 ${
+                loading ? "opacity-0" : "opacity-1"
+              }`}
             />
           )}
         </div>
