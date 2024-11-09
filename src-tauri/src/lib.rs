@@ -1,8 +1,13 @@
 mod extension;
 
+use std::io::BufWriter;
 use std::path::PathBuf;
 
+use fast_image_resize::images::Image;
+use fast_image_resize::{FilterType, IntoImageView, ResizeAlg, ResizeOptions, Resizer};
 use flate2::read::GzDecoder;
+use image::codecs::png::PngEncoder;
+use image::ImageEncoder;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use tar::Archive;
@@ -13,6 +18,7 @@ use tauri_plugin_store::StoreExt;
 
 use crate::extension::{Extension, Extensions, Manifest, Source};
 
+const APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
 const EXTENSIONS_DIR: &str = "extensions";
 const STORE_FILE: &str = "app_data.json";
 
@@ -131,6 +137,65 @@ async fn uninstall_extension(
     Ok(())
 }
 
+#[tauri::command]
+async fn download_image(url: String, min_size: Option<u32>) -> tauri::Result<Vec<u8>> {
+    trace!(
+        "download_image called with url: {} and min_size: {:?}",
+        url,
+        min_size
+    );
+
+    let client = reqwest::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()
+        .unwrap();
+
+    let response = client
+        .get(&url)
+        .send()
+        .await
+        .expect("failed to download image");
+
+    let image = response.bytes().await.expect("failed to read image");
+
+    if min_size.is_none() {
+        return Ok(image.to_vec());
+    }
+
+    let min_size = min_size.unwrap();
+
+    let src_image = image::load_from_memory(&image).expect("failed to load image");
+    let width = src_image.width();
+    let height = src_image.height();
+
+    if width <= min_size && height <= min_size {
+        return Ok(image.to_vec());
+    }
+
+    let aspect_ratio = width as f32 / height as f32;
+    let (width, height) = if width > height {
+        (min_size as u32, (min_size as f32 / aspect_ratio) as u32)
+    } else {
+        ((min_size as f32 * aspect_ratio) as u32, min_size as u32)
+    };
+
+    let mut dst_image = Image::new(width, height, src_image.pixel_type().unwrap());
+
+    let mut resizer = Resizer::new();
+    let resize_options =
+        ResizeOptions::new().resize_alg(ResizeAlg::Convolution(FilterType::Hamming));
+    resizer
+        .resize(&src_image, &mut dst_image, Some(&resize_options))
+        .unwrap();
+
+    let mut result_buf = BufWriter::new(Vec::new());
+    PngEncoder::new(&mut result_buf)
+        .write_image(dst_image.buffer(), width, height, src_image.color().into())
+        .unwrap();
+
+    Ok(result_buf.into_inner().unwrap())
+}
+
 macro_rules! call_extension {
     ($state:expr, $extension_id:expr, $method:ident, $($args:expr),*) => {{
         trace!("{} called with extension_id: {}", stringify!($method), $extension_id);
@@ -235,6 +300,7 @@ pub fn run() {
         get_repository_extensions,
         install_extension,
         uninstall_extension,
+        download_image,
         get_manga_list,
         get_manga_details,
         get_chapter_list,
