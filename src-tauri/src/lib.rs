@@ -187,8 +187,12 @@ async fn get_page_list(
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut ctx = tauri::generate_context!();
-    tauri::Builder::default()
-        .plugin(tauri_plugin_theme::init(ctx.config_mut()))
+    let builder = tauri::Builder::default();
+
+    // Register the plugins
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    let builder = builder.plugin(tauri_plugin_theme::init(ctx.config_mut()));
+    let builder = builder
         .plugin(tauri_plugin_http::init())
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -203,35 +207,42 @@ pub fn run() {
                 .targets([Target::new(TargetKind::Stdout)])
                 .build(),
         )
-        .plugin(tauri_plugin_store::Builder::default().build())
-        .setup(|app| {
-            let app_local_data_dir: PathBuf = app
-                .path()
-                .app_local_data_dir()
-                .expect("failed to get local app data dir");
+        .plugin(tauri_plugin_store::Builder::default().build());
 
-            let extensions_dir = app_local_data_dir.join(EXTENSIONS_DIR);
-            std::fs::create_dir_all(&extensions_dir).expect("failed to create extensions dir");
+    // Setup the app
+    let builder = builder.setup(|app| {
+        let app_local_data_dir: PathBuf = app
+            .path()
+            .app_local_data_dir()
+            .expect("failed to get local app data dir");
 
-            // Load the extensions.
-            let extensions = Extensions::from_dir(extensions_dir);
-            app.manage(extensions);
+        let extensions_dir = app_local_data_dir.join(EXTENSIONS_DIR);
+        std::fs::create_dir_all(&extensions_dir).expect("failed to create extensions dir");
 
-            // Load the store.
-            let _store = app.store(STORE_FILE)?;
+        // Load the extensions.
+        let extensions = Extensions::from_dir(extensions_dir);
+        app.manage(extensions);
 
-            Ok(())
-        })
-        .invoke_handler(tauri::generate_handler![
-            get_extensions,
-            get_repository_extensions,
-            install_extension,
-            uninstall_extension,
-            get_manga_list,
-            get_manga_details,
-            get_chapter_list,
-            get_page_list
-        ])
+        // Load the store.
+        let _store = app.store(STORE_FILE)?;
+
+        Ok(())
+    });
+
+    // Register the commands
+    let builder = builder.invoke_handler(tauri::generate_handler![
+        get_extensions,
+        get_repository_extensions,
+        install_extension,
+        uninstall_extension,
+        get_manga_list,
+        get_manga_details,
+        get_chapter_list,
+        get_page_list
+    ]);
+
+    // Run the application
+    builder
         .run(ctx)
         .expect("error while running tauri application");
 }
