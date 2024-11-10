@@ -123,7 +123,7 @@ const MangaItem = (
   });
 
   useEffect(() => {
-    downloadImage(manga.coverUrl, 300).then((bytes) => {
+    downloadImage(manga.coverUrl, 300, 450).then((bytes) => {
       const blob = new Blob([bytes]);
       const url = URL.createObjectURL(blob);
       setSrc(url);

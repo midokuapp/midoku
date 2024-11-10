@@ -4,7 +4,9 @@ use std::io::BufWriter;
 use std::path::PathBuf;
 
 use fast_image_resize::images::Image;
-use fast_image_resize::{FilterType, IntoImageView, ResizeAlg, ResizeOptions, Resizer};
+use fast_image_resize::{
+    CropBox, FilterType, IntoImageView, ResizeAlg, ResizeOptions, Resizer, SrcCropping,
+};
 use flate2::read::GzDecoder;
 use image::codecs::png::PngEncoder;
 use image::ImageEncoder;
@@ -141,14 +143,9 @@ async fn uninstall_extension(
 async fn download_image(
     pool: State<'_, rayon::ThreadPool>,
     url: String,
-    min_size: Option<u32>,
+    width: Option<u32>,
+    height: Option<u32>,
 ) -> tauri::Result<Vec<u8>> {
-    trace!(
-        "download_image called with url: {} and min_size: {:?}",
-        url,
-        min_size
-    );
-
     let client = reqwest::Client::builder()
         .user_agent(APP_USER_AGENT)
         .build()
@@ -161,42 +158,65 @@ async fn download_image(
         .expect("failed to download image");
 
     let image = response.bytes().await.expect("failed to read image");
+    let image_bytes = image.to_vec();
 
-    if min_size.is_none() {
-        return Ok(image.to_vec());
+    // If no width or height is provided, return the image as is
+    if width.is_none() && height.is_none() {
+        return Ok(image_bytes);
     }
 
-    let min_size = min_size.unwrap();
+    let src_image = image::load_from_memory(&image_bytes).expect("failed to load image");
+    let src_width = src_image.width();
+    let src_height = src_image.height();
 
-    let src_image = image::load_from_memory(&image).expect("failed to load image");
-    let width = src_image.width();
-    let height = src_image.height();
-
-    if width <= min_size && height <= min_size {
-        return Ok(image.to_vec());
-    }
-
-    let aspect_ratio = width as f32 / height as f32;
-    let (width, height) = if width > height {
-        (min_size as u32, (min_size as f32 / aspect_ratio) as u32)
-    } else {
-        ((min_size as f32 * aspect_ratio) as u32, min_size as u32)
+    // Calculate the width and height of the resized image
+    let (dst_width, dst_height) = match (width, height) {
+        (Some(width), Some(height)) => (width, height),
+        (Some(width), None) => {
+            let height = (width as f32 / src_width as f32 * src_height as f32) as u32;
+            (width, height)
+        }
+        (None, Some(height)) => {
+            let width = (height as f32 / src_height as f32 * src_width as f32) as u32;
+            (width, height)
+        }
+        _ => unreachable!(),
     };
 
-    let mut dst_image = Image::new(width, height, src_image.pixel_type().unwrap());
+    // If the image is smaller than the requested size, return the image as is
+    if dst_width >= src_width && dst_height >= src_height {
+        return Ok(image_bytes);
+    }
+
+    let mut dst_image = Image::new(dst_width, dst_height, src_image.pixel_type().unwrap());
+
+    let mut resizer = Resizer::new();
+    let resize_options = ResizeOptions {
+        algorithm: ResizeAlg::Convolution(FilterType::Hamming),
+        cropping: SrcCropping::Crop(CropBox::fit_src_into_dst_size(
+            src_width,
+            src_height,
+            dst_width,
+            dst_height,
+            Some((0.5, 0.5)),
+        )),
+        ..Default::default()
+    };
 
     let (tx, rx) = tokio::sync::oneshot::channel();
     pool.install(move || {
-        let mut resizer = Resizer::new();
-        let resize_options =
-            ResizeOptions::new().resize_alg(ResizeAlg::Convolution(FilterType::Hamming));
         resizer
             .resize(&src_image, &mut dst_image, Some(&resize_options))
             .unwrap();
 
         let mut result_buf = BufWriter::new(Vec::new());
         PngEncoder::new(&mut result_buf)
-            .write_image(dst_image.buffer(), width, height, src_image.color().into())
+            .write_image(
+                dst_image.buffer(),
+                dst_width,
+                dst_height,
+                src_image.color().into(),
+            )
             .unwrap();
 
         tx.send(result_buf).unwrap();

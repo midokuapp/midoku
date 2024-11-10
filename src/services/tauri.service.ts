@@ -40,12 +40,14 @@ export async function uninstallExtension(extensionId: string): Promise<void> {
 
 export async function downloadImage(
   url: string,
-  minSize: number | null,
+  width: number | null,
+  height: number | null,
 ): Promise<Uint8Array> {
   return new Uint8Array(
     await invoke("download_image", {
       url: url,
-      minSize: minSize,
+      width: width,
+      height: height,
     }),
   );
 }
