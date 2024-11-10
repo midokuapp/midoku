@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useInView } from "react-intersection-observer";
 
 import { Extension } from "../../types/extension.ts";
@@ -8,6 +7,7 @@ import { Manga } from "../../types/manga.ts";
 import { getMangaList } from "../../services/extensions.service.ts";
 import { useStore } from "../../services/store.service.ts";
 import { downloadImage } from "../../services/tauri.service.ts";
+import useInfiniteScroll from "../../utils/infinite-scroll-hook.ts";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
@@ -15,7 +15,6 @@ export default function ExtensionBrowse() {
 
   const [extension, setExtension] = useState<Extension | null>(null);
   const [mangas, setMangas] = useState<Array<Manga>>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [page, setPage] = useState<number>(0);
 
@@ -28,7 +27,6 @@ export default function ExtensionBrowse() {
 
   const loadMore = async () => {
     if (!extension) return;
-    setLoading(true);
     const [nextMangas, nextHasMore] = await getMangaList(
       extension.id,
       [],
@@ -37,13 +35,12 @@ export default function ExtensionBrowse() {
     setMangas([...mangas, ...nextMangas]);
     setHasMore(nextHasMore);
     setPage(page + 1);
-    setLoading(false);
   };
 
-  const [sentryRef] = useInfiniteScroll({
-    loading,
-    hasNextPage: hasMore,
+  const { containerRef, loading } = useInfiniteScroll({
+    hasMore: hasMore,
     onLoadMore: loadMore,
+    offset: "50vh",
   });
 
   if (!extension) return <Loader />;
@@ -51,17 +48,14 @@ export default function ExtensionBrowse() {
   return (
     <div className="px-1">
       <ExtensionHeader extension={extension} />
-      <Grid>
+      <Grid ref={containerRef}>
         {mangas.map((manga: Manga) => (
           <GridItem key={manga.id}>
             <MangaItem manga={manga} extensionId={extension.id} />
           </GridItem>
         ))}
         {(loading || hasMore) && (
-          <GridItem
-            ref={sentryRef}
-            className="col-span-full flex flex-col items-center justify-center"
-          >
+          <GridItem className="col-span-full flex flex-col items-center justify-center">
             <Loader />
           </GridItem>
         )}
@@ -87,25 +81,33 @@ const ExtensionHeader = ({ extension }: { extension: Extension }) => (
   </div>
 );
 
-const Grid = ({ children }: { children: React.ReactNode }) => (
-  <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,5fr))] gap-3">
-    {children}
-  </ul>
-);
-
-type GridItemProps = {
+type GridProps = {
   children: React.ReactNode;
-  className?: string;
 };
 
-const GridItem = forwardRef<React.ComponentRef<"li">, GridItemProps>(
-  function GridItem(props: GridItemProps, ref: React.LegacyRef<HTMLLIElement>) {
+const Grid = forwardRef<React.ComponentRef<"ul">, GridProps>(
+  function Grid(props: GridProps, ref: React.LegacyRef<HTMLUListElement>) {
     return (
-      <li ref={ref} className={props.className}>
+      <ul
+        ref={ref}
+        className="grid grid-cols-[repeat(auto-fill,minmax(100px,5fr))] gap-3"
+      >
         {props.children}
-      </li>
+      </ul>
     );
   },
+);
+
+const GridItem = (
+  { children, key, className }: {
+    children: React.ReactNode;
+    key?: string;
+    className?: string;
+  },
+) => (
+  <li key={key} className={className}>
+    {children}
+  </li>
 );
 
 const MangaItem = (

@@ -15,7 +15,6 @@
     "npm:postcss@^8.4.47": "8.4.47",
     "npm:react-dom@18.3.1": "18.3.1_react@18.3.1",
     "npm:react-icons@5.3.0": "5.3.0_react@18.3.1",
-    "npm:react-infinite-scroll-hook@5.0.1": "5.0.1_react@18.3.1_react-dom@18.3.1__react@18.3.1",
     "npm:react-infinite-scroller@^1.2.6": "1.2.6_react@18.3.1",
     "npm:react-intersection-observer@9.13.1": "9.13.1_react@18.3.1_react-dom@18.3.1__react@18.3.1",
     "npm:react-intersection-observer@^9.13.1": "9.13.1_react@18.3.1_react-dom@18.3.1__react@18.3.1",
@@ -933,26 +932,11 @@
         "react"
       ]
     },
-    "react-infinite-scroll-hook@5.0.1_react@18.3.1_react-dom@18.3.1__react@18.3.1": {
-      "integrity": "sha512-fn6+8BAZLQ9C1fvO5kPicGjDR2WHxK7rP4aaSWuaJkvtoJjYuudGJ9wjgPox7dghKm5Xj9cpKFycM86/wAJ3ig==",
-      "dependencies": [
-        "react",
-        "react-dom",
-        "react-intersection-observer-hook"
-      ]
-    },
     "react-infinite-scroller@1.2.6_react@18.3.1": {
       "integrity": "sha512-mGdMyOD00YArJ1S1F3TVU9y4fGSfVVl6p5gh/Vt4u99CJOptfVu/q5V/Wlle72TMgYlBwIhbxK5wF0C/R33PXQ==",
       "dependencies": [
         "prop-types",
         "react"
-      ]
-    },
-    "react-intersection-observer-hook@3.0.1_react@18.3.1_react-dom@18.3.1__react@18.3.1": {
-      "integrity": "sha512-nehzFUV+jVY49tc9FOm4yJHrmFFtCmsBZKiN1rUUB2675CMBf6kKu1ekuTqvCnmh4XG7RFP3bMyAevfqfV94xw==",
-      "dependencies": [
-        "react",
-        "react-dom"
       ]
     },
     "react-intersection-observer@9.13.1_react@18.3.1_react-dom@18.3.1__react@18.3.1": {
@@ -1231,7 +1215,6 @@
       "npm:postcss@8.4.47",
       "npm:react-dom@18.3.1",
       "npm:react-icons@5.3.0",
-      "npm:react-infinite-scroll-hook@5.0.1",
       "npm:react-intersection-observer@9.13.1",
       "npm:react-router-dom@6.27.0",
       "npm:react@18.3.1",
