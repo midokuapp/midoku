@@ -22,11 +22,12 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2.0.2", features = [] }
 
 [dependencies]
-fast_image_resize = { version = "5.0.0", features = ["image", "rayon"] }
+fast_image_resize = { version = "5.0.0", features = ["image"] }
 flate2 = "1.0.34"
 image = "0.25.5"
 log = "0.4.22"
 midoku-bindings = { git = "https://github.com/midokuapp/midoku-rs.git" }
+rayon = "1.10.0"
 serde_json = "1.0.132"
 serde = { version = "1.0.214", features = ["derive"] }
 tar = "0.4.43"

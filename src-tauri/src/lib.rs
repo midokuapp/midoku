@@ -138,7 +138,11 @@ async fn uninstall_extension(
 }
 
 #[tauri::command]
-async fn download_image(url: String, min_size: Option<u32>) -> tauri::Result<Vec<u8>> {
+async fn download_image(
+    pool: State<'_, rayon::ThreadPool>,
+    url: String,
+    min_size: Option<u32>,
+) -> tauri::Result<Vec<u8>> {
     trace!(
         "download_image called with url: {} and min_size: {:?}",
         url,
@@ -181,17 +185,23 @@ async fn download_image(url: String, min_size: Option<u32>) -> tauri::Result<Vec
 
     let mut dst_image = Image::new(width, height, src_image.pixel_type().unwrap());
 
-    let mut resizer = Resizer::new();
-    let resize_options =
-        ResizeOptions::new().resize_alg(ResizeAlg::Convolution(FilterType::Hamming));
-    resizer
-        .resize(&src_image, &mut dst_image, Some(&resize_options))
-        .unwrap();
+    let (tx, rx) = tokio::sync::oneshot::channel();
+    pool.install(move || {
+        let mut resizer = Resizer::new();
+        let resize_options =
+            ResizeOptions::new().resize_alg(ResizeAlg::Convolution(FilterType::Hamming));
+        resizer
+            .resize(&src_image, &mut dst_image, Some(&resize_options))
+            .unwrap();
 
-    let mut result_buf = BufWriter::new(Vec::new());
-    PngEncoder::new(&mut result_buf)
-        .write_image(dst_image.buffer(), width, height, src_image.color().into())
-        .unwrap();
+        let mut result_buf = BufWriter::new(Vec::new());
+        PngEncoder::new(&mut result_buf)
+            .write_image(dst_image.buffer(), width, height, src_image.color().into())
+            .unwrap();
+
+        tx.send(result_buf).unwrap();
+    });
+    let result_buf = rx.await.unwrap();
 
     Ok(result_buf.into_inner().unwrap())
 }
@@ -251,6 +261,14 @@ async fn get_page_list(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let num_threads = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1);
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(num_threads.min(4))
+        .build()
+        .unwrap();
+
     let mut ctx = tauri::generate_context!();
     let builder = tauri::Builder::default();
 
@@ -290,6 +308,9 @@ pub fn run() {
 
         // Load the store.
         let _store = app.store(STORE_FILE)?;
+
+        // Manage the thread pool
+        app.manage(pool);
 
         Ok(())
     });
