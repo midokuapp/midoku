@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useInView } from "react-intersection-observer";
 
 import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
@@ -8,6 +7,7 @@ import { getMangaList } from "../../services/extensions.service.ts";
 import { useStore } from "../../services/store.service.ts";
 import { downloadImage } from "../../services/tauri.service.ts";
 import useInfiniteScroll from "../../utils/infinite-scroll-hook.ts";
+import useLazyImage from "../../utils/lazy-image-hook.ts";
 
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
@@ -116,10 +116,11 @@ const MangaItem = (
   const [src, setSrc] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { ref, inView } = useInView({
+  const { containerRef, inView } = useLazyImage({
     onChange: (inView) => {
       if (inView) setLoading(true);
     },
+    offset: "200vh",
   });
 
   useEffect(() => {
@@ -133,11 +134,13 @@ const MangaItem = (
   return (
     <>
       <Link
-        ref={ref}
         to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
         state={manga}
       >
-        <div className="w-full aspect-[2/3] skeleton rounded-md">
+        <div
+          ref={containerRef}
+          className="w-full aspect-[2/3] skeleton rounded-md relative"
+        >
           {inView && (
             <img
               src={src}
