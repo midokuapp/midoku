@@ -9,11 +9,17 @@
   "tasks": {
     "dev": "deno run -A npm:vite dev",
     "build": "deno run -A npm:vite build",
-    "check": "deno check src/ && deno task check:tauri",
+
+    "check": "deno task check:deno && deno task check:tauri",
+    "check:deno": "deno check src/",
     "check:tauri": "cd src-tauri/ && cargo check && cd ..",
-    "lint": "deno lint && deno fmt --check && deno task lint:tauri",
+
+    "lint": "deno task lint:deno && deno task lint:tauri",
+    "lint:deno": "deno lint && deno fmt --check",
     "lint:tauri": "cd src-tauri/ && cargo fmt --check && cd ..",
-    "fmt": "deno lint --fix && deno fmt && deno task fmt:tauri",
+
+    "fmt": "deno task fmt:deno && deno task fmt:tauri",
+    "fmt:deno": "deno lint --fix && deno fmt",
     "fmt:tauri": "cd src-tauri/ && cargo fmt && cd .."
   },
   "compilerOptions": {
