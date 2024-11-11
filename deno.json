@@ -9,9 +9,12 @@
   "tasks": {
     "dev": "deno run -A npm:vite dev",
     "build": "deno run -A npm:vite build",
-    "check": "deno check src/",
-    "lint": "deno lint && deno fmt --check",
-    "fmt": "deno lint --fix && deno fmt"
+    "check": "deno check src/ && deno task check:tauri",
+    "check:tauri": "cd src-tauri/ && cargo check && cd ..",
+    "lint": "deno lint && deno fmt --check && deno task lint:tauri",
+    "lint:tauri": "cd src-tauri/ && cargo fmt --check && cd ..",
+    "fmt": "deno lint --fix && deno fmt && deno task fmt:tauri",
+    "fmt:tauri": "cd src-tauri/ && cargo fmt && cd .."
   },
   "compilerOptions": {
     "jsx": "react-jsx",
