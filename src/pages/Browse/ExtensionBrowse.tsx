@@ -125,29 +125,27 @@ const MangaItem = (
   }, []);
 
   return (
-    <>
-      <Link
-        to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
-        state={manga}
-      >
-        <div className="w-full aspect-[2/3] skeleton rounded-md">
-          <LazyImage
-            src={src}
-            alt={manga.title}
-            onLoad={() => setLoading(false)}
-            onChange={(inView) => {
-              if (inView) setLoading(true);
-            }}
-            className={`w-full h-full object-cover rounded-md transition-opacity duration-300 ${
-              loading ? "opacity-0" : "opacity-1"
-            }`}
-            offset="200vh"
-          />
-        </div>
-        <p className="mx-1 mt-1 line-clamp-2 text-sm font-bold">
-          {manga.title}
-        </p>
-      </Link>
-    </>
+    <Link
+      to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
+      state={manga}
+    >
+      <div className="w-full aspect-[2/3] skeleton rounded-md">
+        <LazyImage
+          src={src}
+          alt={manga.title}
+          onLoad={() => setLoading(false)}
+          onChange={(inView) => {
+            if (inView) setLoading(true);
+          }}
+          className={`w-full h-full object-cover rounded-md transition-opacity duration-300 ${
+            loading ? "opacity-0" : "opacity-1"
+          }`}
+          offset="200vh"
+        />
+      </div>
+      <p className="mx-1 mt-1 line-clamp-2 text-sm font-bold">
+        {manga.title}
+      </p>
+    </Link>
   );
 };
