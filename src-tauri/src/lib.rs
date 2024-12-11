@@ -146,65 +146,63 @@ async fn download_image(
     width: Option<u32>,
     height: Option<u32>,
 ) -> tauri::Result<Vec<u8>> {
-    let client = reqwest::Client::builder()
-        .user_agent(APP_USER_AGENT)
-        .build()
-        .unwrap();
-
-    let response = client
-        .get(&url)
-        .send()
-        .await
-        .expect("failed to download image");
-
-    let image = response.bytes().await.expect("failed to read image");
-    let image_bytes = image.to_vec();
-
-    // If no width or height is provided, return the image as is
-    if width.is_none() && height.is_none() {
-        return Ok(image_bytes);
-    }
-
-    let src_image = image::load_from_memory(&image_bytes).expect("failed to load image");
-    let src_width = src_image.width();
-    let src_height = src_image.height();
-
-    // Calculate the width and height of the resized image
-    let (dst_width, dst_height) = match (width, height) {
-        (Some(width), Some(height)) => (width, height),
-        (Some(width), None) => {
-            let height = (width as f32 / src_width as f32 * src_height as f32) as u32;
-            (width, height)
-        }
-        (None, Some(height)) => {
-            let width = (height as f32 / src_height as f32 * src_width as f32) as u32;
-            (width, height)
-        }
-        _ => unreachable!(),
-    };
-
-    // If the image is smaller than the requested size, return the image as is
-    if dst_width >= src_width && dst_height >= src_height {
-        return Ok(image_bytes);
-    }
-
-    let mut dst_image = Image::new(dst_width, dst_height, src_image.pixel_type().unwrap());
-
-    let mut resizer = Resizer::new();
-    let resize_options = ResizeOptions {
-        algorithm: ResizeAlg::Convolution(FilterType::Hamming),
-        cropping: SrcCropping::Crop(CropBox::fit_src_into_dst_size(
-            src_width,
-            src_height,
-            dst_width,
-            dst_height,
-            Some((0.5, 0.5)),
-        )),
-        ..Default::default()
-    };
-
     let (tx, rx) = tokio::sync::oneshot::channel();
     pool.install(move || {
+        let client = reqwest::blocking::Client::builder()
+            .user_agent(APP_USER_AGENT)
+            .build()
+            .unwrap();
+
+        let response = client.get(&url).send().expect("failed to download image");
+
+        let image = response.bytes().expect("failed to read image");
+        let image_bytes = image.to_vec();
+
+        // If no width or height is provided, return the image as is
+        if width.is_none() && height.is_none() {
+            tx.send(Ok(image_bytes)).unwrap();
+            return;
+        }
+
+        let src_image = image::load_from_memory(&image_bytes).expect("failed to load image");
+        let src_width = src_image.width();
+        let src_height = src_image.height();
+
+        // Calculate the width and height of the resized image
+        let (dst_width, dst_height) = match (width, height) {
+            (Some(width), Some(height)) => (width, height),
+            (Some(width), None) => {
+                let height = (width as f32 / src_width as f32 * src_height as f32) as u32;
+                (width, height)
+            }
+            (None, Some(height)) => {
+                let width = (height as f32 / src_height as f32 * src_width as f32) as u32;
+                (width, height)
+            }
+            _ => unreachable!(),
+        };
+
+        // If the image is smaller than the requested size, return the image as is
+        if dst_width >= src_width && dst_height >= src_height {
+            tx.send(Ok(image_bytes)).unwrap();
+            return;
+        }
+
+        let mut dst_image = Image::new(dst_width, dst_height, src_image.pixel_type().unwrap());
+
+        let mut resizer = Resizer::new();
+        let resize_options = ResizeOptions {
+            algorithm: ResizeAlg::Convolution(FilterType::Bilinear),
+            cropping: SrcCropping::Crop(CropBox::fit_src_into_dst_size(
+                src_width,
+                src_height,
+                dst_width,
+                dst_height,
+                Some((0.5, 0.5)),
+            )),
+            ..Default::default()
+        };
+
         resizer
             .resize(&src_image, &mut dst_image, Some(&resize_options))
             .unwrap();
@@ -219,11 +217,11 @@ async fn download_image(
             )
             .unwrap();
 
-        tx.send(result_buf).unwrap();
+        tx.send(result_buf.into_inner()).unwrap();
     });
     let result_buf = rx.await.unwrap();
 
-    Ok(result_buf.into_inner().unwrap())
+    Ok(result_buf.unwrap())
 }
 
 macro_rules! call_extension {
