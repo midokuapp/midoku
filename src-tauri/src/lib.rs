@@ -1,24 +1,20 @@
 mod extension;
+mod util;
 
-use std::io::BufWriter;
 use std::path::PathBuf;
 
-use fast_image_resize::images::Image;
-use fast_image_resize::{
-    CropBox, FilterType, IntoImageView, ResizeAlg, ResizeOptions, Resizer, SrcCropping,
-};
 use flate2::read::GzDecoder;
-use image::codecs::png::PngEncoder;
-use image::ImageEncoder;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use tar::Archive;
+use tauri::http::Response;
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_http::reqwest;
 use tauri_plugin_log::{Target, TargetKind};
 use tauri_plugin_store::StoreExt;
 
 use crate::extension::{Extension, Extensions, Manifest, Source};
+use crate::util::{http, image};
 
 const APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
 const EXTENSIONS_DIR: &str = "extensions";
@@ -139,91 +135,6 @@ async fn uninstall_extension(
     Ok(())
 }
 
-#[tauri::command]
-async fn download_image(
-    pool: State<'_, rayon::ThreadPool>,
-    url: String,
-    width: Option<u32>,
-    height: Option<u32>,
-) -> tauri::Result<Vec<u8>> {
-    let (tx, rx) = tokio::sync::oneshot::channel();
-    pool.install(move || {
-        let client = reqwest::blocking::Client::builder()
-            .user_agent(APP_USER_AGENT)
-            .build()
-            .unwrap();
-
-        let response = client.get(&url).send().expect("failed to download image");
-
-        let image = response.bytes().expect("failed to read image");
-        let image_bytes = image.to_vec();
-
-        // If no width or height is provided, return the image as is
-        if width.is_none() && height.is_none() {
-            tx.send(Ok(image_bytes)).unwrap();
-            return;
-        }
-
-        let src_image = image::load_from_memory(&image_bytes).expect("failed to load image");
-        let src_width = src_image.width();
-        let src_height = src_image.height();
-
-        // Calculate the width and height of the resized image
-        let (dst_width, dst_height) = match (width, height) {
-            (Some(width), Some(height)) => (width, height),
-            (Some(width), None) => {
-                let height = (width as f32 / src_width as f32 * src_height as f32) as u32;
-                (width, height)
-            }
-            (None, Some(height)) => {
-                let width = (height as f32 / src_height as f32 * src_width as f32) as u32;
-                (width, height)
-            }
-            _ => unreachable!(),
-        };
-
-        // If the image is smaller than the requested size, return the image as is
-        if dst_width >= src_width && dst_height >= src_height {
-            tx.send(Ok(image_bytes)).unwrap();
-            return;
-        }
-
-        let mut dst_image = Image::new(dst_width, dst_height, src_image.pixel_type().unwrap());
-
-        let mut resizer = Resizer::new();
-        let resize_options = ResizeOptions {
-            algorithm: ResizeAlg::Convolution(FilterType::Bilinear),
-            cropping: SrcCropping::Crop(CropBox::fit_src_into_dst_size(
-                src_width,
-                src_height,
-                dst_width,
-                dst_height,
-                Some((0.5, 0.5)),
-            )),
-            ..Default::default()
-        };
-
-        resizer
-            .resize(&src_image, &mut dst_image, Some(&resize_options))
-            .unwrap();
-
-        let mut result_buf = BufWriter::new(Vec::new());
-        PngEncoder::new(&mut result_buf)
-            .write_image(
-                dst_image.buffer(),
-                dst_width,
-                dst_height,
-                src_image.color().into(),
-            )
-            .unwrap();
-
-        tx.send(result_buf.into_inner()).unwrap();
-    });
-    let result_buf = rx.await.unwrap();
-
-    Ok(result_buf.unwrap())
-}
-
 macro_rules! call_extension {
     ($state:expr, $extension_id:expr, $method:ident, $($args:expr),*) => {{
         trace!("{} called with extension_id: {}", stringify!($method), $extension_id);
@@ -298,8 +209,10 @@ pub fn run() {
         .plugin(
             tauri_plugin_log::Builder::default()
                 .level(log::LevelFilter::Trace)
+                .level_for("async_io", log::LevelFilter::Info)
                 .level_for("cranelift_codegen", log::LevelFilter::Info)
                 .level_for("cranelift_wasm", log::LevelFilter::Info)
+                .level_for("polling", log::LevelFilter::Info)
                 .level_for("regalloc2", log::LevelFilter::Info)
                 .level_for("reqwest", log::LevelFilter::Info)
                 .level_for("wasmtime", log::LevelFilter::Info)
@@ -339,12 +252,115 @@ pub fn run() {
         get_repository_extensions,
         install_extension,
         uninstall_extension,
-        download_image,
         get_manga_list,
         get_manga_details,
         get_chapter_list,
         get_page_list
     ]);
+
+    let builder =
+        builder.register_asynchronous_uri_scheme_protocol("gallery", |app, request, responder| {
+            let pool = app.app_handle().state::<rayon::ThreadPool>();
+
+            let not_found = Response::builder().status(404).body(Vec::new()).unwrap();
+
+            if request.method() != "GET" {
+                responder.respond(not_found);
+                return;
+            }
+
+            let uri = request.uri();
+            let query = uri.query().unwrap_or_default();
+
+            let image_url = {
+                let start_pos = match query.find("url=") {
+                    Some(pos) => pos + 4,
+                    None => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                };
+                let end_pos = match query[start_pos..].find("&") {
+                    Some(pos) => start_pos + pos,
+                    None => start_pos + query[start_pos..].len(),
+                };
+                match urlencoding::decode(&query[start_pos..end_pos]) {
+                    Ok(url) => url.to_string(),
+                    Err(_) => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                }
+            };
+
+            let image_extension = {
+                let extension = reqwest::Url::parse(&image_url).ok().and_then(|url| {
+                    url.path()
+                        .rsplit_once('.')
+                        .map(|(_, extension)| extension.to_string())
+                });
+
+                match extension.as_deref() {
+                    Some("png" | "jpg" | "jpeg" | "gif" | "bmp" | "webp") => extension.unwrap(),
+                    _ => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                }
+            };
+
+            let width = if let Some(start_pos) = query.find("width=") {
+                let start_pos = start_pos + 6;
+                let end_pos = match query[start_pos..].find("&") {
+                    Some(pos) => start_pos + pos,
+                    None => start_pos + query[start_pos..].len(),
+                };
+                let raw = &query[start_pos..end_pos];
+                raw.parse::<u32>().ok()
+            } else {
+                None
+            };
+
+            let height = if let Some(start_pos) = query.find("height=") {
+                let start_pos = start_pos + 7;
+                let end_pos = match query[start_pos..].find("&") {
+                    Some(pos) => start_pos + pos,
+                    None => start_pos + query[start_pos..].len(),
+                };
+                let raw = &query[start_pos..end_pos];
+                raw.parse::<u32>().ok()
+            } else {
+                None
+            };
+
+            pool.spawn(move || {
+                let image_src = match http::download_bytes(image_url) {
+                    Ok(src) => src,
+                    Err(_) => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                };
+                let image_src = match image::resize(image_src, width, height) {
+                    Ok(src) => src,
+                    Err(_) => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                };
+                let response = match Response::builder()
+                    .header("Content-Type", format!("image/{}", image_extension))
+                    .body(image_src)
+                {
+                    Ok(response) => response,
+                    Err(_) => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                };
+                responder.respond(response);
+            });
+        });
 
     // Run the application
     builder

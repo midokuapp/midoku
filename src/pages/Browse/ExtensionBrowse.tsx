@@ -5,7 +5,6 @@ import { Extension } from "../../types/extension.ts";
 import { Manga } from "../../types/manga.ts";
 import { getMangaList } from "../../services/extensions.service.ts";
 import { useStore } from "../../services/store.service.ts";
-import { downloadImage } from "../../services/tauri.service.ts";
 import useInfiniteScroll from "../../utils/infinite-scroll-hook.ts";
 import LazyImage from "../../components/LazyImage.tsx";
 
@@ -113,16 +112,7 @@ const GridItem = (
 const MangaItem = (
   { manga, extensionId }: { manga: Manga; extensionId: string },
 ) => {
-  const [src, setSrc] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    downloadImage(manga.coverUrl, 300, 450).then((bytes) => {
-      const blob = new Blob([bytes]);
-      const url = URL.createObjectURL(blob);
-      setSrc(url);
-    });
-  }, []);
 
   return (
     <Link
@@ -131,7 +121,9 @@ const MangaItem = (
     >
       <div className="w-full aspect-[2/3] skeleton rounded-md">
         <LazyImage
-          src={src}
+          src={`gallery://localhost/?url=${
+            encodeURIComponent(manga.coverUrl)
+          }&width=300&height=450`}
           alt={manga.title}
           onLoad={() => setLoading(false)}
           onChange={(inView) => {

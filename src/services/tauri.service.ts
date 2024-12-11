@@ -37,17 +37,3 @@ export async function uninstallExtension(extensionId: string): Promise<void> {
     extensionId: extensionId,
   });
 }
-
-export async function downloadImage(
-  url: string,
-  width: number | null,
-  height: number | null,
-): Promise<Uint8Array> {
-  return new Uint8Array(
-    await invoke("download_image", {
-      url: url,
-      width: width,
-      height: height,
-    }),
-  );
-}
