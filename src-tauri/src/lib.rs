@@ -53,6 +53,9 @@ pub fn run() {
         )
         .plugin(tauri_plugin_store::Builder::default().build());
 
+    // Register states
+    let builder = builder.manage(pool);
+
     // Setup the app
     let builder = builder.setup(|app| {
         let app_local_data_dir: PathBuf = app
@@ -69,9 +72,6 @@ pub fn run() {
 
         // Load the store.
         let _store = app.store(STORE_FILE)?;
-
-        // Manage the thread pool
-        app.manage(pool);
 
         Ok(())
     });
