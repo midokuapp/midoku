@@ -1,42 +1,62 @@
 use std::io::Cursor;
 
 use image::imageops::FilterType;
-use image::ImageReader;
+use image::{DynamicImage, ImageFormat, ImageReader};
 
 use crate::Result;
 
-pub fn resize(src: Vec<u8>, width: Option<u32>, height: Option<u32>) -> Result<Vec<u8>> {
-    if width.is_none() && height.is_none() {
-        return Err("either width or height must be specified.".into());
+pub struct Image {
+    format: ImageFormat,
+    image_src: DynamicImage,
+    width: usize,
+    height: usize,
+}
+
+impl TryFrom<Vec<u8>> for Image {
+    type Error = Box<dyn std::error::Error>;
+
+    fn try_from(value: Vec<u8>) -> std::result::Result<Self, Self::Error> {
+        let reader = ImageReader::new(Cursor::new(value)).with_guessed_format()?;
+        let format = reader
+            .format()
+            .ok_or("image format could not be guessed.")?;
+
+        let image_src = reader.decode()?;
+        let width = image_src.width() as usize;
+        let height = image_src.height() as usize;
+
+        Ok(Image {
+            format,
+            image_src,
+            width,
+            height,
+        })
+    }
+}
+
+impl TryInto<Vec<u8>> for &Image {
+    type Error = Box<dyn std::error::Error>;
+
+    fn try_into(self) -> std::result::Result<Vec<u8>, Self::Error> {
+        let mut bytes = Vec::new();
+        self.image_src
+            .write_to(&mut Cursor::new(&mut bytes), self.format)?;
+        Ok(bytes)
+    }
+}
+
+impl Image {
+    pub fn format(&self) -> ImageFormat {
+        self.format
     }
 
-    let reader = ImageReader::new(Cursor::new(src)).with_guessed_format()?;
-    let src_format = reader
-        .format()
-        .ok_or("image format could not be guessed.")?;
+    pub fn resize(mut self, width: usize, height: usize) -> Result<Self> {
+        self.image_src =
+            self.image_src
+                .resize_to_fill(width as u32, height as u32, FilterType::Triangle);
+        self.width = width;
+        self.height = height;
 
-    let src_image = reader.decode()?;
-    let src_width = src_image.width();
-    let src_height = src_image.height();
-
-    // Calculate the width and height of the resized image
-    let (dst_width, dst_height) = match (width, height) {
-        (Some(width), Some(height)) => (width, height),
-        (Some(width), None) => {
-            let height = (width as f32 / src_width as f32 * src_height as f32) as u32;
-            (width, height)
-        }
-        (None, Some(height)) => {
-            let width = (height as f32 / src_height as f32 * src_width as f32) as u32;
-            (width, height)
-        }
-        _ => unreachable!(),
-    };
-
-    let dst_image = src_image.resize_to_fill(dst_width, dst_height, FilterType::Triangle);
-
-    let mut result = Vec::new();
-    dst_image.write_to(&mut Cursor::new(&mut result), src_format)?;
-
-    Ok(result)
+        Ok(self)
+    }
 }

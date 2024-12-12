@@ -3,6 +3,7 @@ mod util;
 
 use std::path::PathBuf;
 
+use ::image::ImageFormat;
 use flate2::read::GzDecoder;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
@@ -293,64 +294,71 @@ pub fn run() {
                 }
             };
 
-            let image_extension = {
-                let extension = reqwest::Url::parse(&image_url).ok().and_then(|url| {
-                    url.path()
-                        .rsplit_once('.')
-                        .map(|(_, extension)| extension.to_string())
-                });
-
-                match extension.as_deref() {
-                    Some("png" | "jpg" | "jpeg" | "gif" | "bmp" | "webp") => extension.unwrap(),
-                    _ => {
+            let width = {
+                let start_pos = match query.find("width=") {
+                    Some(pos) => pos + 6,
+                    None => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                };
+                let end_pos = match query[start_pos..].find("&") {
+                    Some(pos) => start_pos + pos,
+                    None => start_pos + query[start_pos..].len(),
+                };
+                let raw = &query[start_pos..end_pos];
+                match raw.parse::<usize>() {
+                    Ok(value) => value,
+                    Err(_) => {
                         responder.respond(not_found);
                         return;
                     }
                 }
             };
 
-            let width = if let Some(start_pos) = query.find("width=") {
-                let start_pos = start_pos + 6;
+            let height = {
+                let start_pos = match query.find("height=") {
+                    Some(pos) => pos + 7,
+                    None => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                };
                 let end_pos = match query[start_pos..].find("&") {
                     Some(pos) => start_pos + pos,
                     None => start_pos + query[start_pos..].len(),
                 };
                 let raw = &query[start_pos..end_pos];
-                raw.parse::<u32>().ok()
-            } else {
-                None
-            };
-
-            let height = if let Some(start_pos) = query.find("height=") {
-                let start_pos = start_pos + 7;
-                let end_pos = match query[start_pos..].find("&") {
-                    Some(pos) => start_pos + pos,
-                    None => start_pos + query[start_pos..].len(),
-                };
-                let raw = &query[start_pos..end_pos];
-                raw.parse::<u32>().ok()
-            } else {
-                None
+                match raw.parse::<usize>() {
+                    Ok(value) => value,
+                    Err(_) => {
+                        responder.respond(not_found);
+                        return;
+                    }
+                }
             };
 
             pool.spawn(move || {
-                let image_src = match http::download_bytes(image_url) {
+                let image_src = http::download_bytes(image_url);
+                let image_src = image_src.and_then(|bytes| image::Image::try_from(bytes));
+                let image_src = image_src.and_then(|src| src.resize(width, height));
+                let image_src = match image_src {
                     Ok(src) => src,
                     Err(_) => {
                         responder.respond(not_found);
                         return;
                     }
                 };
-                let image_src = match image::resize(image_src, width, height) {
-                    Ok(src) => src,
+                let image_bytes: Vec<u8> = match (&image_src).try_into() {
+                    Ok(bytes) => bytes,
                     Err(_) => {
                         responder.respond(not_found);
                         return;
                     }
                 };
                 let response = match Response::builder()
-                    .header("Content-Type", format!("image/{}", image_extension))
-                    .body(image_src)
+                    .header("Content-Type", image_src.format().to_mime_type())
+                    .body(image_bytes)
                 {
                     Ok(response) => response,
                     Err(_) => {
