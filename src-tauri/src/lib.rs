@@ -3,12 +3,11 @@ mod util;
 
 use std::path::PathBuf;
 
-use ::image::ImageFormat;
 use flate2::read::GzDecoder;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use tar::Archive;
-use tauri::http::Response;
+use tauri::http::{Response, StatusCode};
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_http::reqwest;
 use tauri_plugin_log::{Target, TargetKind};
@@ -263,11 +262,15 @@ pub fn run() {
         builder.register_asynchronous_uri_scheme_protocol("gallery", |app, request, responder| {
             let pool = app.app_handle().state::<rayon::ThreadPool>();
 
-            let not_found = Response::builder().status(404).body(Vec::new()).unwrap();
+            let response: fn(u16) -> Response<Vec<u8>> =
+                |status: u16| Response::builder().status(status).body(Vec::new()).unwrap();
+
+            let bad_request = response(400);
+            let not_found = response(404);
+            let internal_server_error = response(500);
 
             if request.method() != "GET" {
-                responder.respond(not_found);
-                return;
+                return responder.respond(not_found);
             }
 
             let uri = request.uri();
@@ -276,10 +279,7 @@ pub fn run() {
             let image_url = {
                 let start_pos = match query.find("url=") {
                     Some(pos) => pos + 4,
-                    None => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    None => return responder.respond(bad_request),
                 };
                 let end_pos = match query[start_pos..].find("&") {
                     Some(pos) => start_pos + pos,
@@ -287,20 +287,14 @@ pub fn run() {
                 };
                 match urlencoding::decode(&query[start_pos..end_pos]) {
                     Ok(url) => url.to_string(),
-                    Err(_) => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    Err(_) => return responder.respond(bad_request),
                 }
             };
 
             let width = {
                 let start_pos = match query.find("width=") {
                     Some(pos) => pos + 6,
-                    None => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    None => return responder.respond(bad_request),
                 };
                 let end_pos = match query[start_pos..].find("&") {
                     Some(pos) => start_pos + pos,
@@ -309,20 +303,14 @@ pub fn run() {
                 let raw = &query[start_pos..end_pos];
                 match raw.parse::<usize>() {
                     Ok(value) => value,
-                    Err(_) => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    Err(_) => return responder.respond(bad_request),
                 }
             };
 
             let height = {
                 let start_pos = match query.find("height=") {
                     Some(pos) => pos + 7,
-                    None => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    None => return responder.respond(bad_request),
                 };
                 let end_pos = match query[start_pos..].find("&") {
                     Some(pos) => start_pos + pos,
@@ -331,42 +319,35 @@ pub fn run() {
                 let raw = &query[start_pos..end_pos];
                 match raw.parse::<usize>() {
                     Ok(value) => value,
-                    Err(_) => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    Err(_) => return responder.respond(bad_request),
                 }
             };
 
             pool.spawn(move || {
-                let image_src = http::download_bytes(image_url);
-                let image_src = image_src.and_then(|bytes| image::Image::try_from(bytes));
+                let image_bytes = http::download_bytes(image_url);
+                let image_bytes = match image_bytes {
+                    Ok(bytes) => bytes,
+                    Err(_) => return responder.respond(not_found),
+                };
+
+                let image_src = image::Image::try_from(image_bytes);
                 let image_src = image_src.and_then(|src| src.resize(width, height));
                 let image_src = match image_src {
                     Ok(src) => src,
-                    Err(_) => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    Err(_) => return responder.respond(internal_server_error),
                 };
+
                 let image_bytes: Vec<u8> = match (&image_src).try_into() {
                     Ok(bytes) => bytes,
-                    Err(_) => {
-                        responder.respond(not_found);
-                        return;
-                    }
+                    Err(_) => return responder.respond(internal_server_error),
                 };
-                let response = match Response::builder()
-                    .header("Content-Type", image_src.format().to_mime_type())
-                    .body(image_bytes)
-                {
-                    Ok(response) => response,
-                    Err(_) => {
-                        responder.respond(not_found);
-                        return;
-                    }
-                };
-                responder.respond(response);
+
+                responder.respond(
+                    Response::builder()
+                        .header("Content-Type", image_src.format().to_mime_type())
+                        .body(image_bytes)
+                        .unwrap(),
+                );
             });
         });
 
