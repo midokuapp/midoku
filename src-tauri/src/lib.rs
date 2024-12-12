@@ -263,8 +263,9 @@ pub fn run() {
         builder.register_asynchronous_uri_scheme_protocol("gallery", |app, request, responder| {
             let pool = app.app_handle().state::<rayon::ThreadPool>();
 
-            let response: fn(u16) -> Response<Vec<u8>> =
-                |status: u16| Response::builder().status(status).body(Vec::new()).unwrap();
+            fn response(status: u16) -> Response<Vec<u8>> {
+                Response::builder().status(status).body(Vec::new()).unwrap()
+            }
 
             let bad_request = response(400);
             let not_found = response(404);
