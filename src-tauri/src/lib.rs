@@ -259,6 +259,7 @@ pub fn run() {
         get_page_list
     ]);
 
+    // Register a custom protocol to download and resize gallery images.
     let builder =
         builder.register_asynchronous_uri_scheme_protocol("gallery", |app, request, responder| {
             let pool = app.app_handle().state::<rayon::ThreadPool>();
