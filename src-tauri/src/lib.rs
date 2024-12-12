@@ -38,16 +38,11 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(
             tauri_plugin_log::Builder::default()
-                .level(log::LevelFilter::Trace)
-                .level_for("async_io", log::LevelFilter::Info)
-                .level_for("cranelift_codegen", log::LevelFilter::Info)
-                .level_for("cranelift_wasm", log::LevelFilter::Info)
-                .level_for("polling", log::LevelFilter::Info)
-                .level_for("regalloc2", log::LevelFilter::Info)
-                .level_for("reqwest", log::LevelFilter::Info)
-                .level_for("wasmtime", log::LevelFilter::Info)
-                .level_for("wasmtime_cranelift", log::LevelFilter::Info)
-                .level_for("wasmtime_environ", log::LevelFilter::Info)
+                .level(if cfg!(debug_assertions) {
+                    log::LevelFilter::Debug
+                } else {
+                    log::LevelFilter::Info
+                })
                 .targets([Target::new(TargetKind::Stdout)])
                 .build(),
         )
