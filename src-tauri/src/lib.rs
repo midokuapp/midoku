@@ -2,12 +2,13 @@ mod extension;
 mod util;
 
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use flate2::read::GzDecoder;
 use log::trace;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use tar::Archive;
-use tauri::http::{Response, StatusCode};
+use tauri::http::Response;
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_http::reqwest;
 use tauri_plugin_log::{Target, TargetKind};
@@ -276,51 +277,41 @@ pub fn run() {
             let uri = request.uri();
             let query = uri.query().unwrap_or_default();
 
-            let image_url = {
-                let start_pos = match query.find("url=") {
-                    Some(pos) => pos + 4,
-                    None => return responder.respond(bad_request),
+            fn get_value<'a>(query: &'a str, key: &str) -> Option<&'a str> {
+                let start_pos = match query.find(&format!("{}=", key)) {
+                    Some(pos) => pos + key.len() + 1,
+                    None => return None,
                 };
                 let end_pos = match query[start_pos..].find("&") {
                     Some(pos) => start_pos + pos,
                     None => start_pos + query[start_pos..].len(),
                 };
-                match urlencoding::decode(&query[start_pos..end_pos]) {
-                    Ok(url) => url.to_string(),
-                    Err(_) => return responder.respond(bad_request),
-                }
+                Some(&query[start_pos..end_pos])
+            }
+
+            fn get_decoded(query: &str, key: &str) -> Option<String> {
+                get_value(query, key)
+                    .and_then(|value| urlencoding::decode(value).ok())
+                    .map(|value| value.to_string())
+            }
+
+            fn get_int<T: FromStr>(query: &str, key: &str) -> Option<T> {
+                get_value(query, key).and_then(|value| value.parse::<T>().ok())
+            }
+
+            let image_url = match get_decoded(query, "url") {
+                Some(url) => url.to_string(),
+                None => return responder.respond(bad_request),
             };
 
-            let width = {
-                let start_pos = match query.find("width=") {
-                    Some(pos) => pos + 6,
-                    None => return responder.respond(bad_request),
-                };
-                let end_pos = match query[start_pos..].find("&") {
-                    Some(pos) => start_pos + pos,
-                    None => start_pos + query[start_pos..].len(),
-                };
-                let raw = &query[start_pos..end_pos];
-                match raw.parse::<usize>() {
-                    Ok(value) => value,
-                    Err(_) => return responder.respond(bad_request),
-                }
+            let width = match get_int(query, "width") {
+                Some(value) => value,
+                None => return responder.respond(bad_request),
             };
 
-            let height = {
-                let start_pos = match query.find("height=") {
-                    Some(pos) => pos + 7,
-                    None => return responder.respond(bad_request),
-                };
-                let end_pos = match query[start_pos..].find("&") {
-                    Some(pos) => start_pos + pos,
-                    None => start_pos + query[start_pos..].len(),
-                };
-                let raw = &query[start_pos..end_pos];
-                match raw.parse::<usize>() {
-                    Ok(value) => value,
-                    Err(_) => return responder.respond(bad_request),
-                }
+            let height = match get_int(query, "height") {
+                Some(value) => value,
+                None => return responder.respond(bad_request),
             };
 
             pool.spawn(move || {
