@@ -19,6 +19,9 @@ pub enum Error {
     #[error("Image error: {0}")]
     Image(#[from] image::ImageError),
 
+    #[error("Image resize error: {0}")]
+    ImageResize(#[from] fast_image_resize::ResizeError),
+
     #[error("Extension not found: {0}")]
     ExtensionNotFound(String),
 
@@ -38,6 +41,7 @@ enum ErrorKind {
     FileNotFound(String),
     Parse(String),
     Image(String),
+    ImageResize(String),
     ExtensionNotFound(String),
     ExtensionMethod(String),
     Wasm(String),
@@ -55,6 +59,7 @@ impl serde::Serialize for Error {
             Self::FileNotFound(_) => ErrorKind::FileNotFound(error_message),
             Self::Parse(_) => ErrorKind::Parse(error_message),
             Self::Image(_) => ErrorKind::Image(error_message),
+            Self::ImageResize(_) => ErrorKind::ImageResize(error_message),
             Self::ExtensionNotFound(_) => ErrorKind::ExtensionNotFound(error_message),
             Self::ExtensionMethod(_) => ErrorKind::ExtensionMethod(error_message),
             Self::Wasm(_) => ErrorKind::Wasm(error_message),

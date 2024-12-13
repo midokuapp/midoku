@@ -22,6 +22,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2.0.2", features = [] }
 
 [dependencies]
+fast_image_resize = { version = "5.1.0", features = ["image"] }
 flate2 = "1.0.34"
 image = "0.25.5"
 log = "0.4.22"

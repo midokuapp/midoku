@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use image::imageops::FilterType;
+use fast_image_resize::{CropBox, FilterType, ResizeAlg, ResizeOptions, Resizer, SrcCropping};
 use image::{DynamicImage, ImageFormat, ImageReader};
 
 use crate::error::Error;
@@ -9,8 +9,8 @@ use crate::Result;
 pub struct Image {
     format: ImageFormat,
     image_src: DynamicImage,
-    width: usize,
-    height: usize,
+    width: u32,
+    height: u32,
 }
 
 impl TryFrom<Vec<u8>> for Image {
@@ -23,8 +23,8 @@ impl TryFrom<Vec<u8>> for Image {
             .ok_or(Error::Parse("image format could not be guessed.".into()))?;
 
         let image_src = reader.decode()?;
-        let width = image_src.width() as usize;
-        let height = image_src.height() as usize;
+        let width = image_src.width();
+        let height = image_src.height();
 
         Ok(Image {
             format,
@@ -51,13 +51,29 @@ impl Image {
         self.format
     }
 
-    pub fn resize(mut self, width: usize, height: usize) -> Result<Self> {
-        self.image_src =
-            self.image_src
-                .resize_to_fill(width as u32, height as u32, FilterType::Triangle);
-        self.width = width;
-        self.height = height;
+    pub fn resize(self, width: u32, height: u32) -> Result<Self> {
+        let mut image_src = DynamicImage::new(width, height, self.image_src.color());
 
-        Ok(self)
+        let mut resizer = Resizer::new();
+        let resize_options = ResizeOptions {
+            algorithm: ResizeAlg::Convolution(FilterType::Lanczos3),
+            cropping: SrcCropping::Crop(CropBox::fit_src_into_dst_size(
+                self.width,
+                self.height,
+                width,
+                height,
+                Some((0.5, 0.5)),
+            )),
+            ..Default::default()
+        };
+
+        resizer.resize(&self.image_src, &mut image_src, Some(&resize_options))?;
+
+        Ok(Image {
+            format: self.format,
+            image_src,
+            width,
+            height,
+        })
     }
 }
