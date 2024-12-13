@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
 
+const TAURI_ENV_PLATFORM = Deno.env.get("TAURI_ENV_PLATFORM");
 const TAURI_ENV_DEBUG = Deno.env.get("TAURI_ENV_DEBUG");
 const TAURI_DEV_HOST = Deno.env.get("TAURI_DEV_HOST");
 
@@ -27,5 +28,8 @@ export default defineConfig({
     target: "esnext",
     minify: !TAURI_ENV_DEBUG ? "esbuild" : false,
     sourcemap: !!TAURI_ENV_DEBUG,
+  },
+  define: {
+    "import.meta.env.TAURI_ENV_PLATFORM": JSON.stringify(TAURI_ENV_PLATFORM),
   },
 });

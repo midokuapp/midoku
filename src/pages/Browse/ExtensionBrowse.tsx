@@ -114,6 +114,15 @@ const MangaItem = (
 ) => {
   const [loading, setLoading] = useState<boolean>(true);
 
+  const platform = import.meta.env.TAURI_ENV_PLATFORM;
+  let uri: string;
+
+  if (platform === "windows" || platform === "android") {
+    uri = "http://gallery.localhost";
+  } else {
+    uri = "gallery://localhost";
+  }
+
   return (
     <Link
       to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
@@ -121,7 +130,7 @@ const MangaItem = (
     >
       <div className="w-full aspect-[2/3] skeleton rounded-md">
         <LazyImage
-          src={`gallery://localhost/?url=${
+          src={`${uri}/?url=${
             encodeURIComponent(manga.coverUrl)
           }&width=300&height=450`}
           alt={manga.title}
