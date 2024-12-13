@@ -7,12 +7,12 @@ use tauri::{AppHandle, Manager, State};
 use tauri_plugin_http::reqwest;
 
 use crate::extension::{Extension, Extensions, Manifest, Source};
-use crate::EXTENSIONS_DIR;
+use crate::{Result, EXTENSIONS_DIR};
 
 #[tauri::command]
 pub async fn get_extensions(
     state: State<'_, Extensions>,
-) -> tauri::Result<Vec<(String, Source, PathBuf)>> {
+) -> Result<Vec<(String, Source, PathBuf)>> {
     trace!("get_extensions called");
     Ok(state
         .lock()
@@ -22,7 +22,7 @@ pub async fn get_extensions(
 }
 
 #[tauri::command]
-pub async fn get_repository_extensions(repository_url: String) -> tauri::Result<Vec<Manifest>> {
+pub async fn get_repository_extensions(repository_url: String) -> Result<Vec<Manifest>> {
     trace!(
         "get_repository_extensions called with repository_url: {}",
         repository_url
@@ -48,7 +48,7 @@ pub async fn install_extension(
     state: State<'_, Extensions>,
     repository_url: String,
     manifest: Manifest,
-) -> tauri::Result<()> {
+) -> Result<()> {
     trace!("install_extension called with manifest: {:?}", manifest);
 
     let app_local_data_dir: PathBuf = app_handle
@@ -99,7 +99,7 @@ pub async fn uninstall_extension(
     app_handle: AppHandle,
     state: State<'_, Extensions>,
     extension_id: String,
-) -> tauri::Result<()> {
+) -> Result<()> {
     trace!(
         "uninstall_extension called with extension_id: {}",
         extension_id

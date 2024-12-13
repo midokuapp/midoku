@@ -4,6 +4,7 @@ use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use midoku_bindings::Bindings;
 use serde::{Deserialize, Serialize};
 
+use crate::error::Error;
 use crate::Result;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -40,22 +41,24 @@ impl Extension {
 
         let extension_id = extension_path
             .file_name()
-            .ok_or("failed to get extension id")?
+            .ok_or(Error::Parse("failed to get extension id".into()))?
             .to_string_lossy()
             .to_string();
 
         let source_path = extension_path.join("source.json");
         let source_reader = std::fs::File::open(source_path)?;
-        let source = serde_json::from_reader(source_reader)?;
+        let source =
+            serde_json::from_reader(source_reader).map_err(|e| Error::Parse(e.to_string()))?;
 
         let icon_path = extension_path.join("icon.png");
 
         let extension_wasm = extension_path.join("extension.wasm");
-        let bindings = Bindings::from_file(extension_wasm)?;
+        let bindings =
+            Bindings::from_file(extension_wasm).map_err(|e| Error::Wasm(e.to_string()))?;
 
         bindings
             .initialize()
-            .map_err(|_| "failed to initialize bindings")?;
+            .map_err(|_| Error::Wasm("failed to initialize bindings".into()))?;
 
         Ok(Self {
             id: extension_id,
@@ -69,7 +72,7 @@ impl Extension {
         tokio::task::block_in_place(|| {
             self.bindings
                 .get_manga_list(filters, page)
-                .map_err(|_| "failed to get manga list".into())
+                .map_err(|_| Error::ExtensionMethod("failed to get manga list".into()))
         })
     }
 
@@ -77,7 +80,7 @@ impl Extension {
         tokio::task::block_in_place(|| {
             self.bindings
                 .get_manga_details(manga_id)
-                .map_err(|_| "failed to get manga details".into())
+                .map_err(|_| Error::ExtensionMethod("failed to get manga details".into()))
         })
     }
 
@@ -85,7 +88,7 @@ impl Extension {
         tokio::task::block_in_place(|| {
             self.bindings
                 .get_chapter_list(manga_id)
-                .map_err(|_| "failed to get chapter list".into())
+                .map_err(|_| Error::ExtensionMethod("failed to get chapter list".into()))
         })
     }
 
@@ -93,7 +96,7 @@ impl Extension {
         tokio::task::block_in_place(|| {
             self.bindings
                 .get_page_list(manga_id, chapter_id)
-                .map_err(|_| "failed to get page list".into())
+                .map_err(|_| Error::ExtensionMethod("failed to get page list".into()))
         })
     }
 }

@@ -1,4 +1,5 @@
 mod command;
+mod error;
 mod extension;
 mod protocol;
 mod util;
@@ -16,7 +17,7 @@ const APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PK
 const EXTENSIONS_DIR: &str = "extensions";
 const STORE_FILE: &str = "app_data.json";
 
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+type Result<T> = std::result::Result<T, crate::error::Error>;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

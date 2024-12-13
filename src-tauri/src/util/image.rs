@@ -3,6 +3,7 @@ use std::io::Cursor;
 use image::imageops::FilterType;
 use image::{DynamicImage, ImageFormat, ImageReader};
 
+use crate::error::Error;
 use crate::Result;
 
 pub struct Image {
@@ -13,13 +14,13 @@ pub struct Image {
 }
 
 impl TryFrom<Vec<u8>> for Image {
-    type Error = Box<dyn std::error::Error>;
+    type Error = Error;
 
-    fn try_from(value: Vec<u8>) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: Vec<u8>) -> Result<Self> {
         let reader = ImageReader::new(Cursor::new(value)).with_guessed_format()?;
         let format = reader
             .format()
-            .ok_or("image format could not be guessed.")?;
+            .ok_or(Error::Parse("image format could not be guessed.".into()))?;
 
         let image_src = reader.decode()?;
         let width = image_src.width() as usize;
@@ -35,9 +36,9 @@ impl TryFrom<Vec<u8>> for Image {
 }
 
 impl TryInto<Vec<u8>> for &Image {
-    type Error = Box<dyn std::error::Error>;
+    type Error = Error;
 
-    fn try_into(self) -> std::result::Result<Vec<u8>, Self::Error> {
+    fn try_into(self) -> Result<Vec<u8>> {
         let mut bytes = Vec::new();
         self.image_src
             .write_to(&mut Cursor::new(&mut bytes), self.format)?;
