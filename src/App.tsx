@@ -20,9 +20,13 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/browse",
+        path: "/",
         element: <Browse />,
       },
+      // {
+      //   path: "/browse",
+      //   element: <Browse />,
+      // },
       {
         path: "/browse/:extensionId",
         element: <ExtensionBrowse />,
@@ -49,8 +53,8 @@ function Layout() {
 
   // Définir les onglets et leurs routes
   const navItems = [
-    { path: "/", icon: <FiBook />, label: "Library" },
-    { path: "/browse", icon: <FiGlobe />, label: "Browse" },
+    // { path: "/", icon: <FiBook />, label: "Library" },
+    { path: "/", icon: <FiGlobe />, label: "Browse" },
     { path: "/extensions", icon: <FiGrid />, label: "Extensions" },
     { path: "/more", icon: <FiSettings />, label: "More" },
   ];
@@ -62,7 +66,7 @@ function Layout() {
       </main>
       {/* Barre de navigation, shadow vers le haut */}
       <nav className="w-full bg-base-200 px-2 border-t border-base-100 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px]">
-        <div className="grid grid-cols-4 max-w-xl mx-auto py-3">
+        <div className="grid grid-cols-3 max-w-xl mx-auto py-3">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
