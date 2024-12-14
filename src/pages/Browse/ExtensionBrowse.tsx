@@ -8,6 +8,9 @@ import { useStore } from "../../services/store.service.ts";
 import useInfiniteScroll from "../../utils/infinite-scroll-hook.ts";
 import LazyImage from "../../components/LazyImage.tsx";
 
+const TAURI_ENV_PLATFORM: string | unknown =
+  (globalThis as Record<string, unknown>).TAURI_ENV_PLATFORM;
+
 export default function ExtensionBrowse() {
   const { extensionId } = useParams();
   const getExtension = useStore((state) => state.getExtension);
@@ -114,10 +117,8 @@ const MangaItem = (
 ) => {
   const [loading, setLoading] = useState<boolean>(true);
 
-  const platform = (globalThis as Record<string, unknown>).TAURI_ENV_PLATFORM;
   let uri: string;
-
-  if (platform === "windows" || platform === "android") {
+  if (TAURI_ENV_PLATFORM === "windows" || TAURI_ENV_PLATFORM === "android") {
     uri = "http://gallery.localhost";
   } else {
     uri = "gallery://localhost";
