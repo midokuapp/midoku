@@ -124,6 +124,10 @@ const MangaItem = (
     uri = "gallery://localhost";
   }
 
+  const url = encodeURIComponent(manga.coverUrl);
+  const width = 300;
+  const height = 450;
+
   return (
     <Link
       to={{ pathname: `/browse/${extensionId}/${manga.id}` }}
@@ -131,9 +135,7 @@ const MangaItem = (
     >
       <div className="w-full aspect-[2/3] skeleton rounded-md">
         <LazyImage
-          src={`${uri}/?url=${
-            encodeURIComponent(manga.coverUrl)
-          }&width=300&height=450`}
+          src={`${uri}/?url=${url}&width=${width}&height=${height}`}
           alt={manga.title}
           onLoad={() => setLoading(false)}
           onChange={(inView) => {
