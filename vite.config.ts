@@ -30,6 +30,6 @@ export default defineConfig({
     sourcemap: !!TAURI_ENV_DEBUG,
   },
   define: {
-    "import.meta.env.TAURI_ENV_PLATFORM": JSON.stringify(TAURI_ENV_PLATFORM),
+    TAURI_ENV_PLATFORM: JSON.stringify(TAURI_ENV_PLATFORM),
   },
 });

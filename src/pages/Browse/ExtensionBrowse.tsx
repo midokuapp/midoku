@@ -114,7 +114,7 @@ const MangaItem = (
 ) => {
   const [loading, setLoading] = useState<boolean>(true);
 
-  const platform = import.meta.env.TAURI_ENV_PLATFORM;
+  const platform = (globalThis as Record<string, unknown>).TAURI_ENV_PLATFORM;
   let uri: string;
 
   if (platform === "windows" || platform === "android") {
