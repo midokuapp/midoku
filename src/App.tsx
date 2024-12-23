@@ -13,6 +13,7 @@ import More from "./pages/More.tsx";
 import MangaDetails from "./pages/MangaDetails.tsx";
 import { useStore } from "./services/store.service.ts";
 import { getExtensions } from "./services/tauri.service.ts";
+import Reader from "./pages/Reader.tsx";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/read/:extensionId/:mangaId/:chapterId",
+    element: <Reader />,
+  }
 ]);
 
 function Layout() {
