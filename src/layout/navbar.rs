@@ -6,11 +6,7 @@ use crate::Route;
 
 #[component]
 pub fn Navbar() -> Element {
-    let path: Route = use_route();
-
     rsx! {
-        p { "{path}" }
-
         main {
             id: "outlet",
             Outlet::<Route> {}
