@@ -5,16 +5,6 @@ use dioxus_free_icons::{Icon, IconShape};
 use crate::Route;
 
 #[component]
-fn NavIcon<T: IconShape + Clone + PartialEq + 'static>(icon: T) -> Element where {
-    rsx! {
-        Icon {
-            style: "color: inherit",
-            icon
-        }
-    }
-}
-
-#[component]
 pub fn Navbar() -> Element {
     let path: Route = use_route();
 
@@ -27,20 +17,45 @@ pub fn Navbar() -> Element {
         }
         nav {
             id: "navbar",
-            Link {
-                class: if (path == Route::Browse {}) { "active" },
-                // active_class: "active",
+            NavLink {
                 to: Route::Browse {},
-                NavIcon { icon: LdGlobe }
+                icon: LdGlobe,
                 "Browse"
             }
-            Link {
-                class: if (path == Route::Extensions {}) { "active" },
-                // active_class: "active",
+            NavLink {
                 to: Route::Extensions {},
-                NavIcon { icon: LdLayoutGrid }
+                icon: LdLayoutGrid,
                 "Extensions"
             }
+        }
+    }
+}
+
+#[component]
+fn NavLink<I: IconShape + Clone + PartialEq + 'static>(
+    to: Route,
+    icon: I,
+    children: Element,
+) -> Element where {
+    let path: Route = use_route();
+
+    rsx! {
+        Link {
+            class: if path == to { "active" },
+            // active_class: "active",
+            to,
+            NavIcon { icon }
+            { children }
+        }
+    }
+}
+
+#[component]
+fn NavIcon<I: IconShape + Clone + PartialEq + 'static>(icon: I) -> Element where {
+    rsx! {
+        Icon {
+            style: "color: inherit",
+            icon
         }
     }
 }
