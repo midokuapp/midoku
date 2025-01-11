@@ -1,6 +1,6 @@
-mod component;
 mod config;
 mod error;
+mod layout;
 mod page;
 mod path;
 
@@ -9,7 +9,7 @@ use midoku_macros::*;
 
 use crate::config::Config;
 
-use crate::component::Navbar;
+use crate::layout::Navbar;
 
 use crate::page::{
     browse::{Browse, BrowseExtension, BrowseManga},
