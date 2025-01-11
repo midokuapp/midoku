@@ -1,2 +1,0 @@
-# Mark all files in tauri android project as generated
-src-tauri/gen/android/**/* linguist-generated

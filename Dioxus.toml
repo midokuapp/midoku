@@ -1,0 +1,6 @@
+[application]
+name = "Midoku"
+
+[bundle]
+identifier = "app.midoku"
+icon = ["assets/icon.png"]

@@ -1,0 +1,19 @@
+[package]
+name = "midoku-macros"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.92"
+quote = "1.0.38"
+syn = "2.0.94"
+toml = "0.8.19"
+serde = "1.0.217"
+
+[lints]
+workspace = true

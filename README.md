@@ -2,26 +2,16 @@
 
 ## Development
 
-I assume you have installed Rust, Cargo.
-
-### Install Deno
-
-```bash
-curl -fsSL https://deno.land/x/install/install.sh | sh
-```
-
-### Then install Tauri CLI
-
-```bash
-cargo install tauri-cli --version "^2.0.0" --locked
-```
+I assume you have followed the [Getting Started](https://dioxuslabs.com/learn/0.6/getting_started/)
+guide from Dioxus and have installed `dioxus-cli`.
 
 ### Run the app
 
 ```bash
-cargo tauri dev
+dx serve
 ```
 
+<!--
 ### Android
 
 See https://v2.tauri.app/start/prerequisites/#android for the prerequisites.
@@ -51,6 +41,7 @@ cargo tauri android build --apk --target aarch64 x86_64
 
 To sign the APK, follow the instructions at
 https://v2.tauri.app/distribute/sign/android/
+--->
 
 ## License
 
