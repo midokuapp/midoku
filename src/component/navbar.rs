@@ -32,7 +32,7 @@ pub fn Navbar() -> Element {
                 // active_class: "active",
                 to: Route::Browse {},
                 NavIcon { icon: LdGlobe }
-                "Home"
+                "Browse"
             }
             Link {
                 class: if (path == Route::Extensions {}) { "active" },
