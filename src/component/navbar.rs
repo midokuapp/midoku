@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::ld_icons::{LdGlobe, LdLayoutGrid, LdSettings};
+use dioxus_free_icons::icons::ld_icons::{LdGlobe, LdLayoutGrid};
 use dioxus_free_icons::{Icon, IconShape};
 
 use crate::Route;
@@ -40,13 +40,6 @@ pub fn Navbar() -> Element {
                 to: Route::Extensions {},
                 NavIcon { icon: LdLayoutGrid }
                 "Extensions"
-            }
-            Link {
-                class: if (path == Route::More {}) { "active" },
-                // active_class: "active",
-                to: Route::More {},
-                NavIcon { icon: LdSettings }
-                "More"
             }
         }
     }

@@ -14,7 +14,6 @@ use crate::component::Navbar;
 use crate::page::{
     browse::{Browse, BrowseExtension, BrowseManga},
     extensions::Extensions,
-    more::More,
 };
 
 // use path::PathResolver;
@@ -47,9 +46,6 @@ enum Route {
     #[layout(Navbar)]
     #[route("/extensions")]
     Extensions {},
-
-    #[route("/more")]
-    More {},
 }
 
 const CSS: Asset = asset!("/assets/main.css");
