@@ -11,11 +11,11 @@ guide from Dioxus and have installed `dioxus-cli`.
 dx serve
 ```
 
-<!--
 ### Android
 
-See https://v2.tauri.app/start/prerequisites/#android for the prerequisites.
+See https://dioxuslabs.com/learn/0.6/guides/mobile/#android for the prerequisites.
 
+<!--
 > [!NOTE]
 > You will not need to install the `armv7-linux-androideabi` nor
 > `i686-linux-android` targets as Wasmtime+Cranelift does not support arm32.
@@ -26,13 +26,15 @@ Initialize the Android project:
 ```bash
 cargo tauri android init --skip-targets-install
 ```
+--->
 
 To develop the app for Android, run:
 
 ```bash
-cargo tauri android dev
+dx serve --platform android
 ```
 
+<!--
 To build the app for Android, run:
 
 ```bash
