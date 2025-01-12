@@ -11,17 +11,20 @@ license = "GPL-3.0-or-later"
 unsafe_code = "forbid"
 
 [workspace.dependencies]
+midoku-bindings = { git = "https://github.com/midokuapp/midoku-rs.git" }
 midoku-macros = { path = "crates/midoku-macros" }
 dark-light = { git = "https://github.com/frewsxcv/rust-dark-light.git", rev = "refs/pull/53/head" }
 # dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
 dioxus = "0.6.1"
 dioxus-free-icons = { version = "0.9", features = ["lucide"] }
 dirs = "5.0.1"
+flate2 = "1.0.34"
 futures-lite = "2.5.0"
 jni = "0.21.1"
 reqwest = "0.12.12"
 serde = "1.0.217"
 serde_json = "1.0.134"
+tar = "0.4.43"
 thiserror = "2.0.9"
 
 [package]
@@ -32,12 +35,15 @@ edition.workspace = true
 publish.workspace = true
 
 [dependencies]
+midoku-bindings.workspace = true
 midoku-macros.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true
+flate2.workspace = true
 reqwest = { workspace = true, features = ["json"] }
 serde.workspace = true
 serde_json.workspace = true
+tar.workspace = true
 thiserror.workspace = true
 
 [target.'cfg(not(target_os = "android"))'.dependencies]

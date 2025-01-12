@@ -31,4 +31,8 @@ impl PathResolver<'_> {
             Ok(PathBuf::from(files_dir))
         })
     }
+
+    pub fn extensions_dir(&self) -> Result<PathBuf> {
+        self.app_local_data_dir().map(|p| p.join(EXTENSIONS_DIR))
+    }
 }

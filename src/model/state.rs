@@ -1,6 +1,11 @@
-use super::Manifest;
+use std::collections::BTreeMap;
 
-#[derive(Debug, Default)]
+use super::{Extension, Manifest};
+
+#[derive(Default)]
+pub struct ExtensionsState(pub BTreeMap<String, Extension>);
+
+#[derive(Default)]
 pub struct ManifestsState(pub Vec<Manifest>);
 
 #[derive(Default)]

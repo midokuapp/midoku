@@ -8,17 +8,20 @@ use dioxus::prelude::*;
 use midoku_macros::*;
 
 use crate::layout::Navbar;
-use crate::model::{Config, ManifestsState, RepositoryUrlState};
+use crate::model::{
+    state::{ExtensionsState, ManifestsState, RepositoryUrlState},
+    Config,
+};
+use crate::path::PathResolver;
 
 use crate::page::{
     browse::{Browse, BrowseExtension, BrowseManga},
     extensions::Extensions,
 };
 
-// use path::PathResolver;
-
 const CSS: Asset = asset!("/assets/main.css");
 const CONFIG: Config = get_config!();
+const PATH: PathResolver = PathResolver(CONFIG);
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -89,6 +92,7 @@ fn App() -> Element {
     //     }
     // });
 
+    use_context_provider(|| Signal::new(ExtensionsState::default()));
     use_context_provider(|| Signal::new(ManifestsState::default()));
     use_context_provider(|| Signal::new(RepositoryUrlState::default()));
 

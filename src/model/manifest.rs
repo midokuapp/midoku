@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize, Clone, PartialEq)]
 pub struct Manifest {
     pub id: String,
     pub name: String,
