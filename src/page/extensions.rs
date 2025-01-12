@@ -15,7 +15,7 @@ pub fn Extensions() -> Element {
     let mut manifests = use_context::<Signal<ManifestsState>>();
     let mut repository_url = use_context::<Signal<RepositoryUrlState>>();
 
-    let is_installed = |extension_id: &str| extensions.read().0.contains_key(extension_id);
+    let is_installed = |extension_id: &str| extensions.read().contains(extension_id);
 
     rsx! {
         input {
@@ -23,8 +23,8 @@ pub fn Extensions() -> Element {
             placeholder: "Extension repository URL",
             value: "{repository_url}",
             onchange: move |event| async move {
-                repository_url.write().0 = event.value();
-                manifests.write().0 = get_repository_extensions(event.value()).await;
+                repository_url.set(event.value().into());
+                manifests.set(get_repository_extensions(event.value()).await.into());
             },
         }
         h2 { "Installed" }
@@ -32,7 +32,6 @@ pub fn Extensions() -> Element {
             {
                 extensions
                     .read()
-                    .0
                     .iter()
                     .map(|(_, extension)| {
                         let extension_id = &extension.id;
@@ -48,7 +47,6 @@ pub fn Extensions() -> Element {
             {
                 manifests
                     .read()
-                    .0
                     .iter()
                     .flat_map(|manifest| {
                         let extension_id = &manifest.id;
@@ -137,7 +135,7 @@ async fn install_extension(manifest: &Manifest) -> Result<()> {
 
     // Register the extension
     let extension = Extension::from_path(extension_path)?;
-    extensions.write().0.insert(extension.id.clone(), extension);
+    extensions.write().insert(extension);
 
     Ok(())
 }
@@ -152,7 +150,7 @@ async fn uninstall_extension(extension_id: &str) -> Result<()> {
     std::fs::remove_dir_all(&extension_path)?;
 
     // Unregister the extension
-    extensions.write().0.remove(extension_id);
+    extensions.write().remove(extension_id);
 
     Ok(())
 }
