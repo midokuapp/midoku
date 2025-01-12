@@ -92,7 +92,7 @@ fn App() -> Element {
     //     }
     // });
 
-    use_context_provider(|| Signal::new(ExtensionsState::default()));
+    use_context_provider(|| Signal::new(ExtensionsState::init()));
     use_context_provider(|| Signal::new(ManifestsState::default()));
     use_context_provider(|| Signal::new(RepositoryUrlState::default()));
 
