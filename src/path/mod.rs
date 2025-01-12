@@ -1,4 +1,3 @@
-use crate::error::*;
 use crate::model::Config;
 
 #[cfg(target_os = "android")]

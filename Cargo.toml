@@ -13,7 +13,7 @@ unsafe_code = "forbid"
 [workspace.dependencies]
 midoku-bindings = { git = "https://github.com/midokuapp/midoku-rs.git" }
 midoku-macros = { path = "crates/midoku-macros" }
-dark-light = { git = "https://github.com/frewsxcv/rust-dark-light.git", rev = "refs/pull/53/head" }
+dark-light = "2.0.0"
 # dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
 dioxus = "0.6.1"
 dioxus-free-icons = { version = "0.9", features = ["lucide"] }

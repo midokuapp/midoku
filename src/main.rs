@@ -1,4 +1,5 @@
 mod error;
+mod hook;
 mod layout;
 mod model;
 mod page;
@@ -9,7 +10,7 @@ use midoku_macros::*;
 
 use crate::layout::Navbar;
 use crate::model::{
-    state::{ExtensionsState, ManifestsState, RepositoryUrlState},
+    state::{ExtensionsState, ManifestsState},
     Config,
 };
 use crate::path::PathResolver;
@@ -22,6 +23,7 @@ use crate::page::{
 const CSS: Asset = asset!("/assets/main.css");
 const CONFIG: Config = get_config!();
 const PATH: PathResolver = PathResolver(CONFIG);
+const APP_STORE: &str = "app_data";
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -94,7 +96,6 @@ fn App() -> Element {
 
     use_context_provider(|| Signal::new(ExtensionsState::init()));
     use_context_provider(|| Signal::new(ManifestsState::default()));
-    use_context_provider(|| Signal::new(RepositoryUrlState::default()));
 
     rsx! {
         document::Stylesheet { href: CSS }

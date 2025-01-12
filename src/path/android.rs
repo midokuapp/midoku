@@ -18,7 +18,7 @@ impl PathResolver<'_> {
         rx.recv().unwrap()
     }
 
-    pub fn app_local_data_dir(&self) -> Result<PathBuf> {
+    pub fn app_local_data_dir(&self) -> PathBuf {
         self.resolve(move |env, activity| {
             let files_dir = env
                 .call_method(activity, "getFilesDir", "()Ljava/io/File;", &[])?
@@ -30,9 +30,10 @@ impl PathResolver<'_> {
             let files_dir: String = env.get_string(&files_dir)?.into();
             Ok(PathBuf::from(files_dir))
         })
+        .unwrap()
     }
 
-    pub fn extensions_dir(&self) -> Result<PathBuf> {
-        self.app_local_data_dir().map(|p| p.join(EXTENSIONS_DIR))
+    pub fn extensions_dir(&self) -> PathBuf {
+        self.app_local_data_dir().join(EXTENSIONS_DIR)
     }
 }

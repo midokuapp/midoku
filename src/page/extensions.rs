@@ -3,17 +3,27 @@ use flate2::read::GzDecoder;
 use tar::Archive;
 
 use crate::error::Result;
+use crate::hook::use_persistent;
 use crate::model::{
     state::{ExtensionsState, ManifestsState, RepositoryUrlState},
     Extension, Manifest,
 };
-use crate::PATH;
+use crate::{APP_STORE, PATH};
 
 #[component]
 pub fn Extensions() -> Element {
+    let mut app_store = use_persistent(APP_STORE);
+
     let extensions = use_context::<Signal<ExtensionsState>>();
     let mut manifests = use_context::<Signal<ManifestsState>>();
-    let mut repository_url = use_context::<Signal<RepositoryUrlState>>();
+    let mut repository_url = use_signal(|| app_store.get_repository_url());
+
+    _ = use_resource(move || async move {
+        let repository_url = repository_url.read();
+        app_store.set_repository_url(repository_url.clone());
+        let repository_extensions = get_repository_extensions(repository_url.clone()).await;
+        manifests.set(repository_extensions.into());
+    });
 
     let is_installed = |extension_id: &str| extensions.read().contains(extension_id);
 
@@ -22,10 +32,7 @@ pub fn Extensions() -> Element {
             r#type: "text",
             placeholder: "Extension repository URL",
             value: "{repository_url}",
-            onchange: move |event| async move {
-                repository_url.set(event.value().into());
-                manifests.set(get_repository_extensions(event.value()).await.into());
-            },
+            onchange: move |event| repository_url.set(event.value()),
         }
         h2 { "Installed" }
         ul {
@@ -103,10 +110,12 @@ async fn get_repository_extensions(repository_url: String) -> Vec<Manifest> {
 }
 
 async fn install_extension(manifest: &Manifest) -> Result<()> {
-    let mut extensions = use_context::<Signal<ExtensionsState>>();
-    let repository_url = use_context::<Signal<RepositoryUrlState>>();
+    let app_store = use_persistent(APP_STORE);
 
-    let extensions_dir = PATH.extensions_dir().expect("failed to get extensions dir");
+    let mut extensions = use_context::<Signal<ExtensionsState>>();
+    let repository_url = app_store.get_repository_url();
+
+    let extensions_dir = PATH.extensions_dir();
     let extension_path = extensions_dir.join(&manifest.id);
 
     // If the path exists, then the extensions have already been installed.
@@ -143,7 +152,7 @@ async fn install_extension(manifest: &Manifest) -> Result<()> {
 async fn uninstall_extension(extension_id: &str) -> Result<()> {
     let mut extensions = use_context::<Signal<ExtensionsState>>();
 
-    let extensions_dir = PATH.extensions_dir().expect("failed to get extensions dir");
+    let extensions_dir = PATH.extensions_dir();
     let extension_path = extensions_dir.join(extension_id);
 
     // Remove the extension directory
