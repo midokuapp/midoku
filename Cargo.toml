@@ -19,6 +19,7 @@ dioxus-free-icons = { version = "0.9", features = ["lucide"] }
 dirs = "5.0.1"
 futures-lite = "2.5.0"
 jni = "0.21.1"
+reqwest = "0.12.12"
 serde = "1.0.217"
 serde_json = "1.0.134"
 thiserror = "2.0.9"
@@ -34,6 +35,7 @@ publish.workspace = true
 midoku-macros.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true
+reqwest = { workspace = true, features = ["json"] }
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true

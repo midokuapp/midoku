@@ -1,15 +1,14 @@
-mod config;
 mod error;
 mod layout;
+mod model;
 mod page;
 mod path;
 
 use dioxus::prelude::*;
 use midoku_macros::*;
 
-use crate::config::Config;
-
 use crate::layout::Navbar;
+use crate::model::{Config, ManifestsState, RepositoryUrlState};
 
 use crate::page::{
     browse::{Browse, BrowseExtension, BrowseManga},
@@ -17,6 +16,9 @@ use crate::page::{
 };
 
 // use path::PathResolver;
+
+const CSS: Asset = asset!("/assets/main.css");
+const CONFIG: Config = get_config!();
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -47,9 +49,6 @@ enum Route {
     #[route("/extensions")]
     Extensions {},
 }
-
-const CSS: Asset = asset!("/assets/main.css");
-const CONFIG: Config = get_config!();
 
 fn main() {
     #[cfg(target_os = "android")]
@@ -89,6 +88,9 @@ fn App() -> Element {
     //         }
     //     }
     // });
+
+    use_context_provider(|| Signal::new(ManifestsState::default()));
+    use_context_provider(|| Signal::new(RepositoryUrlState::default()));
 
     rsx! {
         document::Stylesheet { href: CSS }

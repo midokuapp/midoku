@@ -1,5 +1,5 @@
-use crate::config::Config;
 use crate::error::*;
+use crate::model::Config;
 
 #[cfg(target_os = "android")]
 mod android;
