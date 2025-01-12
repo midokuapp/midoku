@@ -4,11 +4,14 @@ use dioxus::mobile::wry;
 use jni::objects::{JObject, JString};
 use jni::JNIEnv;
 
-use super::{Config, Result};
+use crate::error::Result;
 
-pub struct PathResolver<'a>(pub(crate) &'a Config<'a>);
+use super::Config;
+use super::EXTENSIONS_DIR;
 
-impl PathResolver<'_> {
+pub struct PathResolver(pub Config);
+
+impl PathResolver {
     fn resolve<F>(&self, f: F) -> Result<PathBuf>
     where
         F: FnOnce(&mut JNIEnv, &JObject) -> Result<PathBuf> + Send + 'static,
