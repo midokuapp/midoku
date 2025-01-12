@@ -1,3 +1,4 @@
+use std::fs::OpenOptions;
 use std::io::Write;
 
 use dioxus::prelude::*;
@@ -10,6 +11,10 @@ fn get<K: AsRef<str>, T: DeserializeOwned>(key: K) -> Option<T> {
     let path = PATH.app_local_data_dir();
     let mut file_path = path.join(key.as_ref());
     file_path.set_extension("json");
+    _ = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .open(file_path.clone());
 
     let raw = std::fs::read_to_string(file_path).unwrap();
     serde_json::from_str(&raw).ok()
