@@ -25,27 +25,39 @@ pub fn Extensions() -> Element {
             onchange: move |event| async move {
                 repository_url.write().0 = event.value();
                 manifests.write().0 = get_repository_extensions(event.value()).await;
-            }
+            },
         }
         h2 { "Installed" }
         ul {
-            {extensions.read().0.iter().map(|(_, extension)| {
-                let extension_id = &extension.id;
-                rsx! {
-                    "{extension_id}"
-                    UninstallButton { extension_id }
-                }
-            })}
+            {
+                extensions
+                    .read()
+                    .0
+                    .iter()
+                    .map(|(_, extension)| {
+                        let extension_id = &extension.id;
+                        rsx! {
+                            "{extension_id}"
+                            UninstallButton { extension_id }
+                        }
+                    })
+            }
         }
         h2 { "Available" }
         ul {
-            {manifests.read().0.iter().flat_map(|manifest| {
-                let extension_id = &manifest.id;
-                (!is_installed(extension_id)).then(|| rsx! {
-                    "{extension_id}"
-                    InstallButton { manifest: manifest.clone() }
-                })
-            })}
+            {
+                manifests
+                    .read()
+                    .0
+                    .iter()
+                    .flat_map(|manifest| {
+                        let extension_id = &manifest.id;
+                        (!is_installed(extension_id)).then(|| rsx! {
+                            "{extension_id}"
+                            InstallButton { manifest: manifest.clone() }
+                        })
+                    })
+            }
         }
     }
 }

@@ -7,22 +7,10 @@ use crate::Route;
 #[component]
 pub fn Navbar() -> Element {
     rsx! {
-        main {
-            id: "outlet",
-            Outlet::<Route> {}
-        }
-        nav {
-            id: "navbar",
-            NavLink {
-                to: Route::Browse {},
-                icon: LdGlobe,
-                "Browse"
-            }
-            NavLink {
-                to: Route::Extensions {},
-                icon: LdLayoutGrid,
-                "Extensions"
-            }
+        main { id: "outlet", Outlet::<Route> {} }
+        nav { id: "navbar",
+            NavLink { to: Route::Browse {}, icon: LdGlobe, "Browse" }
+            NavLink { to: Route::Extensions {}, icon: LdLayoutGrid, "Extensions" }
         }
     }
 }
@@ -41,7 +29,7 @@ fn NavLink<I: IconShape + Clone + PartialEq + 'static>(
             // active_class: "active",
             to,
             NavIcon { icon }
-            { children }
+            {children}
         }
     }
 }
@@ -49,9 +37,6 @@ fn NavLink<I: IconShape + Clone + PartialEq + 'static>(
 #[component]
 fn NavIcon<I: IconShape + Clone + PartialEq + 'static>(icon: I) -> Element where {
     rsx! {
-        Icon {
-            style: "color: inherit",
-            icon
-        }
+        Icon { style: "color: inherit", icon }
     }
 }
