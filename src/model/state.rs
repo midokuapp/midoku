@@ -12,8 +12,9 @@ pub struct ExtensionsState(BTreeMap<String, Extension>);
 impl ExtensionsState {
     pub fn init() -> Self {
         let extensions_dir = PATH.extensions_dir();
+        std::fs::create_dir_all(extensions_dir.clone()).unwrap();
         let extensions = std::fs::read_dir(extensions_dir)
-            .expect("failed to read extensions dir")
+            .unwrap()
             .flat_map(|entry| {
                 let entry = entry.expect("failed to read entry");
                 let extension = Extension::from_path(entry.path());
