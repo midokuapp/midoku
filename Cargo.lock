@@ -3246,6 +3246,7 @@ dependencies = [
  "midoku-bindings",
  "midoku-config",
  "midoku-path",
+ "midoku-store",
  "reqwest 0.12.12",
  "serde",
  "serde_json",
@@ -3317,6 +3318,16 @@ version = "0.1.0"
 source = "git+https://github.com/midokuapp/midoku-rs.git#196b027661e03ad310556b659bfac20cd2942bc6"
 dependencies = [
  "wasmtime",
+]
+
+[[package]]
+name = "midoku-store"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "midoku-path",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

@@ -4,16 +4,15 @@ use midoku_path::use_path_resolver;
 use tar::Archive;
 
 use crate::error::Result;
-use crate::hook::use_persistent;
 use crate::model::{
     state::{ExtensionsState, ManifestsState, RepositoryUrlState},
     Extension, Manifest,
 };
-use crate::APP_STORE;
+use crate::store::use_app_data;
 
 #[component]
 pub fn Extensions() -> Element {
-    let mut app_store = use_persistent(APP_STORE);
+    let mut app_store = use_app_data();
 
     let extensions = use_context::<Signal<ExtensionsState>>();
     let mut manifests = use_context::<Signal<ManifestsState>>();
@@ -111,7 +110,7 @@ async fn get_repository_extensions(repository_url: String) -> Vec<Manifest> {
 }
 
 async fn install_extension(manifest: &Manifest) -> Result<()> {
-    let app_store = use_persistent(APP_STORE);
+    let app_store = use_app_data();
     let path_resolver = use_path_resolver();
 
     let mut extensions = use_context::<Signal<ExtensionsState>>();

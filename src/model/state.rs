@@ -2,8 +2,7 @@ use std::collections::{btree_map, BTreeMap};
 
 use dioxus::logger::tracing::*;
 use midoku_path::use_path_resolver;
-
-use crate::hook::UsePersistent;
+use midoku_store::UseStore;
 
 use super::{Extension, Manifest};
 
@@ -75,7 +74,7 @@ pub trait RepositoryUrlState {
     fn set_repository_url(&mut self, value: String);
 }
 
-impl RepositoryUrlState for UsePersistent {
+impl RepositoryUrlState for UseStore {
     const REPOSITORY_URL_KEY: &str = "repositoryUrl";
 
     fn get_repository_url(&self) -> String {

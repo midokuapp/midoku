@@ -1,10 +1,11 @@
 mod error;
-mod hook;
 mod layout;
 mod model;
 mod page;
+mod store;
 
 use dioxus::prelude::*;
+use midoku_store::StoreCollection;
 
 use crate::layout::Navbar;
 use crate::model::state::{ExtensionsState, ManifestsState};
@@ -15,7 +16,6 @@ use crate::page::{
 };
 
 const CSS: Asset = asset!("/assets/main.css");
-const APP_STORE: &str = "app_data";
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -88,6 +88,8 @@ fn App() -> Element {
     //         }
     //     }
     // });
+
+    use_context_provider(|| Signal::new(StoreCollection::new()));
 
     use_context_provider(|| Signal::new(ExtensionsState::init()));
     use_context_provider(|| Signal::new(ManifestsState::default()));

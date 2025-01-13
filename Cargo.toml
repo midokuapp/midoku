@@ -15,6 +15,7 @@ midoku-bindings = { git = "https://github.com/midokuapp/midoku-rs.git" }
 midoku-config = { path = "crates/midoku-config" }
 midoku-macros = { path = "crates/midoku-macros" }
 midoku-path = { path = "crates/midoku-path" }
+midoku-store = { path = "crates/midoku-store" }
 dark-light = "2.0.0"
 # dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
 dioxus = "0.6.1"
@@ -43,6 +44,7 @@ publish.workspace = true
 midoku-bindings.workspace = true
 midoku-config.workspace = true
 midoku-path.workspace = true
+midoku-store.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true
 flate2.workspace = true
