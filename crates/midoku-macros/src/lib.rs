@@ -45,10 +45,16 @@ impl ToTokens for Config {
         let identifier = self.dioxus.bundle.identifier.as_str();
 
         tokens.extend(quote! {
-            Config {
-                name: #name,
-                version: #version,
-                identifier: #identifier,
+            pub fn name() -> &'static str {
+                #name
+            }
+
+            pub fn version() -> &'static str {
+                #version
+            }
+
+            pub fn identifier() -> &'static str {
+                #identifier
             }
         });
     }
@@ -80,7 +86,7 @@ struct Bundle {
     identifier: String,
 }
 
-/// Reads Cargo.toml and Dioxus.toml config files and generates a `Config` based on the contents.
+/// Reads Cargo.toml and Dioxus.toml config files and generates a series of accessors.
 #[proc_macro]
 pub fn get_config(items: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let config = parse_macro_input!(items as Config);

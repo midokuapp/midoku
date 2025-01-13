@@ -52,10 +52,9 @@ fn main() {
     #[cfg(not(target_os = "android"))]
     {
         use dioxus::desktop::{LogicalSize, WindowBuilder};
-        use midoku_config::CONFIG;
 
         let window = WindowBuilder::default()
-            .with_title(CONFIG.name)
+            .with_title(midoku_config::name())
             .with_inner_size(LogicalSize::new(600, 1000));
 
         let config = dioxus::desktop::Config::default()
