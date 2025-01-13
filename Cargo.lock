@@ -3307,9 +3307,11 @@ dependencies = [
 name = "midoku-path"
 version = "0.1.0"
 dependencies = [
+ "dioxus",
  "dirs",
  "jni",
  "midoku-config",
+ "thiserror 2.0.11",
 ]
 
 [[package]]

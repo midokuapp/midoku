@@ -1,10 +1,5 @@
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
-    /// JNI error.
-    #[cfg(target_os = "android")]
-    #[error("jni error: {0}")]
-    Jni(#[from] jni::errors::Error),
-
     /// Unknown path.
     #[error("unknown path")]
     UnknownPath,

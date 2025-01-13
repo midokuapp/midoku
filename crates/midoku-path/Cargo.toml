@@ -7,11 +7,13 @@ license.workspace = true
 
 [dependencies]
 midoku-config.workspace = true
+thiserror.workspace = true
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
 dirs = "5.0.1"
 
 [target.'cfg(target_os = "android")'.dependencies]
+dioxus.workspace = true
 jni = "0.21.1"
 
 [lints]

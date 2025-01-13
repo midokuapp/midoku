@@ -3,11 +3,8 @@ use std::path::PathBuf;
 use dioxus::mobile::wry;
 use jni::objects::{JObject, JString};
 use jni::JNIEnv;
-use midoku_config::UseConfig;
 
 use crate::error::Result;
-
-use super::EXTENSIONS_DIR;
 
 fn resolve<F>(f: F) -> Result<PathBuf>
 where
@@ -18,7 +15,7 @@ where
     rx.recv().unwrap()
 }
 
-pub fn app_local_data_dir() -> PathBuf {
+pub fn app_local_data_dir() -> Result<PathBuf> {
     resolve(move |env, activity| {
         let files_dir = env
             .call_method(activity, "getFilesDir", "()Ljava/io/File;", &[])?
@@ -30,9 +27,4 @@ pub fn app_local_data_dir() -> PathBuf {
         let files_dir: String = env.get_string(&files_dir)?.into();
         Ok(PathBuf::from(files_dir))
     })
-    .unwrap()
-}
-
-pub fn extensions_dir() -> PathBuf {
-    app_local_data_dir().join(EXTENSIONS_DIR)
 }

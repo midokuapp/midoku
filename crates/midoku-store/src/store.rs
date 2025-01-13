@@ -26,7 +26,7 @@ impl Store {
             .entry(name.clone())
             .or_insert_with(move || {
                 let file_name = format!("{}.json", name);
-                let path = midoku_path::app_local_data_dir().join(&file_name);
+                let path = midoku_path::app_local_data_dir().unwrap().join(&file_name);
                 Store::new(path)
             })
             .clone()

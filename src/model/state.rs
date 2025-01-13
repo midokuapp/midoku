@@ -9,7 +9,7 @@ pub struct ExtensionsState(BTreeMap<String, Extension>);
 
 impl ExtensionsState {
     pub fn init() -> Self {
-        let extensions_dir = midoku_path::extensions_dir();
+        let extensions_dir = midoku_path::extensions_dir().unwrap();
         std::fs::create_dir_all(extensions_dir.clone()).unwrap();
         let extensions = std::fs::read_dir(extensions_dir)
             .unwrap()

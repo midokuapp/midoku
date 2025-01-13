@@ -1,13 +1,9 @@
 use std::path::PathBuf;
 
-use super::EXTENSIONS_DIR;
+use crate::error::{Error, Result};
 
-pub fn app_local_data_dir() -> PathBuf {
+pub fn app_local_data_dir() -> Result<PathBuf> {
     dirs::data_local_dir()
-        .unwrap()
-        .join(midoku_config::identifier())
-}
-
-pub fn extensions_dir() -> PathBuf {
-    app_local_data_dir().join(EXTENSIONS_DIR)
+        .ok_or(Error::UnknownPath)
+        .map(|path| path.join(midoku_config::identifier()))
 }
