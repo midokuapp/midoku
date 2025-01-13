@@ -25,7 +25,9 @@ impl InnerStore {
         _ = OpenOptions::new().create(true).write(true).open(&self.path);
 
         let raw = read_to_string(&self.path).unwrap();
-        self.cache = serde_json::from_str(&raw).unwrap();
+        self.cache = serde_json::from_str(&raw)
+            .ok()
+            .unwrap_or_else(|| Map::new())
     }
 
     fn write(&self) {
