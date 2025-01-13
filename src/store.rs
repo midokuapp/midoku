@@ -1,5 +1,5 @@
-use midoku_store::{use_store, UseStore};
+use midoku_store::Store;
 
-pub fn use_app_data() -> UseStore {
-    use_store("app_data")
+pub fn app_data() -> Store {
+    Store::open("app_data")
 }

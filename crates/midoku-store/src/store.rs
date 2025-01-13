@@ -1,51 +1,42 @@
-use std::fs::{read_to_string, File, OpenOptions};
-use std::io::Write;
+use std::collections::HashMap;
 use std::path::PathBuf;
+use std::sync::{Arc, LazyLock, Mutex};
 
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use serde_json::{Map, Value};
 
-pub struct Store {
-    path: PathBuf,
-    cache: Map<String, Value>,
-}
+use crate::inner_store::InnerStore;
+
+static STORE_COLLECTION: LazyLock<Mutex<HashMap<String, Store>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
+#[derive(Clone)]
+pub struct Store(Arc<Mutex<InnerStore>>);
 
 impl Store {
     pub(crate) fn new(path: PathBuf) -> Self {
-        let mut store = Self {
-            path,
-            cache: Map::new(),
-        };
-        store.read();
-        store
+        Self(Arc::new(Mutex::new(InnerStore::new(path))))
     }
 
-    fn read(&mut self) {
-        _ = OpenOptions::new().create(true).write(true).open(&self.path);
-
-        let raw = read_to_string(&self.path).unwrap();
-        self.cache = serde_json::from_str(&raw).unwrap();
+    pub fn open<S: ToString>(name: S) -> Self {
+        let name = name.to_string();
+        STORE_COLLECTION
+            .lock()
+            .unwrap()
+            .entry(name.clone())
+            .or_insert_with(move || {
+                let file_name = format!("{}.json", name);
+                let path = midoku_path::app_local_data_dir().join(&file_name);
+                Store::new(path)
+            })
+            .clone()
     }
 
-    fn write(&self) {
-        let mut file = File::create(&self.path).unwrap();
-        let content = serde_json::to_vec_pretty(&self.cache).unwrap();
-        file.write_all(&content).unwrap();
+    pub fn get<K: AsRef<str>, T: DeserializeOwned>(&self, key: K) -> Option<T> {
+        self.0.lock().unwrap().get(key)
     }
 
-    pub(crate) fn get<K: AsRef<str>, T: DeserializeOwned>(&self, key: K) -> Option<T> {
-        let key = key.as_ref();
-        self.cache
-            .get(key)
-            .cloned()
-            .map(|value| serde_json::from_value(value).unwrap())
-    }
-
-    pub(crate) fn set<K: ToString, T: Serialize>(&mut self, key: K, value: T) {
-        let key = key.to_string();
-        let value = serde_json::to_value(value).unwrap();
-        self.cache.insert(key, value);
-        self.write();
+    pub fn set<K: ToString, T: Serialize>(&mut self, key: K, value: T) {
+        self.0.lock().unwrap().set(key, value);
     }
 }

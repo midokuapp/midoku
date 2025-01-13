@@ -1,8 +1,7 @@
 use std::collections::{btree_map, BTreeMap};
 
 use dioxus::logger::tracing::*;
-use midoku_path::use_path_resolver;
-use midoku_store::UseStore;
+use midoku_store::Store;
 
 use super::{Extension, Manifest};
 
@@ -10,9 +9,7 @@ pub struct ExtensionsState(BTreeMap<String, Extension>);
 
 impl ExtensionsState {
     pub fn init() -> Self {
-        let path_resolver = use_path_resolver();
-
-        let extensions_dir = path_resolver.extensions_dir();
+        let extensions_dir = midoku_path::extensions_dir();
         std::fs::create_dir_all(extensions_dir.clone()).unwrap();
         let extensions = std::fs::read_dir(extensions_dir)
             .unwrap()
@@ -74,7 +71,7 @@ pub trait RepositoryUrlState {
     fn set_repository_url(&mut self, value: String);
 }
 
-impl RepositoryUrlState for UseStore {
+impl RepositoryUrlState for Store {
     const REPOSITORY_URL_KEY: &str = "repositoryUrl";
 
     fn get_repository_url(&self) -> String {

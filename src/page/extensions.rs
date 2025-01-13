@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
 use flate2::read::GzDecoder;
-use midoku_path::use_path_resolver;
 use tar::Archive;
 
 use crate::error::Result;
@@ -8,19 +7,17 @@ use crate::model::{
     state::{ExtensionsState, ManifestsState, RepositoryUrlState},
     Extension, Manifest,
 };
-use crate::store::use_app_data;
+use crate::store;
 
 #[component]
 pub fn Extensions() -> Element {
-    let mut app_store = use_app_data();
-
     let extensions = use_context::<Signal<ExtensionsState>>();
     let mut manifests = use_context::<Signal<ManifestsState>>();
-    let mut repository_url = use_signal(|| app_store.get_repository_url());
+    let mut repository_url = use_signal(|| store::app_data().get_repository_url());
 
     _ = use_resource(move || async move {
         let repository_url = repository_url.read();
-        app_store.set_repository_url(repository_url.clone());
+        store::app_data().set_repository_url(repository_url.clone());
         let repository_extensions = get_repository_extensions(repository_url.clone()).await;
         manifests.set(repository_extensions.into());
     });
@@ -69,6 +66,8 @@ pub fn Extensions() -> Element {
 
 #[component]
 pub fn InstallButton(manifest: Manifest) -> Element {
+    let mut extensions = use_context::<Signal<ExtensionsState>>();
+
     let mut disabled = use_signal(|| false);
 
     rsx! {
@@ -77,7 +76,7 @@ pub fn InstallButton(manifest: Manifest) -> Element {
             onclick: move |_| {
                 disabled.set(true);
                 let manifest = manifest.clone();
-                async move { install_extension(&manifest).await.unwrap() }
+                async move { install_extension(&mut extensions, &manifest).await.unwrap() }
             },
             "Install"
         }
@@ -86,11 +85,13 @@ pub fn InstallButton(manifest: Manifest) -> Element {
 
 #[component]
 pub fn UninstallButton(extension_id: String) -> Element {
+    let mut extensions = use_context::<Signal<ExtensionsState>>();
+
     rsx! {
         button {
             onclick: move |_| {
                 let extension_id = extension_id.clone();
-                async move { uninstall_extension(&extension_id).await.unwrap() }
+                async move { uninstall_extension(&mut extensions, &extension_id).await.unwrap() }
             },
             "Uninstall"
         }
@@ -109,14 +110,14 @@ async fn get_repository_extensions(repository_url: String) -> Vec<Manifest> {
     manifests
 }
 
-async fn install_extension(manifest: &Manifest) -> Result<()> {
-    let app_store = use_app_data();
-    let path_resolver = use_path_resolver();
-
-    let mut extensions = use_context::<Signal<ExtensionsState>>();
+async fn install_extension(
+    extensions: &mut Signal<ExtensionsState>,
+    manifest: &Manifest,
+) -> Result<()> {
+    let app_store = store::app_data();
     let repository_url = app_store.get_repository_url();
 
-    let extensions_dir = path_resolver.extensions_dir();
+    let extensions_dir = midoku_path::extensions_dir();
     let extension_path = extensions_dir.join(&manifest.id);
 
     // If the path exists, then the extensions have already been installed.
@@ -150,11 +151,11 @@ async fn install_extension(manifest: &Manifest) -> Result<()> {
     Ok(())
 }
 
-async fn uninstall_extension(extension_id: &str) -> Result<()> {
-    let mut extensions = use_context::<Signal<ExtensionsState>>();
-    let path_resolver = use_path_resolver();
-
-    let extensions_dir = path_resolver.extensions_dir();
+async fn uninstall_extension(
+    extensions: &mut Signal<ExtensionsState>,
+    extension_id: &str,
+) -> Result<()> {
+    let extensions_dir = midoku_path::extensions_dir();
     let extension_path = extensions_dir.join(extension_id);
 
     // Remove the extension directory

@@ -3324,7 +3324,6 @@ dependencies = [
 name = "midoku-store"
 version = "0.1.0"
 dependencies = [
- "dioxus",
  "midoku-path",
  "serde",
  "serde_json",
