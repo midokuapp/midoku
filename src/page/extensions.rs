@@ -117,7 +117,7 @@ async fn install_extension(
     let app_store = store::app_data();
     let repository_url = app_store.get_repository_url();
 
-    let extensions_dir = midoku_path::extensions_dir().unwrap();
+    let extensions_dir = crate::util::extensions_dir().unwrap();
     let extension_path = extensions_dir.join(&manifest.id);
 
     // If the path exists, then the extensions have already been installed.
@@ -155,7 +155,7 @@ async fn uninstall_extension(
     extensions: &mut Signal<ExtensionsState>,
     extension_id: &str,
 ) -> Result<()> {
-    let extensions_dir = midoku_path::extensions_dir().unwrap();
+    let extensions_dir = crate::util::extensions_dir().unwrap();
     let extension_path = extensions_dir.join(extension_id);
 
     // Remove the extension directory
