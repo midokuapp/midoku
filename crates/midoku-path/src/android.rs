@@ -15,16 +15,35 @@ where
     rx.recv().unwrap()
 }
 
+macro_rules! resolve {
+    (file $method:expr) => {
+        resolve(move |env, activity| {
+            let file = call_method!(env, activity, file $method)?;
+            let string = call_method!(env, file, string "getAbsolutePath")?;
+            Ok(PathBuf::from(string))
+        })
+    };
+    (string $method:expr) => {
+        resolve(move |env, activity| {
+            let string = call_method!(env, activity, string $method)?;
+            Ok(PathBuf::from(string))
+        })
+    };
+}
+
+macro_rules! call_method {
+    ($env:expr, $object:expr, file $method:expr) => {
+        $env.call_method($object, $method, "()Ljava/io/File;", &[])
+            .and_then(|obj| obj.l())
+    };
+    ($env:expr, $object:expr, string $method:expr) => {
+        $env.call_method($object, $method, "()Ljava/lang/String;", &[])
+            .and_then(|obj| obj.l())
+            .map(JString::from)
+            .and_then(|obj| $env.get_string(&obj).map(|java_str| String::from(java_str)))
+    };
+}
+
 pub fn app_local_data_dir() -> Result<PathBuf> {
-    resolve(move |env, activity| {
-        let files_dir = env
-            .call_method(activity, "getFilesDir", "()Ljava/io/File;", &[])?
-            .l()?;
-        let files_dir: JString<'_> = env
-            .call_method(files_dir, "getAbsolutePath", "()Ljava/lang/String;", &[])?
-            .l()?
-            .into();
-        let files_dir: String = env.get_string(&files_dir)?.into();
-        Ok(PathBuf::from(files_dir))
-    })
+    resolve!(file "getFilesDir")
 }
