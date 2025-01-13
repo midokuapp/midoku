@@ -3245,7 +3245,6 @@ dependencies = [
  "futures-lite",
  "midoku-bindings",
  "midoku-config",
- "midoku-macros",
  "midoku-path",
  "reqwest 0.12.12",
  "serde",
@@ -3270,6 +3269,9 @@ dependencies = [
 [[package]]
 name = "midoku-config"
 version = "0.1.0"
+dependencies = [
+ "midoku-macros",
+]
 
 [[package]]
 name = "midoku-http"
@@ -3307,7 +3309,6 @@ dependencies = [
  "dirs",
  "jni",
  "midoku-config",
- "midoku-macros",
 ]
 
 [[package]]

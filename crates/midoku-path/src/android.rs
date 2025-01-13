@@ -3,15 +3,19 @@ use std::path::PathBuf;
 use dioxus::mobile::wry;
 use jni::objects::{JObject, JString};
 use jni::JNIEnv;
+use midoku_config::UseConfig;
 
 use crate::error::Result;
 
 use super::EXTENSIONS_DIR;
 
-pub struct PathResolver;
+#[derive(Clone, Copy)]
+pub struct UsePathResolver {
+    pub(crate) config: UseConfig,
+}
 
-impl PathResolver {
-    fn resolve<F>(f: F) -> Result<PathBuf>
+impl UsePathResolver {
+    fn resolve<F>(&self, f: F) -> Result<PathBuf>
     where
         F: FnOnce(&mut JNIEnv, &JObject) -> Result<PathBuf> + Send + 'static,
     {
@@ -20,8 +24,8 @@ impl PathResolver {
         rx.recv().unwrap()
     }
 
-    pub fn app_local_data_dir() -> PathBuf {
-        Self::resolve(move |env, activity| {
+    pub fn app_local_data_dir(&self) -> PathBuf {
+        self.resolve(move |env, activity| {
             let files_dir = env
                 .call_method(activity, "getFilesDir", "()Ljava/io/File;", &[])?
                 .l()?;
@@ -35,7 +39,7 @@ impl PathResolver {
         .unwrap()
     }
 
-    pub fn extensions_dir() -> PathBuf {
-        Self::app_local_data_dir().join(EXTENSIONS_DIR)
+    pub fn extensions_dir(&self) -> PathBuf {
+        self.app_local_data_dir().join(EXTENSIONS_DIR)
     }
 }

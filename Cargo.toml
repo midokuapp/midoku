@@ -42,7 +42,6 @@ publish.workspace = true
 [dependencies]
 midoku-bindings.workspace = true
 midoku-config.workspace = true
-midoku-macros.workspace = true
 midoku-path.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true

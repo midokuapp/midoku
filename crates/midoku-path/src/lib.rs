@@ -4,12 +4,15 @@ mod android;
 mod desktop;
 
 #[cfg(target_os = "android")]
-pub use android::PathResolver;
+pub use android::UsePathResolver;
 #[cfg(not(target_os = "android"))]
-pub use desktop::PathResolver;
+pub use desktop::UsePathResolver;
 
-use midoku_config::Config;
-use midoku_macros::get_config;
+use midoku_config::use_config;
 
-const CONFIG: Config = get_config!();
 const EXTENSIONS_DIR: &str = "extensions";
+
+pub fn use_path_resolver() -> UsePathResolver {
+    let config = use_config();
+    UsePathResolver { config }
+}

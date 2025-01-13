@@ -13,7 +13,7 @@ proc-macro2 = "1.0.92"
 quote = "1.0.38"
 syn = "2.0.94"
 toml = "0.8.19"
-serde = "1.0.217"
+serde.workspace = true
 
 [lints]
 workspace = true

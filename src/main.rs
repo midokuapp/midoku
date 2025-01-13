@@ -5,8 +5,6 @@ mod model;
 mod page;
 
 use dioxus::prelude::*;
-use midoku_config::Config;
-use midoku_macros::get_config;
 
 use crate::layout::Navbar;
 use crate::model::state::{ExtensionsState, ManifestsState};
@@ -17,7 +15,6 @@ use crate::page::{
 };
 
 const CSS: Asset = asset!("/assets/main.css");
-const CONFIG: Config = get_config!();
 const APP_STORE: &str = "app_data";
 
 #[derive(Debug, Clone, Routable, PartialEq)]
@@ -56,9 +53,12 @@ fn main() {
     #[cfg(not(target_os = "android"))]
     {
         use dioxus::desktop::{LogicalSize, WindowBuilder};
+        use midoku_config::use_config;
+
+        let config = use_config();
 
         let window = WindowBuilder::default()
-            .with_title(CONFIG.name)
+            .with_title(config.name())
             .with_inner_size(LogicalSize::new(600, 1000));
 
         let config = dioxus::desktop::Config::default()
