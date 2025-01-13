@@ -44,6 +44,27 @@ macro_rules! call_method {
     };
 }
 
+/// Returns the path to the suggested directory for the app's config files.
+pub fn app_config_dir() -> Result<PathBuf> {
+    resolve!(file "getDataDir")
+}
+
+/// Returns the path to the suggested directory for the app's data files.
+pub fn app_data_dir() -> Result<PathBuf> {
+    resolve!(file "getDataDir")
+}
+
+/// Returns the path to the suggested directory for the app's local data files.
 pub fn app_local_data_dir() -> Result<PathBuf> {
-    resolve!(file "getFilesDir")
+    resolve!(file "getDataDir")
+}
+
+/// Returns the path to the suggested directory for the app's cache files.
+pub fn app_cache_dir() -> Result<PathBuf> {
+    resolve!(file "getCacheDir")
+}
+
+/// Returns the path to the suggested directory for the app's log files.
+pub fn app_log_dir() -> Result<PathBuf> {
+    resolve!(file "getDataDir").map(|dir| dir.join("logs"))
 }
