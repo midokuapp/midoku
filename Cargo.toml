@@ -12,15 +12,15 @@ unsafe_code = "forbid"
 
 [workspace.dependencies]
 midoku-bindings = { git = "https://github.com/midokuapp/midoku-rs.git" }
+midoku-config = { path = "crates/midoku-config" }
 midoku-macros = { path = "crates/midoku-macros" }
+midoku-path = { path = "crates/midoku-path" }
 dark-light = "2.0.0"
 # dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
 dioxus = "0.6.1"
 dioxus-free-icons = { version = "0.9", features = ["lucide"] }
-dirs = "5.0.1"
 flate2 = "1.0.34"
 futures-lite = "2.5.0"
-jni = "0.21.1"
 reqwest = { version = "0.12.12", default-features = false, features = [
     "rustls-tls",
     "charset",
@@ -41,7 +41,9 @@ publish.workspace = true
 
 [dependencies]
 midoku-bindings.workspace = true
+midoku-config.workspace = true
 midoku-macros.workspace = true
+midoku-path.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true
 flate2.workspace = true
@@ -53,11 +55,7 @@ thiserror.workspace = true
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
 dark-light.workspace = true
-dirs.workspace = true
 futures-lite.workspace = true
-
-[target.'cfg(target_os = "android")'.dependencies]
-jni.workspace = true
 
 [features]
 default = ["desktop"]

@@ -2,13 +2,12 @@ use std::fs::OpenOptions;
 use std::io::Write;
 
 use dioxus::prelude::*;
+use midoku_path::PathResolver;
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::{Map, Value};
 
-use crate::PATH;
-
 fn get<K: AsRef<str>, T: DeserializeOwned>(key: K) -> Option<T> {
-    let path = PATH.app_local_data_dir();
+    let path = PathResolver::app_local_data_dir();
     let mut file_path = path.join(key.as_ref());
     file_path.set_extension("json");
     _ = OpenOptions::new()
@@ -21,7 +20,7 @@ fn get<K: AsRef<str>, T: DeserializeOwned>(key: K) -> Option<T> {
 }
 
 fn set<K: AsRef<str>, T: Serialize>(key: K, value: &T) {
-    let path = PATH.app_local_data_dir();
+    let path = PathResolver::app_local_data_dir();
     std::fs::create_dir_all(&path).unwrap();
     let mut file_path = path.join(key.as_ref());
     file_path.set_extension("json");

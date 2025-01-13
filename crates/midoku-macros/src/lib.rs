@@ -1,5 +1,6 @@
+mod util;
+
 use std::fs::read_to_string;
-use std::path::PathBuf;
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
@@ -22,12 +23,10 @@ impl Parse for Config {
             return Err(syn::Error::new(input.span(), "expected no input"));
         }
 
-        let cargo_manifest_dir = std::env::var("CARGO_MANIFEST_DIR")
-            .map(PathBuf::from)
-            .unwrap();
+        let workspace_dir = crate::util::workspace_dir();
 
-        let cargo_file = cargo_manifest_dir.join("Cargo.toml");
-        let dioxus_file = cargo_manifest_dir.join("Dioxus.toml");
+        let cargo_file = workspace_dir.join("Cargo.toml");
+        let dioxus_file = workspace_dir.join("Dioxus.toml");
 
         let cargo_contents = read_to_string(cargo_file).expect("Failed to read Cargo.toml");
         let dioxus_contents = read_to_string(dioxus_file).expect("Failed to read Dioxus.toml");

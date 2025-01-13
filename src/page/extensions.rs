@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use flate2::read::GzDecoder;
+use midoku_path::PathResolver;
 use tar::Archive;
 
 use crate::error::Result;
@@ -8,7 +9,7 @@ use crate::model::{
     state::{ExtensionsState, ManifestsState, RepositoryUrlState},
     Extension, Manifest,
 };
-use crate::{APP_STORE, PATH};
+use crate::APP_STORE;
 
 #[component]
 pub fn Extensions() -> Element {
@@ -115,7 +116,7 @@ async fn install_extension(manifest: &Manifest) -> Result<()> {
     let mut extensions = use_context::<Signal<ExtensionsState>>();
     let repository_url = app_store.get_repository_url();
 
-    let extensions_dir = PATH.extensions_dir();
+    let extensions_dir = PathResolver::extensions_dir();
     let extension_path = extensions_dir.join(&manifest.id);
 
     // If the path exists, then the extensions have already been installed.
@@ -152,7 +153,7 @@ async fn install_extension(manifest: &Manifest) -> Result<()> {
 async fn uninstall_extension(extension_id: &str) -> Result<()> {
     let mut extensions = use_context::<Signal<ExtensionsState>>();
 
-    let extensions_dir = PATH.extensions_dir();
+    let extensions_dir = PathResolver::extensions_dir();
     let extension_path = extensions_dir.join(extension_id);
 
     // Remove the extension directory

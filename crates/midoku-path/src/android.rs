@@ -6,13 +6,12 @@ use jni::JNIEnv;
 
 use crate::error::Result;
 
-use super::Config;
 use super::EXTENSIONS_DIR;
 
-pub struct PathResolver(pub Config);
+pub struct PathResolver;
 
 impl PathResolver {
-    fn resolve<F>(&self, f: F) -> Result<PathBuf>
+    fn resolve<F>(f: F) -> Result<PathBuf>
     where
         F: FnOnce(&mut JNIEnv, &JObject) -> Result<PathBuf> + Send + 'static,
     {
@@ -21,8 +20,8 @@ impl PathResolver {
         rx.recv().unwrap()
     }
 
-    pub fn app_local_data_dir(&self) -> PathBuf {
-        self.resolve(move |env, activity| {
+    pub fn app_local_data_dir() -> PathBuf {
+        Self::resolve(move |env, activity| {
             let files_dir = env
                 .call_method(activity, "getFilesDir", "()Ljava/io/File;", &[])?
                 .l()?;
@@ -36,7 +35,7 @@ impl PathResolver {
         .unwrap()
     }
 
-    pub fn extensions_dir(&self) -> PathBuf {
-        self.app_local_data_dir().join(EXTENSIONS_DIR)
+    pub fn extensions_dir() -> PathBuf {
+        Self::app_local_data_dir().join(EXTENSIONS_DIR)
     }
 }

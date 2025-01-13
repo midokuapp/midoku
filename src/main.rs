@@ -3,17 +3,13 @@ mod hook;
 mod layout;
 mod model;
 mod page;
-mod path;
 
 use dioxus::prelude::*;
-use midoku_macros::*;
+use midoku_config::Config;
+use midoku_macros::get_config;
 
 use crate::layout::Navbar;
-use crate::model::{
-    state::{ExtensionsState, ManifestsState},
-    Config,
-};
-use crate::path::PathResolver;
+use crate::model::state::{ExtensionsState, ManifestsState};
 
 use crate::page::{
     browse::{Browse, BrowseExtension, BrowseManga},
@@ -22,7 +18,6 @@ use crate::page::{
 
 const CSS: Asset = asset!("/assets/main.css");
 const CONFIG: Config = get_config!();
-const PATH: PathResolver = PathResolver(CONFIG);
 const APP_STORE: &str = "app_data";
 
 #[derive(Debug, Clone, Routable, PartialEq)]

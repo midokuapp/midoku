@@ -1,9 +1,9 @@
 use std::collections::{btree_map, BTreeMap};
 
 use dioxus::logger::tracing::*;
+use midoku_path::PathResolver;
 
 use crate::hook::UsePersistent;
-use crate::PATH;
 
 use super::{Extension, Manifest};
 
@@ -11,7 +11,7 @@ pub struct ExtensionsState(BTreeMap<String, Extension>);
 
 impl ExtensionsState {
     pub fn init() -> Self {
-        let extensions_dir = PATH.extensions_dir();
+        let extensions_dir = PathResolver::extensions_dir();
         std::fs::create_dir_all(extensions_dir.clone()).unwrap();
         let extensions = std::fs::read_dir(extensions_dir)
             .unwrap()
