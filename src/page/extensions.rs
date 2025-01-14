@@ -36,8 +36,10 @@ pub fn Extensions() -> Element {
                     .map(|(_, extension)| {
                         let extension_id = &extension.id;
                         rsx! {
-                            "{extension_id}"
-                            UninstallButton { extension_id }
+                            li {
+                                "{extension_id}"
+                                UninstallButton { extension_id }
+                            }
                         }
                     })
             }
@@ -52,8 +54,10 @@ pub fn Extensions() -> Element {
                         let extension_id = &manifest.id;
                         (!extensions.read().contains(extension_id))
                             .then(|| rsx! {
-                                "{extension_id}"
-                                InstallButton { manifest: manifest.clone() }
+                                li {
+                                    "{extension_id}"
+                                    InstallButton { manifest: manifest.clone() }
+                                }
                             })
                     })
             }
