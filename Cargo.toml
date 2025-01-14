@@ -16,12 +16,11 @@ midoku-config = { path = "crates/midoku-config" }
 midoku-macros = { path = "crates/midoku-macros" }
 midoku-path = { path = "crates/midoku-path" }
 midoku-store = { path = "crates/midoku-store" }
-dark-light = "2.0.0"
+midoku-theme = { path = "crates/midoku-theme" }
 # dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
 dioxus = "0.6.1"
 dioxus-free-icons = { version = "0.9", features = ["lucide"] }
 flate2 = "1.0.34"
-futures-lite = "2.5.0"
 reqwest = { version = "0.12.12", default-features = false, features = [
     "rustls-tls",
     "charset",
@@ -45,6 +44,7 @@ midoku-bindings.workspace = true
 midoku-config.workspace = true
 midoku-path.workspace = true
 midoku-store.workspace = true
+midoku-theme.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true
 flate2.workspace = true
@@ -53,10 +53,6 @@ serde.workspace = true
 serde_json.workspace = true
 tar.workspace = true
 thiserror.workspace = true
-
-[target.'cfg(not(target_os = "android"))'.dependencies]
-dark-light.workspace = true
-futures-lite.workspace = true
 
 [features]
 default = ["desktop"]

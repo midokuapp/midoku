@@ -1,0 +1,18 @@
+[package]
+name = "midoku-theme"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+async-std = "1.13.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+ashpd = { version = "0.10.2", default-features = false, features = [
+    "async-std",
+] }
+
+[lints]
+workspace = true

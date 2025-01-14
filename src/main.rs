@@ -68,23 +68,25 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    // #[cfg(not(target_os = "android"))]
-    // spawn(async move {
-    //     use dark_light::Mode;
-    //     use dioxus::desktop::tao::window::Theme;
-    //     use futures_lite::StreamExt;
+    #[cfg(not(target_os = "android"))]
+    spawn(async move {
+        // use dioxus::desktop::tao::window::Theme;
+        use midoku_theme::prelude::*;
 
-    //     let window = dioxus::desktop::window();
+        // let window = dioxus::desktop::window();
 
-    //     let mut stream = dark_light::subscribe().await;
-    //     while let Some(mode) = stream.next().await {
-    //         match mode {
-    //             Mode::Dark => window.set_theme(Some(Theme::Dark)),
-    //             Mode::Light => window.set_theme(Some(Theme::Light)),
-    //             Mode::Default => window.set_theme(None),
-    //         }
-    //     }
-    // });
+        let mut stream = midoku_theme::subscribe().await;
+        while let Some(mode) = stream.next().await {
+            match mode {
+                // Mode::Dark => window.set_theme(Some(Theme::Dark)),
+                // Mode::Light => window.set_theme(Some(Theme::Light)),
+                // Mode::Unspecified => window.set_theme(None),
+                Mode::Dark => dioxus::logger::tracing::debug!("Dark Theme"),
+                Mode::Light => dioxus::logger::tracing::debug!("Light Theme"),
+                Mode::Unspecified => dioxus::logger::tracing::debug!("Default Theme"),
+            }
+        }
+    });
 
     use_context_provider(|| Signal::new(ExtensionsState::init()));
     use_context_provider(|| Signal::new(ManifestsState::default()));

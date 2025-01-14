@@ -979,20 +979,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dark-light"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18e1a09f280e29a8b00bc7e81eca5ac87dca0575639c9422a5fa25a07bb884b8"
-dependencies = [
- "ashpd 0.10.2",
- "async-std",
- "objc2",
- "objc2-foundation",
- "web-sys",
- "winreg 0.52.0",
-]
-
-[[package]]
 name = "darling"
 version = "0.20.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3238,15 +3224,14 @@ dependencies = [
 name = "midoku"
 version = "0.1.0"
 dependencies = [
- "dark-light",
  "dioxus",
  "dioxus-free-icons",
  "flate2",
- "futures-lite",
  "midoku-bindings",
  "midoku-config",
  "midoku-path",
  "midoku-store",
+ "midoku-theme",
  "reqwest 0.12.12",
  "serde",
  "serde_json",
@@ -3329,6 +3314,15 @@ dependencies = [
  "midoku-path",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "midoku-theme"
+version = "0.1.0"
+dependencies = [
+ "ashpd 0.10.2",
+ "async-std",
+ "thiserror 2.0.11",
 ]
 
 [[package]]
@@ -4313,7 +4307,7 @@ dependencies = [
  "wasm-streams",
  "web-sys",
  "webpki-roots 0.25.4",
- "winreg 0.50.0",
+ "winreg",
 ]
 
 [[package]]
@@ -6661,16 +6655,6 @@ name = "winreg"
 version = "0.50.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "524e57b2c537c0f9b1e69f1965311ec12182b4122e45035b1508cd24d2adadb1"
-dependencies = [
- "cfg-if",
- "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "winreg"
-version = "0.52.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a277a57398d4bfa075df44f501a17cfdf8542d224f0d36095a2adc7aee4ef0a5"
 dependencies = [
  "cfg-if",
  "windows-sys 0.48.0",
