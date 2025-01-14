@@ -5,7 +5,6 @@ resolver = "2"
 [workspace.package]
 edition = "2021"
 publish = false
-license = "GPL-3.0-or-later"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
@@ -38,6 +37,7 @@ version = "0.1.0"
 authors = ["Youn Mélois <youn@melois.dev>"]
 edition.workspace = true
 publish.workspace = true
+license = "GPL-3.0-or-later"
 
 [dependencies]
 midoku-bindings.workspace = true

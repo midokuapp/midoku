@@ -47,8 +47,15 @@ https://v2.tauri.app/distribute/sign/android/
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0
+The Midoku application located in [src/](src/) is licensed under the GNU General Public License v3.0
 ([LICENSE](LICENSE) or https://www.gnu.org/licenses/gpl-3.0.html)
+
+The helper crates located in [crates/](crates/) are licensed under either of
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
 
 ## Disclaimer
 
