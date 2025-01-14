@@ -1,8 +1,7 @@
 mod extension;
 mod manifest;
 mod source;
-pub mod state;
 
-pub use extension::Extension;
-pub use manifest::Manifest;
+pub use extension::{init_extensions, Extension, Extensions};
+pub use manifest::{Manifest, Manifests};
 pub use source::Source;

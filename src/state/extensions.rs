@@ -3,30 +3,18 @@ use flate2::read::GzDecoder;
 use tar::Archive;
 
 use crate::error::Result;
-use crate::model::{
-    state::{ExtensionsState, RepositoryUrlState},
-    Extension, Manifest,
-};
-use crate::store;
+use crate::model::{Extension, Manifest};
 
-pub fn use_extensions() -> UseExtensions {
-    let extensions = use_context::<Signal<ExtensionsState>>();
-    UseExtensions { inner: extensions }
+use super::{State, StateRepositoryUrl};
+
+pub trait StateExtensions {
+    async fn install_extension(&mut self, manifest: &Manifest) -> Result<()>;
+    async fn uninstall_extension(&mut self, extension_id: &str) -> Result<()>;
 }
 
-#[derive(Clone, Copy)]
-pub struct UseExtensions {
-    inner: Signal<ExtensionsState>,
-}
-
-impl UseExtensions {
-    pub fn read(&self) -> ReadableRef<Signal<ExtensionsState>> {
-        self.inner.read()
-    }
-
-    pub async fn install(&mut self, manifest: &Manifest) -> Result<()> {
-        let app_store = store::app_data();
-        let repository_url = app_store.get_repository_url();
+impl StateExtensions for State {
+    async fn install_extension(&mut self, manifest: &Manifest) -> Result<()> {
+        let repository_url = self.repository_url();
 
         let extensions_dir = crate::util::extensions_dir().unwrap();
         let extension_path = extensions_dir.join(&manifest.id);
@@ -57,12 +45,14 @@ impl UseExtensions {
 
         // Register the extension
         let extension = Extension::from_path(extension_path)?;
-        self.inner.write().insert(extension);
+        self.extensions
+            .write()
+            .insert(extension.id.clone(), extension);
 
         Ok(())
     }
 
-    pub async fn uninstall(&mut self, extension_id: &str) -> Result<()> {
+    async fn uninstall_extension(&mut self, extension_id: &str) -> Result<()> {
         let extensions_dir = crate::util::extensions_dir().unwrap();
         let extension_path = extensions_dir.join(extension_id);
 
@@ -70,7 +60,7 @@ impl UseExtensions {
         std::fs::remove_dir_all(&extension_path)?;
 
         // Unregister the extension
-        self.inner.write().remove(extension_id);
+        self.extensions.write().remove(extension_id);
 
         Ok(())
     }

@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+pub type Manifests = Vec<Manifest>;
+
 #[derive(Deserialize, Clone, PartialEq)]
 pub struct Manifest {
     pub id: String,

@@ -1,15 +1,14 @@
 mod error;
-mod hook;
 mod layout;
 mod model;
 mod page;
-mod store;
+mod state;
 mod util;
 
 use dioxus::prelude::*;
 
 use crate::layout::Navbar;
-use crate::model::state::{ExtensionsState, ManifestsState};
+use crate::state::use_state_provider;
 
 use crate::page::{
     browse::{Browse, BrowseExtension, BrowseManga},
@@ -69,6 +68,8 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    use_state_provider();
+
     #[cfg(not(target_os = "android"))]
     spawn(async move {
         // use dioxus::desktop::tao::window::Theme;
@@ -88,9 +89,6 @@ fn App() -> Element {
             }
         }
     });
-
-    use_context_provider(|| Signal::new(ExtensionsState::init()));
-    use_context_provider(|| Signal::new(ManifestsState::default()));
 
     rsx! {
         document::Stylesheet { href: CSS }

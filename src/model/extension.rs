@@ -1,5 +1,7 @@
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
+use dioxus::logger::tracing::*;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use midoku_bindings::Bindings;
 
@@ -7,11 +9,36 @@ use crate::error::{Error, Result};
 
 use super::Source;
 
+pub type Extensions = BTreeMap<String, Extension>;
+
 pub struct Extension {
     pub id: String,
     pub source: Source,
     pub icon_path: PathBuf,
     bindings: Bindings,
+}
+
+pub fn init_extensions() -> Extensions {
+    let extensions_dir = crate::util::extensions_dir().unwrap();
+    std::fs::create_dir_all(extensions_dir.clone()).unwrap();
+    std::fs::read_dir(extensions_dir)
+        .unwrap()
+        .flat_map(|entry| {
+            let entry = entry.expect("failed to read entry");
+            let extension = Extension::from_path(entry.path());
+
+            match extension {
+                Ok(extension) => {
+                    debug!("loaded extension: {}", &extension.id);
+                    Some((extension.id.clone(), extension))
+                }
+                Err(e) => {
+                    warn!("failed to load extension: {}", e);
+                    None
+                }
+            }
+        })
+        .collect()
 }
 
 impl Extension {

@@ -1,21 +1,19 @@
 use dioxus::prelude::*;
 
-use crate::hook::use_extensions;
-use crate::model::{
-    state::{ManifestsState, RepositoryUrlState},
-    Manifest,
-};
-use crate::store;
+use crate::model::Manifest;
+use crate::state::{State, StateExtensions, StateRepositoryUrl};
 
 #[component]
 pub fn Extensions() -> Element {
-    let extensions = use_extensions();
-    let mut manifests = use_context::<Signal<ManifestsState>>();
-    let mut repository_url = use_signal(|| store::app_data().get_repository_url());
+    let mut state = use_context::<State>();
+    let extensions = state.extensions;
+    let mut manifests = state.manifests;
+
+    let mut repository_url = use_signal(|| state.repository_url());
 
     _ = use_resource(move || async move {
         let repository_url = repository_url.read();
-        store::app_data().set_repository_url(repository_url.clone());
+        state.set_repository_url(repository_url.clone());
         let repository_extensions = get_repository_extensions(repository_url.clone()).await;
         manifests.set(repository_extensions.into());
     });
@@ -52,7 +50,7 @@ pub fn Extensions() -> Element {
                     .iter()
                     .flat_map(|manifest| {
                         let extension_id = &manifest.id;
-                        (!extensions.read().contains(extension_id))
+                        (!extensions.read().contains_key(extension_id))
                             .then(|| rsx! {
                                 li {
                                     "{extension_id}"
@@ -67,7 +65,7 @@ pub fn Extensions() -> Element {
 
 #[component]
 pub fn InstallButton(manifest: Manifest) -> Element {
-    let mut extensions = use_extensions();
+    let mut state = use_context::<State>();
 
     let mut disabled = use_signal(|| false);
 
@@ -77,7 +75,7 @@ pub fn InstallButton(manifest: Manifest) -> Element {
             onclick: move |_| {
                 disabled.set(true);
                 let manifest = manifest.clone();
-                async move { extensions.install(&manifest).await.unwrap() }
+                async move { state.install_extension(&manifest).await.unwrap() }
             },
             "Install"
         }
@@ -86,13 +84,13 @@ pub fn InstallButton(manifest: Manifest) -> Element {
 
 #[component]
 pub fn UninstallButton(extension_id: String) -> Element {
-    let mut extensions = use_extensions();
+    let mut state = use_context::<State>();
 
     rsx! {
         button {
             onclick: move |_| {
                 let extension_id = extension_id.clone();
-                async move { extensions.uninstall(&extension_id).await.unwrap() }
+                async move { state.uninstall_extension(&extension_id).await.unwrap() }
             },
             "Uninstall"
         }

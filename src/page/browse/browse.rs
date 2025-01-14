@@ -1,11 +1,12 @@
 use dioxus::prelude::*;
 
-use crate::hook::use_extensions;
+use crate::state::State;
 use crate::Route;
 
 #[component]
 pub fn Browse() -> Element {
-    let extensions = use_extensions();
+    let state = use_context::<State>();
+    let extensions = state.extensions;
 
     rsx! {
         ul {
