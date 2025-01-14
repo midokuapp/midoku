@@ -1,17 +1,15 @@
 use dioxus::prelude::*;
-use flate2::read::GzDecoder;
-use tar::Archive;
 
-use crate::error::Result;
+use crate::hook::use_extensions;
 use crate::model::{
-    state::{ExtensionsState, ManifestsState, RepositoryUrlState},
-    Extension, Manifest,
+    state::{ManifestsState, RepositoryUrlState},
+    Manifest,
 };
 use crate::store;
 
 #[component]
 pub fn Extensions() -> Element {
-    let extensions = use_context::<Signal<ExtensionsState>>();
+    let extensions = use_extensions();
     let mut manifests = use_context::<Signal<ManifestsState>>();
     let mut repository_url = use_signal(|| store::app_data().get_repository_url());
 
@@ -21,8 +19,6 @@ pub fn Extensions() -> Element {
         let repository_extensions = get_repository_extensions(repository_url.clone()).await;
         manifests.set(repository_extensions.into());
     });
-
-    let is_installed = |extension_id: &str| extensions.read().contains(extension_id);
 
     rsx! {
         input {
@@ -54,10 +50,11 @@ pub fn Extensions() -> Element {
                     .iter()
                     .flat_map(|manifest| {
                         let extension_id = &manifest.id;
-                        (!is_installed(extension_id)).then(|| rsx! {
-                            "{extension_id}"
-                            InstallButton { manifest: manifest.clone() }
-                        })
+                        (!extensions.read().contains(extension_id))
+                            .then(|| rsx! {
+                                "{extension_id}"
+                                InstallButton { manifest: manifest.clone() }
+                            })
                     })
             }
         }
@@ -66,7 +63,7 @@ pub fn Extensions() -> Element {
 
 #[component]
 pub fn InstallButton(manifest: Manifest) -> Element {
-    let mut extensions = use_context::<Signal<ExtensionsState>>();
+    let mut extensions = use_extensions();
 
     let mut disabled = use_signal(|| false);
 
@@ -76,7 +73,7 @@ pub fn InstallButton(manifest: Manifest) -> Element {
             onclick: move |_| {
                 disabled.set(true);
                 let manifest = manifest.clone();
-                async move { install_extension(&mut extensions, &manifest).await.unwrap() }
+                async move { extensions.install(&manifest).await.unwrap() }
             },
             "Install"
         }
@@ -85,13 +82,13 @@ pub fn InstallButton(manifest: Manifest) -> Element {
 
 #[component]
 pub fn UninstallButton(extension_id: String) -> Element {
-    let mut extensions = use_context::<Signal<ExtensionsState>>();
+    let mut extensions = use_extensions();
 
     rsx! {
         button {
             onclick: move |_| {
                 let extension_id = extension_id.clone();
-                async move { uninstall_extension(&mut extensions, &extension_id).await.unwrap() }
+                async move { extensions.uninstall(&extension_id).await.unwrap() }
             },
             "Uninstall"
         }
@@ -108,61 +105,4 @@ async fn get_repository_extensions(repository_url: String) -> Vec<Manifest> {
     };
 
     manifests
-}
-
-async fn install_extension(
-    extensions: &mut Signal<ExtensionsState>,
-    manifest: &Manifest,
-) -> Result<()> {
-    let app_store = store::app_data();
-    let repository_url = app_store.get_repository_url();
-
-    let extensions_dir = crate::util::extensions_dir().unwrap();
-    let extension_path = extensions_dir.join(&manifest.id);
-
-    // If the path exists, then the extensions have already been installed.
-    if extension_path.exists() {
-        return Ok(());
-    }
-
-    std::fs::create_dir_all(&extension_path)?;
-
-    let extension_package_url = format!("{}/extensions/{}", repository_url, manifest.extension);
-
-    // Download the extension package
-    let extension_package = reqwest::get(&extension_package_url)
-        .await
-        .expect("failed to download extension package")
-        .bytes()
-        .await
-        .expect("failed to read extension package");
-
-    // Extract the extension package
-    let extension_package = GzDecoder::new(extension_package.as_ref());
-    let mut extension_package = Archive::new(extension_package);
-
-    // Unpack the extension package
-    extension_package.unpack(&extension_path)?;
-
-    // Register the extension
-    let extension = Extension::from_path(extension_path)?;
-    extensions.write().insert(extension);
-
-    Ok(())
-}
-
-async fn uninstall_extension(
-    extensions: &mut Signal<ExtensionsState>,
-    extension_id: &str,
-) -> Result<()> {
-    let extensions_dir = crate::util::extensions_dir().unwrap();
-    let extension_path = extensions_dir.join(extension_id);
-
-    // Remove the extension directory
-    std::fs::remove_dir_all(&extension_path)?;
-
-    // Unregister the extension
-    extensions.write().remove(extension_id);
-
-    Ok(())
 }
