@@ -21,9 +21,7 @@ const CSS: Asset = asset!("/assets/main.css");
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
-    #[redirect("/", || Route::SourceList {})]
-
-    #[nest("/sources")]
+    #[nest("/")]
         #[layout(Navbar)]
         #[route("")]
         SourceList {},
