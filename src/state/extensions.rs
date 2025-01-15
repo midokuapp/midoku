@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use dioxus::prelude::*;
 use flate2::read::GzDecoder;
 use tar::Archive;
@@ -44,10 +46,10 @@ impl StateExtensions for State {
         extension_package.unpack(&extension_path)?;
 
         // Register the extension
-        let extension = Extension::from_path(extension_path)?;
+        let extension = Extension::from_path(extension_path).await?;
         self.extensions
             .write()
-            .insert(extension.id.clone(), extension);
+            .insert(extension.id().to_string(), Arc::new(extension));
 
         Ok(())
     }

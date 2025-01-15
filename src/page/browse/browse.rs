@@ -6,16 +6,15 @@ use crate::Route;
 #[component]
 pub fn Browse() -> Element {
     let state = use_context::<State>();
-    let extensions = state.extensions;
+    let extensions = state.extensions.read();
 
     rsx! {
         ul {
             {
                 extensions
-                    .read()
                     .iter()
                     .map(|(_, extension)| {
-                        let extension_id = &extension.id;
+                        let extension_id = extension.id();
                         rsx! {
                             li {
                                 Link {

@@ -32,7 +32,7 @@ pub fn Extensions() -> Element {
                     .read()
                     .iter()
                     .map(|(_, extension)| {
-                        let extension_id = &extension.id;
+                        let extension_id = extension.id();
                         rsx! {
                             li {
                                 "{extension_id}"
