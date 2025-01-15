@@ -55,7 +55,7 @@ where
 ///
 /// # Example
 ///
-/// ```no_run
+/// ```
 /// use midoku_theme::prelude::*;
 ///
 /// async fn example() {
