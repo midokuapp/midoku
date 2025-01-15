@@ -2,7 +2,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use ashpd::desktop::settings::{ColorScheme, Settings};
-use async_std::stream::{self, Empty, Stream, StreamExt};
+use tokio_stream::{empty, once, Empty, Stream, StreamExt};
 
 use crate::mode::Mode;
 
@@ -23,7 +23,7 @@ enum SubscriptionStream<S> {
 
 impl<S> SubscriptionStream<S> {
     fn empty() -> Self {
-        SubscriptionStream::Empty(stream::empty())
+        SubscriptionStream::Empty(empty())
     }
 }
 
@@ -83,6 +83,6 @@ pub async fn subscribe() -> impl Stream<Item = Mode> {
         return SubscriptionStream::empty();
     };
 
-    let stream = stream::once(initial_mode).chain(stream).map(Mode::from);
+    let stream = once(initial_mode).chain(stream).map(Mode::from);
     SubscriptionStream::Some(stream)
 }

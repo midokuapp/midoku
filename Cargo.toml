@@ -30,6 +30,7 @@ serde = "1.0.217"
 serde_json = "1.0.134"
 tar = "0.4.43"
 thiserror = "2.0.9"
+tokio = "1.43.0"
 
 [package]
 name = "midoku"

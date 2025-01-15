@@ -6,10 +6,9 @@ pub use linux::subscribe;
 
 #[cfg(not(any(target_os = "linux")))]
 mod unknown {
-    use async_std::stream::{once, Stream};
+    use tokio_stream::{once, Stream};
 
-    use crate::error::Result;
-    use crate::Mode;
+    use crate::mode::Mode;
 
     pub async fn subscribe() -> impl Stream<Item = Mode> {
         once(Mode::Unspecified)
