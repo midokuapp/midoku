@@ -12,19 +12,17 @@ use tokio::task::block_in_place;
 use crate::model::{init_extensions, Extensions, Manifests};
 
 pub fn use_state_provider() {
-    let app_store = use_signal(|| Store::open("app_data"));
-    let extensions = use_signal(|| {
-        block_in_place(|| {
-            let handle = Handle::current();
-            handle.block_on(init_extensions())
-        })
+    let app_store = Store::open("app_data");
+    let extensions = block_in_place(|| {
+        let handle = Handle::current();
+        handle.block_on(init_extensions())
     });
-    let manifests = use_signal(|| vec![]);
+    let manifests = vec![];
 
     use_context_provider(|| State {
-        app_store,
-        extensions,
-        manifests,
+        app_store: Signal::new(app_store),
+        extensions: Signal::new(extensions),
+        manifests: Signal::new(manifests),
     });
 }
 
