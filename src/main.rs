@@ -13,7 +13,7 @@ use crate::layout::Navbar;
 
 use crate::page::{
     extensions::ExtensionList,
-    sources::{ChapterList, MangaList, MangaState, PageList, SourceList},
+    sources::{ChapterList, ChapterState, MangaList, MangaState, PageList, SourceList},
 };
 
 const CSS: Asset = asset!("/assets/main.css");
@@ -35,6 +35,7 @@ enum Route {
             MangaList { extension_id: String },
 
             #[nest("/:manga_id")]
+                #[layout(ChapterState)]
                 #[route("")]
                 ChapterList {
                     extension_id: String,
@@ -47,6 +48,7 @@ enum Route {
                     manga_id: String,
                     chapter_id: String
                 },
+                #[end_layout]
             #[end_nest]
         #[end_nest]
         #[end_layout]

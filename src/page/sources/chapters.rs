@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::ld_icons::LdArrowLeft;
 use dioxus_free_icons::Icon;
+use midoku_bindings::exports::{Chapter, Manga};
 use tokio::runtime::Handle;
 use tokio::task::block_in_place;
 
@@ -8,7 +9,7 @@ use crate::hook::use_state;
 use crate::Route;
 
 #[component]
-pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
+pub fn ChapterState(extension_id: String, manga_id: String) -> Element {
     let state = use_state();
     let extensions = state.extensions;
     let extension = extensions.get(&extension_id).unwrap();
@@ -19,12 +20,35 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
     })
     .unwrap();
 
-    let mut chapter_list = use_signal(|| vec![]);
+    let mut chapter_list = Signal::new(vec![]);
     use_future(move || {
         let manga_id = manga_id.clone();
         let extension = extension.clone();
         async move { chapter_list.set(extension.get_chapter_list(manga_id).await.unwrap()) }
     });
+
+    use_context_provider(|| ChapterListState {
+        manga_details: Signal::new(manga_details),
+        chapter_list,
+    });
+
+    rsx! {
+        Outlet::<Route> {}
+    }
+}
+
+#[derive(Clone, Copy)]
+struct ChapterListState {
+    manga_details: Signal<Manga>,
+    chapter_list: Signal<Vec<Chapter>>,
+}
+
+#[component]
+pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
+    let self_state = use_context::<ChapterListState>();
+
+    let manga_details = self_state.manga_details.read();
+    let chapter_list = self_state.chapter_list;
 
     let id = &manga_details.id;
     let title = &manga_details.title;
