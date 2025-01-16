@@ -1,2 +1,2 @@
-pub mod browse;
 pub mod extensions;
+pub mod sources;

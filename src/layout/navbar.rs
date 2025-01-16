@@ -9,8 +9,8 @@ pub fn Navbar() -> Element {
     rsx! {
         main { id: "outlet", Outlet::<Route> {} }
         nav { id: "navbar",
-            NavLink { to: Route::Browse {}, icon: LdGlobe, "Browse" }
-            NavLink { to: Route::Extensions {}, icon: LdLayoutGrid, "Extensions" }
+            NavLink { to: Route::SourceList {}, icon: LdGlobe, "Browse" }
+            NavLink { to: Route::ExtensionList {}, icon: LdLayoutGrid, "Extensions" }
         }
     }
 }

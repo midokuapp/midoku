@@ -4,7 +4,7 @@ use crate::model::Manifest;
 use crate::state::{State, StateExtensions, StateRepositoryUrl};
 
 #[component]
-pub fn Extensions() -> Element {
+pub fn ExtensionList() -> Element {
     let mut state = use_context::<State>();
     let extensions = state.extensions;
     let mut manifests = state.manifests;

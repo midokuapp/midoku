@@ -4,9 +4,30 @@ use dioxus_free_icons::Icon;
 use midoku_bindings::exports::Manga;
 
 use crate::state::State;
+use crate::Route;
 
 #[component]
-pub fn BrowseExtension(extension_id: String) -> Element {
+pub fn MangaState() -> Element {
+    use_context_provider(|| MangaListState {
+        mangas: Signal::new(vec![]),
+        has_more: Signal::new(true),
+        page: Signal::new(0),
+    });
+
+    rsx! {
+        Outlet::<Route> {}
+    }
+}
+
+#[derive(Clone, Copy)]
+struct MangaListState {
+    mangas: Signal<Vec<Manga>>,
+    has_more: Signal<bool>,
+    page: Signal<u32>,
+}
+
+#[component]
+pub fn MangaList(extension_id: String) -> Element {
     let state = use_context::<State>();
     let extensions = state.extensions.read();
     let extension = use_signal(|| extensions.get(&extension_id).unwrap().clone());
@@ -15,9 +36,11 @@ pub fn BrowseExtension(extension_id: String) -> Element {
     let source = extension_ref.source();
     let icon_path = extension_ref.icon_path();
 
-    let mut mangas = use_signal::<Vec<Manga>>(|| vec![]);
-    let mut has_more = use_signal::<bool>(|| true);
-    let mut page = use_signal::<u32>(|| 0);
+    let self_state = use_context::<MangaListState>();
+
+    let mut mangas = self_state.mangas;
+    let mut has_more = self_state.has_more;
+    let mut page = self_state.page;
 
     let load_more = move || async move {
         let _page = *page.read();
@@ -47,8 +70,17 @@ pub fn BrowseExtension(extension_id: String) -> Element {
                     .iter()
                     .map(|manga| {
                         let title = &manga.title;
+                        let manga_id = manga.id.clone();
                         rsx! {
-                            li { "{title}" }
+                            li {
+                                Link {
+                                    to: Route::ChapterList {
+                                        extension_id: extension_id.clone(),
+                                        manga_id,
+                                    },
+                                    "{title}"
+                                }
+                            }
                         }
                     })
             }

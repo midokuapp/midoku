@@ -11,8 +11,8 @@ use crate::layout::Navbar;
 use crate::state::use_state_provider;
 
 use crate::page::{
-    browse::{Browse, BrowseExtension, BrowseManga},
-    extensions::Extensions,
+    extensions::ExtensionList,
+    sources::{ChapterList, MangaList, MangaState, PageList, SourceList},
 };
 
 const CSS: Asset = asset!("/assets/main.css");
@@ -20,31 +20,40 @@ const CSS: Asset = asset!("/assets/main.css");
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
-    #[redirect("/", || Route::Browse {})]
+    #[redirect("/", || Route::SourceList {})]
 
-    #[nest("/browse")]
+    #[nest("/sources")]
         #[layout(Navbar)]
         #[route("")]
-        Browse {},
+        SourceList {},
         #[end_layout]
 
-        #[nest("/extension/:extension_id")]
+        #[layout(MangaState)]
+        #[nest("/:extension_id/mangas")]
             #[route("")]
-            BrowseExtension { extension_id: String },
+            MangaList { extension_id: String },
 
-            #[nest("/manga/:manga_id")]
+            #[nest("/:manga_id")]
                 #[route("")]
-                BrowseManga {
+                ChapterList {
+                    extension_id: String,
+                    manga_id: String
+                },
+
+                #[route("/chapter/:chapter_id")]
+                PageList {
                     extension_id: String,
                     manga_id: String,
+                    chapter_id: String
                 },
             #[end_nest]
         #[end_nest]
+        #[end_layout]
     #[end_nest]
 
     #[layout(Navbar)]
     #[route("/extensions")]
-    Extensions {},
+    ExtensionList {},
 }
 
 fn main() {

@@ -4,7 +4,7 @@ use crate::state::State;
 use crate::Route;
 
 #[component]
-pub fn Browse() -> Element {
+pub fn SourceList() -> Element {
     let state = use_context::<State>();
     let extensions = state.extensions.read();
 
@@ -18,7 +18,7 @@ pub fn Browse() -> Element {
                         rsx! {
                             li {
                                 Link {
-                                    to: Route::BrowseExtension {
+                                    to: Route::MangaList {
                                         extension_id: extension_id.to_string(),
                                     },
                                     "{extension_id}"
