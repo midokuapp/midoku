@@ -30,11 +30,10 @@ struct MangaListState {
 pub fn MangaList(extension_id: String) -> Element {
     let state = use_state();
     let extensions = state.extensions;
-    let extension = use_signal(|| extensions.get(&extension_id).unwrap());
-    let extension_ref = extension.read();
+    let extension = extensions.get(&extension_id).unwrap();
 
-    let source = extension_ref.source();
-    let icon_path = extension_ref.icon_path();
+    let name = extension.source().name.clone();
+    let icon_path = extension.icon_path();
 
     let self_state = use_context::<MangaListState>();
 
@@ -42,16 +41,19 @@ pub fn MangaList(extension_id: String) -> Element {
     let mut has_more = self_state.has_more;
     let mut page = self_state.page;
 
-    let load_more = move || async move {
-        let _page = *page.read();
-        let Ok((mut next_mangas, next_has_more)) =
-            extension.read().get_manga_list(vec![], _page).await
-        else {
-            return;
-        };
-        mangas.write().append(&mut next_mangas);
-        has_more.set(next_has_more);
-        page.set(_page + 1);
+    let load_more = move || {
+        let extension = extension.clone();
+        async move {
+            let _page = *page.read();
+            let Ok((mut next_mangas, next_has_more)) =
+                extension.get_manga_list(vec![], _page).await
+            else {
+                return;
+            };
+            mangas.write().append(&mut next_mangas);
+            has_more.set(next_has_more);
+            page.set(_page + 1);
+        }
     };
 
     use_future(load_more);
@@ -61,7 +63,7 @@ pub fn MangaList(extension_id: String) -> Element {
             GoBackButton {
                 Icon { style: "color: inherit", icon: LdArrowLeft }
             }
-            h2 { "{source.name}" }
+            h2 { "{name}" }
         }
         ul {
             {
