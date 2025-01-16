@@ -8,8 +8,8 @@ mod util;
 
 use dioxus::prelude::*;
 
+use crate::hook::use_state_provider;
 use crate::layout::Navbar;
-use crate::state::use_state_provider;
 
 use crate::page::{
     extensions::ExtensionList,

@@ -1,11 +1,11 @@
 use dioxus::prelude::*;
 
-use crate::state::State;
+use crate::hook::use_state;
 use crate::Route;
 
 #[component]
 pub fn SourceList() -> Element {
-    let state = use_context::<State>();
+    let state = use_state();
     let extensions = state.extensions.read();
 
     rsx! {

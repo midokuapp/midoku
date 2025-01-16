@@ -4,7 +4,6 @@ use dioxus_free_icons::Icon;
 use midoku_bindings::exports::Manga;
 
 use crate::hook::use_extension;
-use crate::state::State;
 use crate::Route;
 
 #[component]

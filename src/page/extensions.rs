@@ -1,11 +1,12 @@
 use dioxus::prelude::*;
 
+use crate::hook::use_state;
 use crate::model::Manifest;
-use crate::state::{State, StateExtensions, StateRepositoryUrl};
+use crate::state::{StateExtensions, StateRepositoryUrl};
 
 #[component]
 pub fn ExtensionList() -> Element {
-    let mut state = use_context::<State>();
+    let mut state = use_state();
     let extensions = state.extensions;
     let mut manifests = state.manifests;
 
@@ -65,7 +66,7 @@ pub fn ExtensionList() -> Element {
 
 #[component]
 pub fn InstallButton(manifest: Manifest) -> Element {
-    let mut state = use_context::<State>();
+    let mut state = use_state();
 
     let mut disabled = use_signal(|| false);
 
@@ -84,7 +85,7 @@ pub fn InstallButton(manifest: Manifest) -> Element {
 
 #[component]
 pub fn UninstallButton(extension_id: String) -> Element {
-    let mut state = use_context::<State>();
+    let mut state = use_state();
 
     rsx! {
         button {
