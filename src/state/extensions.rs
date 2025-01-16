@@ -47,9 +47,7 @@ impl StateExtensions for State {
 
         // Register the extension
         let extension = Extension::from_path(extension_path).await?;
-        self.extensions
-            .write()
-            .insert(extension.id().to_string(), Arc::new(extension));
+        self.extensions.add(extension);
 
         Ok(())
     }
@@ -62,7 +60,7 @@ impl StateExtensions for State {
         std::fs::remove_dir_all(&extension_path)?;
 
         // Unregister the extension
-        self.extensions.write().remove(extension_id);
+        self.extensions.remove(extension_id);
 
         Ok(())
     }

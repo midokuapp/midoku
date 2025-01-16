@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use dioxus::logger::tracing::*;
+use dioxus::prelude::*;
 use midoku_bindings::exports::{Chapter, Filter, Manga, Page};
 use midoku_bindings::Bindings;
 
@@ -10,34 +11,70 @@ use crate::error::{Error, Result};
 
 use super::Source;
 
-pub type Extensions = BTreeMap<String, Arc<Extension>>;
+#[derive(Clone, Copy)]
+pub struct Extensions {
+    pub inner: Signal<BTreeMap<String, Arc<Extension>>>,
+}
+
+impl Extensions {
+    pub async fn init() -> Self {
+        let extensions_dir = crate::util::extensions_dir().unwrap();
+        std::fs::create_dir_all(extensions_dir.clone()).unwrap();
+
+        let mut extensions = BTreeMap::new();
+        for entry in std::fs::read_dir(extensions_dir).unwrap() {
+            let entry = entry.expect("failed to read entry");
+            let extension = Extension::from_path(entry.path()).await;
+
+            match extension {
+                Ok(extension) => {
+                    debug!("loaded extension: {}", &extension.id);
+                    extensions.insert(extension.id().to_string(), Arc::new(extension));
+                }
+                Err(e) => warn!("failed to load extension: {}", e),
+            }
+        }
+
+        Extensions {
+            inner: Signal::new(extensions),
+        }
+    }
+
+    pub fn contains<S: AsRef<str>>(&self, extension_id: S) -> bool {
+        self.inner.read().contains_key(extension_id.as_ref())
+    }
+
+    pub fn get<S: AsRef<str>>(&self, extension_id: S) -> Option<Arc<Extension>> {
+        self.inner.read().get(extension_id.as_ref()).cloned()
+    }
+
+    pub fn add(&mut self, extension: Extension) {
+        self.inner
+            .write()
+            .insert(extension.id.clone(), Arc::new(extension));
+    }
+
+    pub fn remove<S: AsRef<str>>(&mut self, extension_id: S) {
+        self.inner.write().remove(extension_id.as_ref());
+    }
+
+    pub fn to_vec(&self) -> Vec<Arc<Extension>> {
+        let mut extensions: Vec<Arc<Extension>> = self
+            .inner
+            .cloned()
+            .into_iter()
+            .map(|(_, extension)| extension)
+            .collect();
+        extensions.sort_by(|a, b| a.source.name.cmp(&b.source.name));
+        extensions
+    }
+}
 
 pub struct Extension {
     id: String,
     source: Source,
     icon_path: PathBuf,
     bindings: Bindings,
-}
-
-pub async fn init_extensions() -> Extensions {
-    let extensions_dir = crate::util::extensions_dir().unwrap();
-    std::fs::create_dir_all(extensions_dir.clone()).unwrap();
-
-    let mut extensions = Extensions::new();
-    for entry in std::fs::read_dir(extensions_dir).unwrap() {
-        let entry = entry.expect("failed to read entry");
-        let extension = Extension::from_path(entry.path()).await;
-
-        match extension {
-            Ok(extension) => {
-                debug!("loaded extension: {}", &extension.id);
-                extensions.insert(extension.id().to_string(), Arc::new(extension));
-            }
-            Err(e) => warn!("failed to load extension: {}", e),
-        }
-    }
-
-    extensions
 }
 
 impl Extension {

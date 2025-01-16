@@ -12,6 +12,6 @@ use crate::model::{Extensions, Manifests};
 #[derive(Clone, Copy)]
 pub struct State {
     pub app_store: Signal<Store>,
-    pub extensions: Signal<Extensions>,
+    pub extensions: Extensions,
     pub manifests: Signal<Manifests>,
 }

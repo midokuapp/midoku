@@ -30,9 +30,9 @@ pub fn ExtensionList() -> Element {
         ul {
             {
                 extensions
-                    .read()
+                    .to_vec()
                     .iter()
-                    .map(|(_, extension)| {
+                    .map(|extension| {
                         let extension_id = extension.id();
                         rsx! {
                             li {
@@ -51,7 +51,7 @@ pub fn ExtensionList() -> Element {
                     .iter()
                     .flat_map(|manifest| {
                         let extension_id = &manifest.id;
-                        (!extensions.read().contains_key(extension_id))
+                        (!extensions.contains(extension_id))
                             .then(|| rsx! {
                                 li {
                                     "{extension_id}"

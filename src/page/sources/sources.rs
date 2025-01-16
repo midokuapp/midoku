@@ -6,14 +6,15 @@ use crate::Route;
 #[component]
 pub fn SourceList() -> Element {
     let state = use_state();
-    let extensions = state.extensions.read();
+    let extensions = state.extensions;
 
     rsx! {
         ul {
             {
                 extensions
+                    .to_vec()
                     .iter()
-                    .map(|(_, extension)| {
+                    .map(|extension| {
                         let extension_id = extension.id();
                         rsx! {
                             li {

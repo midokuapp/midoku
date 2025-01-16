@@ -3,7 +3,7 @@ use dioxus_free_icons::icons::ld_icons::LdArrowLeft;
 use dioxus_free_icons::Icon;
 use midoku_bindings::exports::Manga;
 
-use crate::hook::use_extension;
+use crate::hook::use_state;
 use crate::Route;
 
 #[component]
@@ -28,7 +28,9 @@ struct MangaListState {
 
 #[component]
 pub fn MangaList(extension_id: String) -> Element {
-    let extension = use_extension(&extension_id);
+    let state = use_state();
+    let extensions = state.extensions;
+    let extension = use_signal(|| extensions.get(&extension_id).unwrap());
     let extension_ref = extension.read();
 
     let source = extension_ref.source();
