@@ -1,6 +1,3 @@
-use std::sync::Arc;
-
-use dioxus::prelude::*;
 use flate2::read::GzDecoder;
 use tar::Archive;
 
