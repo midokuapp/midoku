@@ -82,20 +82,17 @@ fn App() -> Element {
 
     #[cfg(not(target_os = "android"))]
     spawn(async move {
-        // use dioxus::desktop::tao::window::Theme;
+        use dioxus::desktop::tao::window::Theme;
         use midoku_theme::prelude::*;
 
-        // let window = dioxus::desktop::window();
+        let window = dioxus::desktop::window();
 
         let mut stream = midoku_theme::subscribe().await;
         while let Some(mode) = stream.next().await {
             match mode {
-                // Mode::Dark => window.set_theme(Some(Theme::Dark)),
-                // Mode::Light => window.set_theme(Some(Theme::Light)),
-                // Mode::Unspecified => window.set_theme(None),
-                Mode::Dark => dioxus::logger::tracing::debug!("Dark Theme"),
-                Mode::Light => dioxus::logger::tracing::debug!("Light Theme"),
-                Mode::Unspecified => dioxus::logger::tracing::debug!("Default Theme"),
+                Mode::Dark => window.set_theme(Some(Theme::Dark)),
+                Mode::Light => window.set_theme(Some(Theme::Light)),
+                Mode::Unspecified => window.set_theme(None),
             }
         }
     });
