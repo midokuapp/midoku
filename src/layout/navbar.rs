@@ -21,9 +21,12 @@ fn NavLink<I: IconShape + Clone + PartialEq + 'static>(
     icon: I,
     children: Element,
 ) -> Element where {
+    let path: Route = use_route();
+
     rsx! {
         Link {
-            active_class: "active",
+            class: if path == to { "active" },
+            // active_class: "active",
             to,
             NavIcon { icon }
             {children}
