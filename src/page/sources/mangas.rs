@@ -64,8 +64,7 @@ pub fn MangaList(extension_id: String) -> Element {
             }
             h2 { "{name}" }
         }
-        ul {
-            class: "manga-grid",
+        ul { class: "manga-grid",
             {
                 self_state
                     .mangas

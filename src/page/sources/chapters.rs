@@ -80,10 +80,10 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
             }
             h2 { "{title}" }
         }
-        ul {
-            class: "chapter-list",
+        ul { class: "chapter-list",
             {
-                self_state.chapter_list
+                self_state
+                    .chapter_list
                     .read()
                     .iter()
                     .map(|chapter| {
