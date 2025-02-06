@@ -24,20 +24,19 @@ pub fn PageList(extension_id: String, manga_id: String, chapter_id: String) -> E
                 Icon { style: "color: inherit", icon: LdArrowLeft }
             }
         }
-        ul {
-            {
-                page_list
-                    .read()
-                    .iter()
-                    .map(|page| {
-                        let page_url = page.url.clone();
-                        rsx! {
-                            li {
-                                img { src: "{page_url}" }
-                            }
-                        }
-                    })
+        ul { id: "page-view",
+            for page in page_list.read().iter() {
+                Page { url: page.url.clone() }
             }
+        }
+    }
+}
+
+#[component]
+fn Page(url: String) -> Element {
+    rsx! {
+        li {
+            img { src: "{url}" }
         }
     }
 }

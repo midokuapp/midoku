@@ -37,10 +37,14 @@ body {
     color: black;
 }
 
-.manga-grid {
+#manga-grid {
     overflow-y: auto;
 }
 
-.chapter-list {
+#chapter-list {
+    overflow-y: auto;
+}
+
+#page-view {
     overflow-y: auto;
 }
