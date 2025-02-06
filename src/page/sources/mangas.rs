@@ -95,6 +95,7 @@ pub fn MangaList(extension_id: String) -> Element {
                         loading.set(is_intersecting);
                     }
                 },
+                "loading..."
             }
         }
     }
