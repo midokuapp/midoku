@@ -35,28 +35,33 @@ pub fn MangaList(extension_id: String) -> Element {
     let name = extension.source().name.clone();
     let icon_path = extension.icon_path();
 
-    let self_state = use_context::<MangaListState>();
+    let mut self_state = use_context::<MangaListState>();
 
-    let mut mangas = self_state.mangas;
-    let mut has_more = self_state.has_more;
-    let mut page = self_state.page;
+    let mut has_more: bool = *self_state.has_more.read();
+    let mut page: u32 = *self_state.page.read();
+    let mut loading = use_signal(|| false);
 
-    let load_more = move || {
+    _ = use_resource(move || {
         let extension = extension.clone();
-        async move {
-            let _page = *page.read();
-            let Ok((mut next_mangas, next_has_more)) =
-                extension.get_manga_list(vec![], _page).await
-            else {
-                return;
-            };
-            mangas.write().append(&mut next_mangas);
-            has_more.set(next_has_more);
-            page.set(_page + 1);
-        }
-    };
 
-    use_future(load_more);
+        async move {
+            while loading() {
+                let Ok((mut next_mangas, next_has_more)) =
+                    extension.get_manga_list(vec![], page).await
+                else {
+                    return;
+                };
+                self_state.mangas.write().append(&mut next_mangas);
+                has_more = next_has_more;
+                page += 1;
+            }
+        }
+    });
+
+    use_effect(use_reactive((&has_more, &page), move |(has_more, page)| {
+        self_state.has_more.set(has_more);
+        self_state.page.set(page);
+    }));
 
     rsx! {
         div {
@@ -67,7 +72,8 @@ pub fn MangaList(extension_id: String) -> Element {
         }
         ul {
             {
-                mangas
+                self_state
+                    .mangas
                     .read()
                     .iter()
                     .map(|manga| {
@@ -86,6 +92,16 @@ pub fn MangaList(extension_id: String) -> Element {
                         }
                     })
             }
+        }
+        div {
+            onvisible: move |event| {
+                let data = event.data();
+                let is_intersecting = data.is_intersecting().unwrap_or_default();
+                if loading() != is_intersecting {
+                    loading.set(is_intersecting);
+                    dioxus::logger::tracing::debug!("{is_intersecting}");
+                }
+            },
         }
     }
 }
