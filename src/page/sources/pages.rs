@@ -41,8 +41,8 @@ pub fn PageList(extension_id: String, manga_id: String, chapter_id: String) -> E
                 }
             }
 
-            let last_index = new_page_list.len() as u32 - 1;
             if let Some(page) = new_page_list.last() {
+                let last_index = new_page_list.len() as u32 - 1;
                 if page.index != last_index {
                     dioxus::logger::tracing::error!(
                         "pages do not end with index {last_index}: {extension_id} {manga_id} {chapter_id}"
