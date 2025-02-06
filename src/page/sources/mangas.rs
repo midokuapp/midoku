@@ -37,8 +37,6 @@ pub fn MangaList(extension_id: String) -> Element {
 
     let mut self_state = use_context::<MangaListState>();
 
-    let mut has_more: bool = *self_state.has_more.read();
-    let mut page: u32 = *self_state.page.read();
     let mut loading = use_signal(|| false);
 
     _ = use_resource(move || {
@@ -46,22 +44,18 @@ pub fn MangaList(extension_id: String) -> Element {
 
         async move {
             while loading() {
+                let page = *self_state.page.peek();
                 let Ok((mut next_mangas, next_has_more)) =
                     extension.get_manga_list(vec![], page).await
                 else {
                     return;
                 };
                 self_state.mangas.write().append(&mut next_mangas);
-                has_more = next_has_more;
-                page += 1;
+                self_state.has_more.set(next_has_more);
+                self_state.page.set(page + 1);
             }
         }
     });
-
-    use_effect(use_reactive((&has_more, &page), move |(has_more, page)| {
-        self_state.has_more.set(has_more);
-        self_state.page.set(page);
-    }));
 
     rsx! {
         div {
@@ -71,6 +65,7 @@ pub fn MangaList(extension_id: String) -> Element {
             h2 { "{name}" }
         }
         ul {
+            class: "grid",
             {
                 self_state
                     .mangas
@@ -92,16 +87,15 @@ pub fn MangaList(extension_id: String) -> Element {
                         }
                     })
             }
-        }
-        div {
-            onvisible: move |event| {
-                let data = event.data();
-                let is_intersecting = data.is_intersecting().unwrap_or_default();
-                if loading() != is_intersecting {
-                    loading.set(is_intersecting);
-                    dioxus::logger::tracing::debug!("{is_intersecting}");
-                }
-            },
+            div {
+                onvisible: move |event| {
+                    let data = event.data();
+                    let is_intersecting = data.is_intersecting().unwrap_or_default();
+                    if loading() != is_intersecting {
+                        loading.set(is_intersecting);
+                    }
+                },
+            }
         }
     }
 }
