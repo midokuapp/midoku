@@ -47,4 +47,13 @@ body {
 
 #page-view {
     overflow-y: auto;
+    list-style: none;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.page,
+.page > img {
+    width: 100%;
 }

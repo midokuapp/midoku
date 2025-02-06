@@ -35,7 +35,7 @@ pub fn PageList(extension_id: String, manga_id: String, chapter_id: String) -> E
 #[component]
 fn Page(url: String) -> Element {
     rsx! {
-        li {
+        li { class: "page",
             img { src: "{url}" }
         }
     }
