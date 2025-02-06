@@ -43,7 +43,7 @@ pub fn MangaList(extension_id: String) -> Element {
         let extension = extension.clone();
 
         async move {
-            while loading() {
+            while loading() && *self_state.has_more.peek() {
                 let page = *self_state.page.peek();
                 let Ok((mut next_mangas, next_has_more)) =
                     extension.get_manga_list(vec![], page).await
