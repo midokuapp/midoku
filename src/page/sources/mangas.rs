@@ -65,26 +65,16 @@ pub fn MangaList(extension_id: String) -> Element {
             h2 { "{name}" }
         }
         ul { id: "manga-grid",
-            {
-                self_state
-                    .mangas
-                    .read()
-                    .iter()
-                    .map(|manga| {
-                        let title = &manga.title;
-                        let manga_id = manga.id.clone();
-                        rsx! {
-                            li {
-                                Link {
-                                    to: Route::ChapterList {
-                                        extension_id: extension_id.clone(),
-                                        manga_id,
-                                    },
-                                    "{title}"
-                                }
-                            }
-                        }
-                    })
+            for manga in self_state.mangas.read().iter() {
+                li {
+                    Link {
+                        to: Route::ChapterList {
+                            extension_id: extension_id.clone(),
+                            manga_id: manga.id.clone(),
+                        },
+                        "{manga.title}"
+                    }
+                }
             }
             div {
                 onvisible: move |event| {

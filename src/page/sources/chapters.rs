@@ -81,33 +81,21 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
             h2 { "{title}" }
         }
         ul { id: "chapter-list",
-            {
-                self_state
-                    .chapter_list
-                    .read()
-                    .iter()
-                    .map(|chapter| {
-                        let chapter_id = chapter.id.clone();
-                        let chapter_title = chapter.title.clone();
-                        let chapter_volume = chapter.volume;
-                        let chapter_chapter = chapter.chapter;
-                        rsx! {
-                            li {
-                                Link {
-                                    to: Route::PageList {
-                                        extension_id: extension_id.to_string(),
-                                        manga_id: id.clone(),
-                                        chapter_id,
-                                    },
-                                    if chapter_volume >= 0.0 {
-                                        "vol {chapter_volume} ch {chapter_chapter}: {chapter_title}"
-                                    } else {
-                                        "ch {chapter_chapter}: {chapter_title}"
-                                    }
-                                }
-                            }
+            for chapter in self_state.chapter_list.read().iter() {
+                li {
+                    Link {
+                        to: Route::PageList {
+                            extension_id: extension_id.to_string(),
+                            manga_id: id.clone(),
+                            chapter_id: chapter.id.clone(),
+                        },
+                        if chapter.volume >= 0.0 {
+                            "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
+                        } else {
+                            "ch {chapter.chapter}: {chapter.title}"
                         }
-                    })
+                    }
+                }
             }
         }
     }
