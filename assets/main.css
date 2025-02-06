@@ -37,6 +37,10 @@ body {
     color: black;
 }
 
-.grid {
+.manga-grid {
+    overflow-y: auto;
+}
+
+.chapter-list {
     overflow-y: auto;
 }

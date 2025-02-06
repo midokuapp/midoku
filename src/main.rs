@@ -34,8 +34,8 @@ enum Route {
             #[route("")]
             MangaList { extension_id: String },
 
+            #[layout(ChapterState)]
             #[nest("/:manga_id")]
-                #[layout(ChapterState)]
                 #[route("")]
                 ChapterList {
                     extension_id: String,
@@ -48,8 +48,8 @@ enum Route {
                     manga_id: String,
                     chapter_id: String
                 },
-                #[end_layout]
             #[end_nest]
+            #[end_layout]
         #[end_nest]
         #[end_layout]
     #[end_nest]
