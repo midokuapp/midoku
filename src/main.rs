@@ -6,11 +6,8 @@ mod page;
 mod state;
 mod util;
 
-use std::sync::LazyLock;
-
 use const_format::concatcp;
 use dioxus::prelude::*;
-use rayon::ThreadPool;
 
 use crate::hook::{use_gallery_handler, use_mode_provider, use_state_provider};
 use crate::layout::Navbar;
@@ -22,16 +19,6 @@ use crate::page::{
 
 const APP_USER_AGENT: &str = concatcp!(midoku_config::NAME, "/", midoku_config::VERSION);
 const CSS: Asset = asset!("/assets/tailwind.css");
-
-const THREAD_POOL: LazyLock<ThreadPool> = LazyLock::new(|| {
-    let num_threads = std::thread::available_parallelism()
-        .map(|n| n.get())
-        .unwrap_or(1);
-    rayon::ThreadPoolBuilder::new()
-        .num_threads(num_threads.min(4))
-        .build()
-        .expect("could not build thread pool.")
-});
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
