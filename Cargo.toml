@@ -20,6 +20,7 @@ const_format = "0.2.34"
 # dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
 dioxus = "0.6.2"
 dioxus-free-icons = { version = "0.9", features = ["lucide"] }
+fast_image_resize = { version = "5.1.0", features = ["image"] }
 flate2 = "1.0.34"
 image = "0.25.5"
 rayon = "1.10.0"
@@ -53,6 +54,7 @@ midoku-theme.workspace = true
 const_format.workspace = true
 dioxus = { workspace = true, features = ["router"] }
 dioxus-free-icons.workspace = true
+fast_image_resize.workspace = true
 flate2.workspace = true
 image.workspace = true
 rayon.workspace = true

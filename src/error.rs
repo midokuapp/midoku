@@ -35,6 +35,10 @@ pub enum Error {
     /// Image error.
     #[error("Image error: {0}")]
     Image(#[from] image::ImageError),
+
+    /// Image resize error.
+    #[error("Image resize error: {0}")]
+    ImageResize(#[from] fast_image_resize::ResizeError),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
