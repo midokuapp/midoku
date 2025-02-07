@@ -12,7 +12,7 @@ use const_format::concatcp;
 use dioxus::prelude::*;
 use rayon::ThreadPool;
 
-use crate::hook::{use_gallery_handler, use_state_provider};
+use crate::hook::{use_gallery_handler, use_mode_provider, use_state_provider};
 use crate::layout::Navbar;
 
 use crate::page::{
@@ -97,23 +97,7 @@ fn main() {
 fn App() -> Element {
     use_gallery_handler();
     use_state_provider();
-
-    #[cfg(not(target_os = "android"))]
-    spawn(async move {
-        use dioxus::desktop::tao::window::Theme;
-        use midoku_theme::prelude::*;
-
-        let window = dioxus::desktop::window();
-
-        let mut stream = midoku_theme::subscribe().await;
-        while let Some(mode) = stream.next().await {
-            match mode {
-                Mode::Dark => window.set_theme(Some(Theme::Dark)),
-                Mode::Light => window.set_theme(Some(Theme::Light)),
-                Mode::Unspecified => window.set_theme(None),
-            }
-        }
-    });
+    use_mode_provider();
 
     rsx! {
         div { class: "flex flex-col h-screen",
