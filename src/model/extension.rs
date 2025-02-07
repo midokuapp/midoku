@@ -136,23 +136,32 @@ impl Extension {
             .map_err(|_| Error::ExtensionMethod("failed to get manga list".to_string()))
     }
 
-    pub async fn get_manga_details(&self, manga_id: String) -> Result<Manga> {
+    pub async fn get_manga_details<S>(&self, manga_id: S) -> Result<Manga>
+    where
+        S: ToString,
+    {
         self.bindings
-            .get_manga_details(manga_id)
+            .get_manga_details(manga_id.to_string())
             .await
             .map_err(|_| Error::ExtensionMethod("failed to get manga details".to_string()))
     }
 
-    pub async fn get_chapter_list(&self, manga_id: String) -> Result<Vec<Chapter>> {
+    pub async fn get_chapter_list<S>(&self, manga_id: S) -> Result<Vec<Chapter>>
+    where
+        S: ToString,
+    {
         self.bindings
-            .get_chapter_list(manga_id)
+            .get_chapter_list(manga_id.to_string())
             .await
             .map_err(|_| Error::ExtensionMethod("failed to get chapter list".to_string()))
     }
 
-    pub async fn get_page_list(&self, manga_id: String, chapter_id: String) -> Result<Vec<Page>> {
+    pub async fn get_page_list<S>(&self, manga_id: S, chapter_id: S) -> Result<Vec<Page>>
+    where
+        S: ToString,
+    {
         self.bindings
-            .get_page_list(manga_id, chapter_id)
+            .get_page_list(manga_id.to_string(), chapter_id.to_string())
             .await
             .map_err(|_| Error::ExtensionMethod("failed to get page list".to_string()))
     }
