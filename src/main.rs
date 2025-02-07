@@ -1,3 +1,4 @@
+mod component;
 mod error;
 mod hook;
 mod layout;
@@ -10,11 +11,11 @@ use const_format::concatcp;
 use dioxus::prelude::*;
 
 use crate::hook::{use_gallery_handler, use_mode_provider, use_state_provider};
-use crate::layout::Navbar;
+use crate::layout::{ChapterListState, MangaListState, Navbar};
 
 use crate::page::{
     extensions::ExtensionList,
-    sources::{ChapterList, ChapterState, MangaList, MangaState, PageList, SourceList},
+    sources::{ChapterList, MangaList, PageList, SourceList},
 };
 
 const APP_USER_AGENT: &str = concatcp!(midoku_config::NAME, "/", midoku_config::VERSION);
@@ -31,12 +32,12 @@ enum Route {
         SourceList {},
         #[end_layout]
 
-        #[layout(MangaState)]
+        #[layout(MangaListState)]
         #[nest("/:extension_id/mangas")]
             #[route("")]
             MangaList { extension_id: String },
 
-            #[layout(ChapterState)]
+            #[layout(ChapterListState)]
             #[nest("/:manga_id")]
                 #[route("")]
                 ChapterList {

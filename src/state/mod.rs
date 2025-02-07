@@ -1,7 +1,11 @@
+mod chapter_list;
 mod extensions;
+mod manga_list;
 mod repository_url;
 
+pub use chapter_list::ChapterList;
 pub use extensions::StateExtensions;
+pub use manga_list::MangaList;
 pub use repository_url::StateRepositoryUrl;
 
 use dioxus::prelude::*;

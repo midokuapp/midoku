@@ -1,28 +1,9 @@
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::ld_icons::LdArrowLeft;
 use dioxus_free_icons::Icon;
-use midoku_bindings::exports::{Chapter, Manga};
 
 use crate::hook::use_state;
 use crate::Route;
-
-#[component]
-pub fn ChapterState(extension_id: String) -> Element {
-    use_context_provider(|| ChapterListState {
-        manga_details: Signal::new(None),
-        chapter_list: Signal::new(vec![]),
-    });
-
-    rsx! {
-        Outlet::<Route> {}
-    }
-}
-
-#[derive(Clone, Copy)]
-struct ChapterListState {
-    manga_details: Signal<Option<Manga>>,
-    chapter_list: Signal<Vec<Chapter>>,
-}
 
 #[component]
 pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
@@ -33,7 +14,7 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
     let extensions = state.extensions;
     let extension = extensions.get(extension_id.to_string()).unwrap();
 
-    let mut self_state = use_context::<ChapterListState>();
+    let mut self_state = use_context::<crate::state::ChapterList>();
 
     let mut loading = use_signal(|| true);
 

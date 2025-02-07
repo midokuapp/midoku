@@ -1,10 +1,11 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::ld_icons::{LdDownload, LdTrash2};
-use dioxus_free_icons::Icon;
 
+use crate::component::extension::{
+    InstallButton, Item, ItemDescription, ItemDetail, ItemIcon, ItemTitle, List, UninstallButton,
+};
 use crate::hook::use_state;
 use crate::model::Manifest;
-use crate::state::{StateExtensions, StateRepositoryUrl};
+use crate::state::StateRepositoryUrl;
 
 #[component]
 pub fn ExtensionList() -> Element {
@@ -35,7 +36,7 @@ pub fn ExtensionList() -> Element {
                 onchange: move |event| repository_url.set(event.value()),
             }
             h2 { class: "text-xl font-semibold mb-2", "Installed" }
-            Group {
+            List {
                 for extension in extensions.to_vec().iter() {
                     Item {
                         ItemIcon {
@@ -55,7 +56,7 @@ pub fn ExtensionList() -> Element {
                 }
             }
             h2 { class: "text-xl font-semibold mb-2", "Available" }
-            Group {
+            List {
                 for manifest in manifests().iter().filter(|manifest| !extensions.contains(&manifest.id)) {
                     Item {
                         ItemIcon {
@@ -74,95 +75,6 @@ pub fn ExtensionList() -> Element {
                     }
                 }
             }
-        }
-    }
-}
-
-#[component]
-fn Group(children: Element) -> Element {
-    rsx! {
-        ul { class: "space-y-4 mb-8", {children} }
-    }
-}
-
-#[component]
-fn Item(children: Element) -> Element {
-    rsx! {
-        li { class: "flex item-center gap-4 p-3 rounded-lg shadow-md", {children} }
-    }
-}
-
-#[component]
-fn ItemIcon(src: String, alt: String) -> Element {
-    rsx! {
-        figure { class: "size-12",
-            img { class: "rounded-md", src, alt }
-        }
-    }
-}
-
-#[component]
-fn ItemDetail(children: Element) -> Element {
-    rsx! {
-        div { class: "flex flex-col", {children} }
-    }
-}
-
-#[component]
-fn ItemTitle(title: String) -> Element {
-    rsx! {
-        h3 { class: "text-lg font-semibold", "{title}" }
-    }
-}
-
-#[component]
-fn ItemDescription(language: String, version: String, nsfw: bool) -> Element {
-    rsx! {
-        p { class: "text-sm",
-            span { class: "opacity-70", "{language} {version}" }
-            if nsfw {
-                span { class: "text-error", " +18" }
-            }
-        }
-    }
-}
-
-#[component]
-fn InstallButton(manifest: Manifest) -> Element {
-    let mut state = use_state();
-
-    let mut disabled = use_signal(|| false);
-
-    rsx! {
-        button {
-            class: "ml-auto btn btn-circle hover:btn-success",
-            disabled: "{disabled}",
-            onclick: move |_| {
-                disabled.set(true);
-                let manifest = manifest.clone();
-                async move { state.install_extension(&manifest).await.unwrap() }
-            },
-            if disabled() {
-                div { class: "loading loading-spinner" }
-            } else {
-                Icon { class: "size-4", icon: LdDownload }
-            }
-        }
-    }
-}
-
-#[component]
-fn UninstallButton(extension_id: String) -> Element {
-    let mut state = use_state();
-
-    rsx! {
-        button {
-            class: "ml-auto btn btn-circle hover:btn-error",
-            onclick: move |_| {
-                let extension_id = extension_id.clone();
-                async move { state.uninstall_extension(&extension_id).await.unwrap() }
-            },
-            Icon { class: "size-4", icon: LdTrash2 }
         }
     }
 }
