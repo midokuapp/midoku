@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::ld_icons::{LdDownload, LdLoaderCircle, LdTrash2};
+use dioxus_free_icons::icons::ld_icons::{LdDownload, LdTrash2};
 use dioxus_free_icons::Icon;
 
 use crate::hook::use_state;
@@ -24,11 +24,11 @@ pub fn ExtensionList() -> Element {
     rsx! {
         div { class: "max-w-xl mx-auto p-3",
             h1 { class: "text-2xl font-bold mb-4", "Extension Manager" }
-            p { class: "mb-4 text-gray-700",
+            p { class: "mb-4 opacity-70",
                 "Manage your manga extensions: Install new sources or uninstall those you no longer need."
             }
             input {
-                class: "w-full border border-gray-500 rounded-md mb-4 p-2",
+                class: "input input-bordered w-full",
                 r#type: "text",
                 placeholder: "Extension repository URL",
                 value: "{repository_url}",
@@ -119,9 +119,9 @@ fn ItemTitle(title: String) -> Element {
 fn ItemDescription(language: String, version: String, nsfw: bool) -> Element {
     rsx! {
         p { class: "text-sm",
-            span { class: "text-gray-700", "{language} {version}" }
+            span { class: "opacity-70", "{language} {version}" }
             if nsfw {
-                span { class: "text-red-500", " +18" }
+                span { class: "text-error", " +18" }
             }
         }
     }
@@ -135,7 +135,7 @@ fn InstallButton(manifest: Manifest) -> Element {
 
     rsx! {
         button {
-            class: "ml-auto rounded-full bg-gray-100 hover:bg-green-500 size-12 flex justify-center items-center",
+            class: "ml-auto btn btn-circle hover:btn-success",
             disabled: "{disabled}",
             onclick: move |_| {
                 disabled.set(true);
@@ -143,9 +143,9 @@ fn InstallButton(manifest: Manifest) -> Element {
                 async move { state.install_extension(&manifest).await.unwrap() }
             },
             if disabled() {
-                Icon { class: "size-5 animate-spin", icon: LdLoaderCircle }
+                div { class: "loading loading-spinner" }
             } else {
-                Icon { class: "size-5", icon: LdDownload }
+                Icon { class: "size-4", icon: LdDownload }
             }
         }
     }
@@ -157,12 +157,12 @@ fn UninstallButton(extension_id: String) -> Element {
 
     rsx! {
         button {
-            class: "ml-auto rounded-full bg-gray-100 hover:bg-red-500 size-12 flex justify-center items-center",
+            class: "ml-auto btn btn-circle hover:btn-error",
             onclick: move |_| {
                 let extension_id = extension_id.clone();
                 async move { state.uninstall_extension(&extension_id).await.unwrap() }
             },
-            Icon { class: "size-5", icon: LdTrash2 }
+            Icon { class: "size-4", icon: LdTrash2 }
         }
     }
 }

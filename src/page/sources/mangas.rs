@@ -74,7 +74,7 @@ pub fn MangaList(extension_id: String) -> Element {
                 }
             }
             li {
-                class: "col-span-full",
+                class: "col-span-full flex flex-col items-center justify-center",
                 onvisible: move |event| {
                     let data = event.data();
                     let is_intersecting = data.is_intersecting().unwrap_or_default();
@@ -82,7 +82,7 @@ pub fn MangaList(extension_id: String) -> Element {
                         loading.set(is_intersecting);
                     }
                 },
-                "loading..."
+                div { class: "loading loading-dots" }
             }
         }
     }
@@ -93,7 +93,7 @@ fn Header(title: String) -> Element {
     rsx! {
         div { class: "p-5 flex items-center gap-3",
             GoBackButton {
-                Icon { style: "color: inherit", icon: LdArrowLeft }
+                Icon { class: "size-4", icon: LdArrowLeft }
             }
             h1 { class: "text-2xl font-bold", "{title}" }
         }
@@ -128,12 +128,21 @@ fn Item(extension_id: String, manga_id: String, children: Element) -> Element {
 
 #[component]
 fn ItemImage(src: String, alt: String) -> Element {
+    let mut loading = use_signal(|| true);
+
     rsx! {
-        figure { class: "w-full aspect-[2/3]",
+        figure {
+            class: {
+                format!(
+                    "w-full aspect-[2/3] rounded-md bg-base-200 {}",
+                    if loading() { "animate-pulse" } else { "" },
+                )
+            },
             img {
                 class: "w-full h-full object-cover rounded-md",
                 src,
                 alt,
+                onload: move |_| loading.set(false),
             }
         }
     }

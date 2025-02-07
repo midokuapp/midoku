@@ -23,7 +23,7 @@ pub fn SourceList() -> Element {
                             ItemDescription { language: extension.source().language.clone() }
                         }
                         Link {
-                            class: "ml-auto px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-300",
+                            class: "ml-auto btn hover:btn-primary",
                             to: Route::MangaList {
                                 extension_id: extension.id().to_string(),
                             },
@@ -77,7 +77,7 @@ fn ItemTitle(title: String) -> Element {
 fn ItemDescription(language: String) -> Element {
     rsx! {
         p { class: "text-sm",
-            span { class: "text-gray-700", "{language}" }
+            span { class: "opacity-70", "{language}" }
         }
     }
 }
