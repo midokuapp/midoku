@@ -23,6 +23,18 @@ pub enum Error {
     /// WebAssembly error.
     #[error("WASM error: {0}")]
     Wasm(String),
+
+    /// HTTP error.
+    #[error("HTTP error: {0}")]
+    Http(#[from] reqwest::Error),
+
+    /// Parse error.
+    #[error("Parse error: {0}")]
+    Parse(&'static str),
+
+    /// Image error.
+    #[error("Image error: {0}")]
+    Image(#[from] image::ImageError),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

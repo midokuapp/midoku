@@ -18,7 +18,7 @@ pub struct Extensions {
 
 impl Extensions {
     pub async fn init() -> Self {
-        let extensions_dir = crate::util::extensions_dir().unwrap();
+        let extensions_dir = crate::util::path::extensions_dir().unwrap();
         std::fs::create_dir_all(extensions_dir.clone()).unwrap();
 
         let mut extensions = BTreeMap::new();

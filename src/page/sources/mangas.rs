@@ -57,6 +57,9 @@ pub fn MangaList(extension_id: String) -> Element {
         }
     });
 
+    const WIDTH: u32 = 300;
+    const HEIGHT: u32 = 450;
+
     rsx! {
         Header { title: name.clone() }
         Grid {
@@ -65,7 +68,7 @@ pub fn MangaList(extension_id: String) -> Element {
                     extension_id: extension_id.clone(),
                     manga_id: manga.id.clone(),
                     ItemImage {
-                        src: manga.cover_url.clone(),
+                        src: format!("/gallery/?url={}&width={WIDTH}&height={HEIGHT}", manga.cover_url.clone()),
                         alt: manga.title.clone(),
                     }
                     ItemTitle { title: manga.title.clone() }

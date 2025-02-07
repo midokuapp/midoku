@@ -15,7 +15,7 @@ impl StateExtensions for State {
     async fn install_extension(&mut self, manifest: &Manifest) -> Result<()> {
         let repository_url = self.repository_url();
 
-        let extensions_dir = crate::util::extensions_dir().unwrap();
+        let extensions_dir = crate::util::path::extensions_dir().unwrap();
         let extension_path = extensions_dir.join(&manifest.id);
 
         // If the path exists, then the extensions have already been installed.
@@ -50,7 +50,7 @@ impl StateExtensions for State {
     }
 
     async fn uninstall_extension(&mut self, extension_id: &str) -> Result<()> {
-        let extensions_dir = crate::util::extensions_dir().unwrap();
+        let extensions_dir = crate::util::path::extensions_dir().unwrap();
         let extension_path = extensions_dir.join(extension_id);
 
         // Remove the extension directory

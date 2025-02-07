@@ -6,9 +6,13 @@ mod page;
 mod state;
 mod util;
 
-use dioxus::prelude::*;
+use std::sync::LazyLock;
 
-use crate::hook::use_state_provider;
+use const_format::concatcp;
+use dioxus::prelude::*;
+use rayon::ThreadPool;
+
+use crate::hook::{use_gallery_handler, use_state_provider};
 use crate::layout::Navbar;
 
 use crate::page::{
@@ -16,7 +20,18 @@ use crate::page::{
     sources::{ChapterList, ChapterState, MangaList, MangaState, PageList, SourceList},
 };
 
+const APP_USER_AGENT: &str = concatcp!(midoku_config::NAME, "/", midoku_config::VERSION);
 const CSS: Asset = asset!("/assets/tailwind.css");
+
+const THREAD_POOL: LazyLock<ThreadPool> = LazyLock::new(|| {
+    let num_threads = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1);
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(num_threads.min(4))
+        .build()
+        .expect("could not build thread pool.")
+});
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -67,7 +82,7 @@ fn main() {
         use dioxus::desktop::{LogicalSize, WindowBuilder};
 
         let window = WindowBuilder::default()
-            .with_title(midoku_config::name())
+            .with_title(midoku_config::NAME)
             .with_inner_size(LogicalSize::new(600, 1000));
 
         let config = dioxus::desktop::Config::default()
@@ -80,6 +95,7 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    use_gallery_handler();
     use_state_provider();
 
     #[cfg(not(target_os = "android"))]

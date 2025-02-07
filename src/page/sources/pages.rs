@@ -66,9 +66,11 @@ pub fn PageList(extension_id: String, manga_id: String, chapter_id: String) -> E
     });
 
     rsx! {
-        div { GoBackButton {
-            Icon { style: "color: inherit", icon: LdArrowLeft }
-        } }
+        div {
+            GoBackButton {
+                Icon { style: "color: inherit", icon: LdArrowLeft }
+            }
+        }
         ul { id: "page-view",
             for page in page_list.read().iter() {
                 Page {

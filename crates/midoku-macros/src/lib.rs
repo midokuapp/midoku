@@ -45,17 +45,9 @@ impl ToTokens for Config {
         let identifier = self.dioxus.bundle.identifier.as_str();
 
         tokens.extend(quote! {
-            pub fn name() -> &'static str {
-                #name
-            }
-
-            pub fn version() -> &'static str {
-                #version
-            }
-
-            pub fn identifier() -> &'static str {
-                #identifier
-            }
+            pub const NAME: &str = #name;
+            pub const VERSION: &str = #version;
+            pub const IDENTIFIER: &str = #identifier;
         });
     }
 }
