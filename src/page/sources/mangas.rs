@@ -134,7 +134,7 @@ fn ItemImage(src: String, alt: String) -> Element {
         figure {
             class: {
                 format!(
-                    "w-full aspect-[2/3] rounded-md bg-base-200 {}",
+                    "w-full aspect-[2/3] rounded-md bg-base-300 {}",
                     if loading() { "animate-pulse" } else { "" },
                 )
             },
