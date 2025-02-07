@@ -5,8 +5,6 @@
 I assume you have followed the [Getting Started](https://dioxuslabs.com/learn/0.6/getting_started/)
 guide from Dioxus and have installed `dioxus-cli`.
 
-You also need Tailwind's standalone CLI: https://tailwindcss.com/blog/standalone-cli.
-
 ### Run the app
 
 ```bash

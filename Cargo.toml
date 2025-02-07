@@ -66,6 +66,10 @@ thiserror.workspace = true
 tokio.workspace = true
 urlencoding.workspace = true
 
+[build-dependencies]
+const_format.workspace = true
+reqwest = { workspace = true, features = ["blocking"] }
+
 [features]
 default = ["desktop"]
 desktop = ["dioxus/desktop"]
