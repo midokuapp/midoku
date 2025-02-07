@@ -13,19 +13,19 @@ pub const THREAD_POOL: LazyLock<ThreadPool> = LazyLock::new(|| {
 });
 
 macro_rules! spawn {
-    ($future:expr) => {{
-        use ::tokio::runtime::Builder;
-        use ::tokio::task::LocalSet;
-
+    ($future:expr) => {
         crate::util::thread::THREAD_POOL.spawn(move || {
-            let rt = Builder::new_current_thread().enable_all().build().unwrap();
-            let local = LocalSet::new();
+            let rt = ::tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .unwrap();
+            let local = ::tokio::task::LocalSet::new();
 
             local.spawn_local($future);
 
             rt.block_on(local);
         })
-    }};
+    };
 }
 
 pub(crate) use spawn;
