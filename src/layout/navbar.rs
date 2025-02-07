@@ -7,8 +7,8 @@ use crate::Route;
 #[component]
 pub fn Navbar() -> Element {
     rsx! {
-        main { id: "outlet", Outlet::<Route> {} }
-        nav { id: "navbar",
+        main { class: "flex-1 p-2", Outlet::<Route> {} }
+        nav { class: "w-full grid grid-cols-2 py-3",
             NavLink { to: Route::SourceList {}, icon: LdGlobe, "Browse" }
             NavLink { to: Route::ExtensionList {}, icon: LdLayoutGrid, "Extensions" }
         }
@@ -22,21 +22,19 @@ fn NavLink<I: IconShape + Clone + PartialEq + 'static>(
     children: Element,
 ) -> Element where {
     let path: Route = use_route();
+    let text_color = if path == to {
+        "text-black"
+    } else {
+        "opacity-50"
+    };
 
     rsx! {
         Link {
-            class: if path == to { "active" },
+            class: "flex flex-col items-center {text_color}",
             // active_class: "active",
             to,
-            NavIcon { icon }
+            Icon { class: "size-4", icon }
             {children}
         }
-    }
-}
-
-#[component]
-fn NavIcon<I: IconShape + Clone + PartialEq + 'static>(icon: I) -> Element where {
-    rsx! {
-        Icon { style: "color: inherit", icon }
     }
 }
