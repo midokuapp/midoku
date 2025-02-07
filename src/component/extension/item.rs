@@ -38,9 +38,17 @@ pub fn ItemDescription(
 ) -> Element {
     rsx! {
         p { class: "text-sm",
-            if let Some(language) = language { span { class: "opacity-70", "{language}"} }
-            if let Some(version) = version { span { class: "opacity-70", " {version}"} }
-            if let Some(nsfw) = nsfw { span { class: "text-error", " +18"} }
+            if let Some(language) = language {
+                span { class: "opacity-70", "{language}" }
+            }
+            if let Some(version) = version {
+                span { class: "opacity-70", " {version}" }
+            }
+            if let Some(nsfw) = nsfw {
+                if nsfw {
+                    span { class: "text-error", " +18" }
+                }
+            }
         }
     }
 }
