@@ -32,8 +32,7 @@ pub fn MangaList(extension_id: String) -> Element {
     let extensions = state.extensions;
     let extension = extensions.get(&extension_id).unwrap();
 
-    let name = extension.source().name.clone();
-    let icon_path = extension.icon_path();
+    let extension_name = extension.source().name.clone();
 
     let mut self_state = use_context::<MangaListState>();
 
@@ -61,7 +60,7 @@ pub fn MangaList(extension_id: String) -> Element {
     const HEIGHT: u32 = 450;
 
     rsx! {
-        Header { title: name.clone() }
+        Header { title: extension_name.clone() }
         Grid {
             for manga in self_state.mangas.read().iter() {
                 Item {
