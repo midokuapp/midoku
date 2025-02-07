@@ -16,7 +16,7 @@ use crate::page::{
     sources::{ChapterList, ChapterState, MangaList, MangaState, PageList, SourceList},
 };
 
-const CSS: Asset = asset!("/assets/main.css");
+const CSS: Asset = asset!("/assets/tailwind.css");
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -100,7 +100,9 @@ fn App() -> Element {
     });
 
     rsx! {
-        document::Stylesheet { href: CSS }
-        Router::<Route> {}
+        div { class: "flex flex-col h-screen",
+            document::Stylesheet { href: CSS }
+            Router::<Route> {}
+        }
     }
 }
