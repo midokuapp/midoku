@@ -18,6 +18,7 @@ mod deno {
                 "--dev",
                 "npm:tailwindcss",
                 "npm:@tailwindcss/cli",
+                "npm:daisyui@beta",
             ])
             .stdout(std::io::stdout())
             .stderr(std::io::stderr())
