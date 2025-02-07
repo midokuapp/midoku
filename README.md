@@ -5,6 +5,8 @@
 I assume you have followed the [Getting Started](https://dioxuslabs.com/learn/0.6/getting_started/)
 guide from Dioxus and have installed `dioxus-cli`.
 
+You also need `deno` to compile Tailwind automatically: https://docs.deno.com/runtime/getting_started/installation/
+
 ### Run the app
 
 ```bash
