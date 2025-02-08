@@ -17,8 +17,7 @@ midoku-path = { path = "crates/midoku-path" }
 midoku-store = { path = "crates/midoku-store" }
 midoku-theme = { path = "crates/midoku-theme" }
 const_format = "0.2.34"
-# dioxus = { git = "https://github.com/DioxusLabs/dioxus.git" }
-dioxus = "0.6.2"
+dioxus = "0.6.3"
 dioxus-free-icons = { version = "0.9", features = ["lucide"] }
 fast_image_resize = { version = "5.1.0", features = ["image"] }
 flate2 = "1.0.34"
