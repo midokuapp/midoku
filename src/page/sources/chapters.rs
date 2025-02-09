@@ -15,33 +15,50 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
 
     let mut self_state = use_context::<crate::state::ChapterList>();
 
-    let mut loading = use_signal(|| true);
+    let mut loading_manga_details = use_signal(|| self_state.manga_details.peek().is_none());
+    let mut loading_chapter_list = use_signal(|| self_state.chapter_list.peek().is_empty());
 
-    use_future(move || {
-        let extension = extension.clone();
-
-        async move {
-            let Ok(manga_details) = extension.get_manga_details(manga_id.to_string()).await else {
-                dioxus::logger::tracing::error!(
-                    "could not get manga details: {extension_id} {manga_id}"
-                );
-                return;
-            };
-            self_state.manga_details.set(Some(manga_details));
-
-            let Ok(chapter_list) = extension.get_chapter_list(manga_id.to_string()).await else {
-                dioxus::logger::tracing::error!(
-                    "could not get chapter list: {extension_id} {manga_id}"
-                );
-                return;
-            };
-            self_state.chapter_list.set(chapter_list);
-
-            loading.set(false);
+    use_future(move || async move {
+        if !loading_manga_details() {
+            return;
         }
+
+        let Ok(manga_details) = extension
+            .read()
+            .get_manga_details(manga_id.to_string())
+            .await
+        else {
+            dioxus::logger::tracing::error!(
+                "could not get manga details: {extension_id} {manga_id}"
+            );
+            return;
+        };
+        self_state.manga_details.set(Some(manga_details));
+
+        loading_manga_details.set(false);
     });
 
-    if loading() {
+    use_future(move || async move {
+        if !loading_chapter_list() {
+            return;
+        }
+
+        let Ok(chapter_list) = extension
+            .read()
+            .get_chapter_list(manga_id.to_string())
+            .await
+        else {
+            dioxus::logger::tracing::error!(
+                "could not get chapter list: {extension_id} {manga_id}"
+            );
+            return;
+        };
+        self_state.chapter_list.set(chapter_list);
+
+        loading_chapter_list.set(false);
+    });
+
+    if loading_manga_details() {
         return rsx!(
             Header { v_align: VerticalAlign::Center, BackButton {} }
             div { class: "flex-1 flex flex-col items-center justify-center",
@@ -58,19 +75,25 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
 
     rsx! {
         Header { v_align: VerticalAlign::Center, BackButton {} }
-        ul {
-            for chapter in self_state.chapter_list.read().iter() {
-                li {
-                    Link {
-                        to: Route::PageList {
-                            extension_id: extension_id.to_string(),
-                            manga_id: id.clone(),
-                            chapter_id: chapter.id.clone(),
-                        },
-                        if chapter.volume >= 0.0 {
-                            "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
-                        } else {
-                            "ch {chapter.chapter}: {chapter.title}"
+        if loading_chapter_list() {
+            div { class: "flex-1 flex flex-col items-center justify-center",
+                span { class: "loading loading-spinner loading-xl" }
+            }
+        } else {
+            ul {
+                for chapter in self_state.chapter_list.read().iter() {
+                    li {
+                        Link {
+                            to: Route::PageList {
+                                extension_id: extension_id.to_string(),
+                                manga_id: id.clone(),
+                                chapter_id: chapter.id.clone(),
+                            },
+                            if chapter.volume >= 0.0 {
+                                "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
+                            } else {
+                                "ch {chapter.chapter}: {chapter.title}"
+                            }
                         }
                     }
                 }
