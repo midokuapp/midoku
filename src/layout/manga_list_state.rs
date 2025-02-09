@@ -12,6 +12,6 @@ pub fn MangaListState() -> Element {
     });
 
     rsx! {
-        main { class: "flex flex-col h-screen", Outlet::<Route> {} }
+        div { class: "flex flex-col w-screen h-screen", Outlet::<Route> {} }
     }
 }

@@ -88,9 +88,7 @@ fn App() -> Element {
     use_mode_provider();
 
     rsx! {
-        div { class: "flex flex-col h-screen",
-            document::Stylesheet { href: CSS }
-            Router::<Route> {}
-        }
+        document::Stylesheet { href: CSS }
+        Router::<Route> {}
     }
 }

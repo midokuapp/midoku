@@ -1,9 +1,7 @@
 use dioxus::prelude::*;
 
-use crate::component::{
-    manga::{Grid, Item, ItemImage, ItemTitle},
-    Header,
-};
+use crate::component::manga::{Grid, Item, ItemImage, ItemTitle};
+use crate::component::{BackButton, Header, VerticalAlign};
 use crate::hook::use_state;
 
 #[component]
@@ -40,7 +38,10 @@ pub fn MangaList(extension_id: String) -> Element {
     const HEIGHT: u32 = 450;
 
     rsx! {
-        Header { title: extension_name.clone() }
+        Header { v_align: VerticalAlign::Center,
+            BackButton {}
+            h1 { class: "text-xl font-bold", "{extension_name}" }
+        }
         Grid {
             for manga in self_state.mangas.read().iter() {
                 Item {

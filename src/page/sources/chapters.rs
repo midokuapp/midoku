@@ -1,7 +1,6 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::ld_icons::LdArrowLeft;
-use dioxus_free_icons::Icon;
 
+use crate::component::{BackButton, Header, VerticalAlign};
 use crate::hook::use_state;
 use crate::Route;
 
@@ -44,7 +43,10 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
 
     if loading() {
         return rsx!(
-            p { "loading..." }
+            Header { v_align: VerticalAlign::Center, BackButton {} }
+            div { class: "flex-1 flex flex-col items-center justify-center",
+                span { class: "loading loading-spinner loading-xl" }
+            }
         );
     }
 
@@ -55,13 +57,8 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
     let title = &manga_details.title;
 
     rsx! {
-        div {
-            GoBackButton {
-                Icon { style: "color: inherit", icon: LdArrowLeft }
-            }
-            h2 { "{title}" }
-        }
-        ul { id: "chapter-list",
+        Header { v_align: VerticalAlign::Center, BackButton {} }
+        ul {
             for chapter in self_state.chapter_list.read().iter() {
                 li {
                     Link {

@@ -11,6 +11,6 @@ pub fn ChapterListState(extension_id: String) -> Element {
     });
 
     rsx! {
-        Outlet::<Route> {}
+        div { class: "flex flex-col w-screen h-screen", Outlet::<Route> {} }
     }
 }

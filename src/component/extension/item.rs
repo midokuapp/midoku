@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 #[component]
 pub fn Item(children: Element) -> Element {
     rsx! {
-        li { class: "flex items-center gap-4 p-3 rounded-lg shadow-md", {children} }
+        li { class: "list-row flex items-center gap-4 p-3", {children} }
     }
 }
 
@@ -26,7 +26,7 @@ pub fn ItemDetail(children: Element) -> Element {
 #[component]
 pub fn ItemTitle(title: String) -> Element {
     rsx! {
-        h3 { class: "text-lg font-semibold", "{title}" }
+        h3 { class: "text-base", "{title}" }
     }
 }
 
@@ -46,7 +46,7 @@ pub fn ItemDescription(
             }
             if let Some(nsfw) = nsfw {
                 if nsfw {
-                    span { class: "text-error", " +18" }
+                    span { class: "text-error", " 18+" }
                 }
             }
         }

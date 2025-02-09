@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 use crate::component::extension::{
     InstallButton, Item, ItemDescription, ItemDetail, ItemIcon, ItemTitle, List, UninstallButton,
 };
+use crate::component::{Header, HorizontalAlign, VerticalAlign};
 use crate::hook::use_state;
 use crate::model::Manifest;
 use crate::state::StateRepositoryUrl;
@@ -23,55 +24,63 @@ pub fn ExtensionList() -> Element {
     });
 
     rsx! {
-        div { class: "max-w-xl mx-auto p-3",
-            h1 { class: "text-2xl font-bold mb-4", "Extension Manager" }
-            p { class: "mb-4 opacity-70",
-                "Manage your manga extensions: Install new sources or uninstall those you no longer need."
-            }
-            input {
-                class: "input input-bordered w-full",
-                r#type: "text",
-                placeholder: "Extension repository URL",
-                value: "{repository_url}",
-                onchange: move |event| repository_url.set(event.value()),
-            }
-            h2 { class: "text-xl font-semibold mb-2", "Installed" }
-            List {
-                for extension in extensions.to_vec().iter() {
-                    Item {
-                        ItemIcon {
-                            src: extension.icon_path().to_string_lossy().to_string(),
-                            alt: extension.source().name.clone(),
-                        }
-                        ItemDetail {
-                            ItemTitle { title: extension.source().name.clone() }
-                            ItemDescription {
-                                language: extension.source().language.clone(),
-                                version: extension.source().version.clone(),
-                                nsfw: extension.source().nsfw,
+        Header { h_align: HorizontalAlign::Center, v_align: VerticalAlign::Center,
+            h1 { class: "max-w-xl w-full text-xl font-bold", "Extension Manager" }
+        }
+        div { class: "px-5",
+            div { class: "max-w-xl w-full mx-auto",
+                p { class: "mb-4 opacity-70",
+                    "Manage your manga extensions: Install new sources or uninstall those you no longer need."
+                }
+                input {
+                    class: "input input-bordered w-full mb-4",
+                    r#type: "text",
+                    placeholder: "Extension repository URL",
+                    value: "{repository_url}",
+                    onchange: move |event| repository_url.set(event.value()),
+                }
+                if extensions.to_vec().len() > 0 {
+                    h2 { class: "text-lg font-semibold mb-2", "Installed" }
+                    List {
+                        for extension in extensions.to_vec().iter() {
+                            Item {
+                                ItemIcon {
+                                    src: extension.icon_path().to_string_lossy().to_string(),
+                                    alt: extension.source().name.clone(),
+                                }
+                                ItemDetail {
+                                    ItemTitle { title: extension.source().name.clone() }
+                                    ItemDescription {
+                                        language: extension.source().language.clone(),
+                                        version: extension.source().version.clone(),
+                                        nsfw: extension.source().nsfw,
+                                    }
+                                }
+                                UninstallButton { extension_id: extension.id() }
                             }
                         }
-                        UninstallButton { extension_id: extension.id() }
                     }
                 }
-            }
-            h2 { class: "text-xl font-semibold mb-2", "Available" }
-            List {
-                for manifest in manifests().iter().filter(|manifest| !extensions.contains(&manifest.id)) {
-                    Item {
-                        ItemIcon {
-                            src: "{repository_url}/icons/{manifest.icon}",
-                            alt: manifest.name.clone(),
-                        }
-                        ItemDetail {
-                            ItemTitle { title: manifest.name.clone() }
-                            ItemDescription {
-                                language: manifest.language.clone(),
-                                version: manifest.version.clone(),
-                                nsfw: manifest.nsfw,
+                if manifests().iter().filter(|manifest| !extensions.contains(&manifest.id)).count() > 0 {
+                    h2 { class: "text-lg font-semibold mb-2", "Available" }
+                    List {
+                        for manifest in manifests().iter().filter(|manifest| !extensions.contains(&manifest.id)) {
+                            Item {
+                                ItemIcon {
+                                    src: "{repository_url}/icons/{manifest.icon}",
+                                    alt: manifest.name.clone(),
+                                }
+                                ItemDetail {
+                                    ItemTitle { title: manifest.name.clone() }
+                                    ItemDescription {
+                                        language: manifest.language.clone(),
+                                        version: manifest.version.clone(),
+                                        nsfw: manifest.nsfw,
+                                    }
+                                }
+                                InstallButton { manifest: manifest.clone() }
                             }
                         }
-                        InstallButton { manifest: manifest.clone() }
                     }
                 }
             }
