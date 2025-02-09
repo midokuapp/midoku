@@ -1,6 +1,5 @@
 use std::collections::BTreeMap;
 use std::path::PathBuf;
-use std::sync::Arc;
 
 use dioxus::logger::tracing::*;
 use dioxus::prelude::*;
@@ -13,7 +12,7 @@ use super::Source;
 
 #[derive(Clone, Copy)]
 pub struct Extensions {
-    pub inner: Signal<BTreeMap<String, Arc<Extension>>>,
+    pub inner: Signal<BTreeMap<String, Signal<Extension>>>,
 }
 
 impl Extensions {
@@ -29,7 +28,7 @@ impl Extensions {
             match extension {
                 Ok(extension) => {
                     debug!("loaded extension: {}", &extension.id);
-                    extensions.insert(extension.id().to_string(), Arc::new(extension));
+                    extensions.insert(extension.id().to_string(), Signal::new(extension));
                 }
                 Err(e) => warn!("failed to load extension: {}", e),
             }
@@ -44,28 +43,28 @@ impl Extensions {
         self.inner.read().contains_key(extension_id.as_ref())
     }
 
-    pub fn get<S: AsRef<str>>(&self, extension_id: S) -> Option<Arc<Extension>> {
+    pub fn get<S: AsRef<str>>(&self, extension_id: S) -> Option<Signal<Extension>> {
         self.inner.read().get(extension_id.as_ref()).cloned()
     }
 
     pub fn add(&mut self, extension: Extension) {
         self.inner
             .write()
-            .insert(extension.id.clone(), Arc::new(extension));
+            .insert(extension.id.clone(), Signal::new(extension));
     }
 
     pub fn remove<S: AsRef<str>>(&mut self, extension_id: S) {
         self.inner.write().remove(extension_id.as_ref());
     }
 
-    pub fn to_vec(&self) -> Vec<Arc<Extension>> {
-        let mut extensions: Vec<Arc<Extension>> = self
+    pub fn to_vec(&self) -> Vec<Signal<Extension>> {
+        let mut extensions: Vec<Signal<Extension>> = self
             .inner
             .cloned()
             .into_iter()
             .map(|(_, extension)| extension)
             .collect();
-        extensions.sort_by(|a, b| a.source.name.cmp(&b.source.name));
+        extensions.sort_by(|a, b| a.peek().source.name.cmp(&b.peek().source.name));
         extensions
     }
 }

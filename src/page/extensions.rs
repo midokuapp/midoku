@@ -45,18 +45,18 @@ pub fn ExtensionList() -> Element {
                         for extension in extensions.to_vec().iter() {
                             Item {
                                 ItemIcon {
-                                    src: extension.icon_path().to_string_lossy().to_string(),
-                                    alt: extension.source().name.clone(),
+                                    src: extension.read().icon_path().to_string_lossy().to_string(),
+                                    alt: extension.read().source().name.clone(),
                                 }
                                 ItemDetail {
-                                    ItemTitle { title: extension.source().name.clone() }
+                                    ItemTitle { title: extension.read().source().name.clone() }
                                     ItemDescription {
-                                        language: extension.source().language.clone(),
-                                        version: extension.source().version.clone(),
-                                        nsfw: extension.source().nsfw,
+                                        language: extension.read().source().language.clone(),
+                                        version: extension.read().source().version.clone(),
+                                        nsfw: extension.read().source().nsfw,
                                     }
                                 }
-                                UninstallButton { extension_id: extension.id() }
+                                UninstallButton { extension_id: extension.read().id() }
                             }
                         }
                     }

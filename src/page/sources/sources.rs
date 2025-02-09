@@ -19,17 +19,17 @@ pub fn SourceList() -> Element {
                 for extension in extensions.to_vec().iter() {
                     Item {
                         ItemIcon {
-                            src: extension.icon_path().to_string_lossy().to_string(),
-                            alt: extension.source().name.clone(),
+                            src: extension.read().icon_path().to_string_lossy().to_string(),
+                            alt: extension.read().source().name.clone(),
                         }
                         ItemDetail {
-                            ItemTitle { title: extension.source().name.clone() }
-                            ItemDescription { language: extension.source().language.clone() }
+                            ItemTitle { title: extension.read().source().name.clone() }
+                            ItemDescription { language: extension.read().source().language.clone() }
                         }
                         Link {
                             class: "ml-auto btn hover:btn-primary",
                             to: Route::MangaList {
-                                extension_id: extension.id().to_string(),
+                                extension_id: extension.read().id().to_string(),
                             },
                             "Browse"
                         }

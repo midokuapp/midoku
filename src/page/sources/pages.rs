@@ -17,52 +17,48 @@ pub fn PageList(extension_id: String, manga_id: String, chapter_id: String) -> E
     let mut page_list = use_signal(|| vec![]);
     let mut loading_index = use_signal(|| 0);
 
-    use_future(move || {
-        let extension = extension.clone();
-        let manga_id = manga_id.clone();
-        let chapter_id = chapter_id.clone();
-        async move {
-            let Ok(mut new_page_list) = extension.get_page_list(manga_id, chapter_id).await else {
+    use_future(move || async move {
+        let Ok(mut new_page_list) = extension.read().get_page_list(manga_id, chapter_id).await
+        else {
+            dioxus::logger::tracing::error!(
+                "could not get page list: {extension_id} {manga_id} {chapter_id}"
+            );
+            return;
+        };
+        // make sure pages are sorted by their index
+        new_page_list.sort_by(|a, b| a.index.cmp(&b.index));
+
+        // check if there are gaps or repeated indices
+        if let Some(page) = new_page_list.first() {
+            if page.index != 0 {
                 dioxus::logger::tracing::error!(
-                    "could not get page list: {extension_id} {manga_id} {chapter_id}"
+                    "pages do not start with index 0: {extension_id} {manga_id} {chapter_id}"
                 );
                 return;
-            };
-            // make sure pages are sorted by their index
-            new_page_list.sort_by(|a, b| a.index.cmp(&b.index));
-
-            // check if there are gaps or repeated indices
-            if let Some(page) = new_page_list.first() {
-                if page.index != 0 {
-                    dioxus::logger::tracing::error!(
-                        "pages do not start with index 0: {extension_id} {manga_id} {chapter_id}"
-                    );
-                    return;
-                }
             }
+        }
 
-            if let Some(page) = new_page_list.last() {
-                let last_index = new_page_list.len() as u32 - 1;
-                if page.index != last_index {
-                    dioxus::logger::tracing::error!(
+        if let Some(page) = new_page_list.last() {
+            let last_index = new_page_list.len() as u32 - 1;
+            if page.index != last_index {
+                dioxus::logger::tracing::error!(
                         "pages do not end with index {last_index}: {extension_id} {manga_id} {chapter_id}"
                     );
-                    return;
-                }
+                return;
             }
-
-            for (idx, b) in new_page_list.iter().enumerate().skip(1) {
-                let a = new_page_list.get(idx - 1).unwrap();
-                if a.index == b.index {
-                    dioxus::logger::tracing::error!(
-                        "pages cannot have duplicate indices: {extension_id} {manga_id} {chapter_id}"
-                    );
-                    return;
-                }
-            }
-
-            page_list.set(new_page_list);
         }
+
+        for (idx, b) in new_page_list.iter().enumerate().skip(1) {
+            let a = new_page_list.get(idx - 1).unwrap();
+            if a.index == b.index {
+                dioxus::logger::tracing::error!(
+                    "pages cannot have duplicate indices: {extension_id} {manga_id} {chapter_id}"
+                );
+                return;
+            }
+        }
+
+        page_list.set(new_page_list);
     });
 
     rsx! {
