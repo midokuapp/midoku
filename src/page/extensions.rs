@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use crate::component::extension::{
     InstallButton, Item, ItemDescription, ItemDetail, ItemIcon, ItemTitle, List, UninstallButton,
 };
-use crate::component::{Header, HorizontalAlign, VerticalAlign};
+use crate::component::{Header, HorizontalAlign, ScrollArea, ScrollDirection, VerticalAlign};
 use crate::hook::use_state;
 use crate::model::Manifest;
 use crate::state::StateRepositoryUrl;
@@ -27,8 +27,10 @@ pub fn ExtensionList() -> Element {
         Header { h_align: HorizontalAlign::Center, v_align: VerticalAlign::Center,
             h1 { class: "max-w-xl w-full text-xl font-bold", "Extension Manager" }
         }
-        div { class: "px-5",
-            div { class: "max-w-xl w-full mx-auto",
+        ScrollArea {
+            direction: ScrollDirection::Vertical,
+            class: "px-5",
+            div { class: "max-w-xl w-full h-full mx-auto",
                 p { class: "mb-4 opacity-70",
                     "Manage your manga extensions: Install new sources or uninstall those you no longer need."
                 }
@@ -42,6 +44,7 @@ pub fn ExtensionList() -> Element {
                 if extensions.to_vec().len() > 0 {
                     h2 { class: "text-lg font-semibold mb-2", "Installed" }
                     List {
+                        class: "mb-8",
                         for extension in extensions.to_vec().iter() {
                             Item {
                                 ItemIcon {

@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
-use crate::component::{BackButton, Header, VerticalAlign};
+use crate::component::extension::List;
+use crate::component::{BackButton, Header, ScrollArea, ScrollDirection, VerticalAlign};
 use crate::hook::use_state;
 use crate::Route;
 
@@ -80,19 +81,22 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
                 span { class: "loading loading-spinner loading-xl" }
             }
         } else {
-            ul {
-                for chapter in self_state.chapter_list.read().iter() {
-                    li {
-                        Link {
-                            to: Route::PageList {
-                                extension_id: extension_id.to_string(),
-                                manga_id: id.clone(),
-                                chapter_id: chapter.id.clone(),
-                            },
-                            if chapter.volume >= 0.0 {
-                                "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
-                            } else {
-                                "ch {chapter.chapter}: {chapter.title}"
+            ScrollArea {
+                direction: ScrollDirection::Vertical,
+                ul {
+                    for chapter in self_state.chapter_list.read().iter() {
+                        li {
+                            Link {
+                                to: Route::PageList {
+                                    extension_id: extension_id.to_string(),
+                                    manga_id: id.clone(),
+                                    chapter_id: chapter.id.clone(),
+                                },
+                                if chapter.volume >= 0.0 {
+                                    "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
+                                } else {
+                                    "ch {chapter.chapter}: {chapter.title}"
+                                }
                             }
                         }
                     }

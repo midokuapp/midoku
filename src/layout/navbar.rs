@@ -8,8 +8,8 @@ use crate::Route;
 pub fn Navbar() -> Element {
     rsx! {
         div { class: "flex flex-col w-screen h-screen",
-            main { class: "flex-1 flex flex-col", Outlet::<Route> {} }
-            nav { class: "w-full bg-base-200 border-t border-base-100",
+            Outlet::<Route> {}
+            nav { class: "w-full bg-base-200 border-t border-base-100 mt-auto",
                 div { class: "grid grid-cols-2 max-w-xl mx-auto py-3",
                     NavLink { to: Route::SourceList {}, icon: LdGlobe, "Browse" }
                     NavLink { to: Route::ExtensionList {}, icon: LdLayoutGrid, "Extensions" }
