@@ -12,6 +12,7 @@ use super::Source;
 
 #[derive(Clone, Copy)]
 pub struct Extensions {
+    scope_id: ScopeId,
     pub inner: Signal<BTreeMap<String, Signal<Extension>>>,
 }
 
@@ -34,8 +35,11 @@ impl Extensions {
             }
         }
 
+        let extensions = Signal::new(extensions);
+
         Extensions {
-            inner: Signal::new(extensions),
+            scope_id: extensions.origin_scope(),
+            inner: extensions,
         }
     }
 
@@ -48,9 +52,10 @@ impl Extensions {
     }
 
     pub fn add(&mut self, extension: Extension) {
-        self.inner
-            .write()
-            .insert(extension.id.clone(), Signal::new(extension));
+        self.inner.write().insert(
+            extension.id.clone(),
+            Signal::new_in_scope(extension, self.scope_id),
+        );
     }
 
     pub fn remove<S: AsRef<str>>(&mut self, extension_id: S) {
