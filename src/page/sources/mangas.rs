@@ -38,8 +38,7 @@ pub fn MangaList(extension_id: String) -> Element {
             BackButton {}
             h1 { class: "text-xl font-bold", "{extension_name}" }
         }
-        ScrollArea {
-            direction: ScrollDirection::Vertical,
+        ScrollArea { direction: ScrollDirection::Vertical,
             Grid {
                 for manga in self_state.mangas.read().iter() {
                     Item {

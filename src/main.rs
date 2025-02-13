@@ -21,7 +21,7 @@ use crate::page::{
 const APP_USER_AGENT: &str = concatcp!(midoku_config::NAME, "/", midoku_config::VERSION);
 const CSS: Asset = asset!("/assets/tailwind.css");
 
-#[derive(Debug, Clone, Routable, PartialEq)]
+#[derive(Debug, Clone, Routable, PartialEq, Eq, Hash)]
 #[rustfmt::skip]
 enum Route {
     #[redirect("/", || Route::SourceList {})]

@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
 
-use crate::component::extension::List;
 use crate::component::{BackButton, Header, ScrollArea, ScrollDirection, VerticalAlign};
 use crate::hook::use_state;
 use crate::Route;
@@ -81,8 +80,7 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
                 span { class: "loading loading-spinner loading-xl" }
             }
         } else {
-            ScrollArea {
-                direction: ScrollDirection::Vertical,
+            ScrollArea { direction: ScrollDirection::Vertical,
                 ul {
                     for chapter in self_state.chapter_list.read().iter() {
                         li {

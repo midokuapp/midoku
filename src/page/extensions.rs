@@ -27,9 +27,7 @@ pub fn ExtensionList() -> Element {
         Header { h_align: HorizontalAlign::Center, v_align: VerticalAlign::Center,
             h1 { class: "max-w-xl w-full text-xl font-bold", "Extension Manager" }
         }
-        ScrollArea {
-            direction: ScrollDirection::Vertical,
-            class: "px-5",
+        ScrollArea { direction: ScrollDirection::Vertical, class: "px-5",
             div { class: "max-w-xl w-full h-full mx-auto",
                 p { class: "mb-4 opacity-70",
                     "Manage your manga extensions: Install new sources or uninstall those you no longer need."
@@ -43,8 +41,7 @@ pub fn ExtensionList() -> Element {
                 }
                 if extensions.to_vec().len() > 0 {
                     h2 { class: "text-lg font-semibold mb-2", "Installed" }
-                    List {
-                        class: "mb-8",
+                    List { class: "mb-8",
                         for extension in extensions.to_vec().iter() {
                             Item {
                                 ItemIcon {

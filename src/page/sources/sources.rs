@@ -14,11 +14,8 @@ pub fn SourceList() -> Element {
         Header { h_align: HorizontalAlign::Center, v_align: VerticalAlign::Center,
             h1 { class: "max-w-xl w-full text-xl font-bold", "Explore" }
         }
-        ScrollArea {
-            direction: ScrollDirection::Vertical,
-            class: "px-5",
-            List {
-                class: "max-w-xl w-full mx-auto",
+        ScrollArea { direction: ScrollDirection::Vertical, class: "px-5",
+            List { class: "max-w-xl w-full mx-auto",
                 for extension in extensions.to_vec().iter() {
                     Item {
                         ItemIcon {
