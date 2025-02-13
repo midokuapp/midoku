@@ -6,3 +6,6 @@ codegen-units = 1
 panic = "abort"
 strip = true
 incremental = false
+
+[patch.crates-io]
+dioxus = { git = "https://github.com/DioxusLabs/dioxus.git", rev = "refs/pull/3722/head" }
