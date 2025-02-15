@@ -1,4 +1,7 @@
 use dioxus::prelude::*;
+use dioxus_free_icons::icons::ld_icons::{LdBrush, LdClock, LdUser};
+use dioxus_free_icons::Icon;
+use midoku_bindings::exports::Status;
 
 use crate::component::{BackButton, Header, ScrollArea, ScrollDirection, VerticalAlign};
 use crate::hook::use_state;
@@ -72,28 +75,88 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
 
     let id = &manga_details.id;
     let title = &manga_details.title;
+    // let url = &manga_details.url;
+    let description = &manga_details.description;
+    let cover_url = &manga_details.cover_url;
+    let author_name = &manga_details.author_name;
+    let artist_name = &manga_details.artist_name;
+    let categories = &manga_details.categories;
+    let status = match manga_details.status {
+        Status::Unknown => "Unknown",
+        Status::Ongoing => "Ongoing",
+        Status::Completed => "Completed",
+        Status::Hiatus => "Hiatus",
+        Status::Cancelled => "Cancelled",
+    };
+    // let content_rating = &manga_details.content_rating;
+    // let reading_mode = &manga_details.reading_mode;
+
+    let mut cover_loading = use_signal(|| true);
 
     rsx! {
         Header { v_align: VerticalAlign::Center, BackButton {} }
-        if loading_chapter_list() {
-            div { class: "flex-1 flex flex-col items-center justify-center",
-                span { class: "loading loading-spinner loading-xl" }
-            }
-        } else {
-            ScrollArea { direction: ScrollDirection::Vertical,
-                ul {
-                    for chapter in self_state.chapter_list.read().iter() {
-                        li {
-                            Link {
-                                to: Route::PageList {
-                                    extension_id: extension_id.to_string(),
-                                    manga_id: id.clone(),
-                                    chapter_id: chapter.id.clone(),
-                                },
-                                if chapter.volume >= 0.0 {
-                                    "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
-                                } else {
-                                    "ch {chapter.chapter}: {chapter.title}"
+        ScrollArea { direction: ScrollDirection::Vertical,
+            div { class: "max-w-xl w-full h-full mx-auto",
+                div { class: "flex gap-3 mb-2",
+                    figure {
+                        class: format!(
+                            "flex-none w-48 aspect-[2/3] rounded-md bg-base-300 {}",
+                            if cover_loading() { "animate-pulse" } else { "" },
+                        ),
+                        img {
+                            class: "w-full h-full object-cover rounded-md",
+                            src: "{cover_url}",
+                            alt: "{title}",
+                            onload: move |_| cover_loading.set(false),
+                        }
+                    }
+                    div {
+                        class: "grow flex flex-col gap-2 w-full",
+                        h1 { class: "text-3xl", "{title}" }
+                        div {
+                            class: "flex gap-2 items-center",
+                            Icon { class: "size-4", icon: LdUser }
+                            span { "{author_name}" }
+                        }
+                        div {
+                            class: "flex gap-2 items-center",
+                            Icon { class: "size-4", icon: LdBrush }
+                            span { "{artist_name}" }
+                        }
+                        div {
+                            class: "flex gap-2 items-center",
+                            Icon { class: "size-4", icon: LdClock }
+                            span { "{status}" }
+                        }
+                        div {
+                            class: "flex flex-wrap content-start gap-1 grow",
+                            for category in categories.iter() {
+                                span { class: "badge badge-outline", "{category}" }
+                            }
+                        }
+                    }
+                }
+                p { class: "break-words mb-2", "{description}" }
+
+                if loading_chapter_list() {
+                    div { class: "flex-1 flex flex-col items-center justify-center",
+                        span { class: "loading loading-spinner loading-xl" }
+                    }
+                } else {
+                    ul {
+                        for chapter in self_state.chapter_list.read().iter() {
+                            li {
+                                Link {
+                                    to: Route::PageList {
+                                        extension_id: extension_id.to_string(),
+                                        manga_id: id.clone(),
+                                        chapter_id: chapter.id.clone(),
+                                    },
+                                    if chapter.volume >= 0.0 {
+                                        "vol {chapter.volume} ch {chapter.chapter}: {chapter.title}"
+                                    } else {
+                                        "ch {chapter.chapter}: {chapter.title}"
+                                    }
                                 }
                             }
                         }
