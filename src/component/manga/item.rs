@@ -42,6 +42,6 @@ pub fn ItemImage(src: String, alt: String) -> Element {
 #[component]
 pub fn ItemTitle(title: String) -> Element {
     rsx! {
-        p { class: "mx-1 mt-1 line-clamp-2 text-sm font-bold", "{title}" }
+        p { class: "mx-1 mt-1 line-clamp-2 text-sm", "{title}" }
     }
 }
