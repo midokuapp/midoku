@@ -136,7 +136,7 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
                         }
                     }
                 }
-                p { class: "break-words mb-2", "{description}" }
+                MangaDescription { description }
 
                 if loading_chapter_list() {
                     div { class: "flex-1 flex flex-col items-center justify-center",
@@ -161,6 +161,38 @@ pub fn ChapterList(extension_id: String, manga_id: String) -> Element {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+fn MangaDescription(description: String) -> Element {
+    use dioxus_free_icons::icons::ld_icons::{LdChevronDown, LdChevronUp};
+
+    let mut expanded = use_signal(|| false);
+
+    rsx! {
+        div {
+            onclick: move |_| expanded.toggle(),
+
+            p {
+                class: "break-words mb-2",
+                class: if expanded() {
+                    "line-clamp-none"
+                } else {
+                    "line-clamp-3"
+                },
+                "{description}",
+            }
+
+            div {
+                class: "flex justify-center",
+                if expanded() {
+                    Icon { class: "size-6", icon: LdChevronUp }
+                } else {
+                    Icon { class: "size-6", icon: LdChevronDown }
                 }
             }
         }
